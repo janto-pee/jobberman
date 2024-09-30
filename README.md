@@ -1,354 +1,367 @@
-# Awesome-Angel-Startups REST API
+# Next Generation Recruitment Platform - Architecture
 
-This product is built with Nodejs, Typescript, MongoDb and mongoose.
-It serves data about more than 30000 startups.
+## What is Next Generation Recruitment Platform (NGRP)?
+NGRP is a a web-based software application that offers a comprehensive suite of tools and features designed to help recruiters and hiring managers streamline their hiring process. At it core, NGRP provide a centralized hub for recruiters to manage job postings, resumes, and candidate communication. 
 
-The entire application is contained within the `src` file.
+NGRP help organizations attract and hire top talent through features like job board integrations, candidate tracking, communication tools, and more. 
 
-Also, the product files are structured in such a way that: 
 
-`model` is a folder that contains all the model used for various routes.
 
-`controller` contains all controller files for each routes and calls the service.
+## How will we design NGRP?
+I have divided the design of NGRP into four lessons:
 
-`service` is a folder that contains the service files that makes request to the database using the model
+Requirements: This lesson will put forth the functional and non-functional requirements of NGRP.
+Design: This lesson will explain the workflow and usage of each component, API design and database schema.
+Detailed design: In this lesson, we’ll explore the components of our NGRP design in detail and discuss various approaches to generate timelines. Moreover, we’ll also evaluate our proposed design.
+Quiz: This lesson will test our understanding of the NGRP design.
 
-You can use this product with fetch or axios first by
 
-## Install
+## Requirements
 
-    npm install axios
+We’ll concentrate on some important features of NGRP to make this design simple. Let’s list down the requirements for our system:
 
-## Import axios into your document
+### Functional requirements
+Employers (Users)
+Profile management: Enable employers to create and manage profiles, including company profiles, job listings, and application status tracking.
+Job Posting Analytics: Providing employers with analytics related to their job postings, including impressions, applications, and applicant demographics to help them improve their hiring practices systematically.
 
-    import axios from "axios"
+Applicants (Users)
+Profile management: Enable applicants to create and manage customizable profiles
+Job Application Track: Allow job seekers to track the status of their job application, and provide additional information on whether they are being screened, accepted, or denied.
+Recommended actions: Use user information and application history to recommend appropriate job listings to job seekers, improving job matching accuracy.
+Skill-matching algorithm: Develop a skill-matching algorithm to match applicants with the right job listings based on their skills and qualifications.
 
-## Make first request
+Others
+Messaging System: Implement a messaging system that allows job seekers and employers to communicate directly within the platform about job opportunities and applications.
+User analytics and ratings: Allow users (job seekers and employers) to review and rate each other based on their experience, increasing the insight and trustworthiness of the inside of the platform does not increase.
+Compensation Negotiation Forum: Provide a forum for job seekers and employers to negotiate compensation and benefits to facilitate fair and transparent communication.
+Interview Scheduler: An integrated interview scheduling system that allows employers to schedule interviews with applicants directly through the platform.
 
-    axios.get
 
-# REQUEST & RESPONSE
 
-The axios request to the this product include
 
-## Get list of Things
+### Non-functional requirements#
+Scalability: The system should be scalable to handle millions of users in terms of computational resources and storage.
 
-### Request
+Latency: The latency to generate a course feed should be low.
 
-`GET /thing/`
+Availability: The system should be highly available.
 
-    const response = await axios.get('/user?ID=12345');
+Durability Any uploaded content (photos and videos) should never get lost.
 
-### Response
+Consistency: We can compromise a little on consistency. It is acceptable if the courses takes time to show in followers’ feeds located in a distant region.
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 2
+Reliability: The system must be able to tolerate hardware and software failures.
 
-    []
 
-## Create a new Thing
+## Building blocks we will use#
+We’ll focus on the high-level design of NGRP. The design will utilize the following building blocks in our design:
 
-### Request
+A load balancer at various layers will ensure smooth requests distribution among available servers.
+A database is used to store the user, students, courses, and accounts metadata and relationship among them.
+Blob storage is needed to store the various types of content such as photos, videos, slides and so on.
+A cache stores the most frequent content related requests.
+CDN is used to effectively deliver content to end-users which reduces delay and burden on end-servers.
+compute servers
+web and app servers
 
-`POST /thing/`
 
-    curl -i -H 'Accept: application/json' -d 'name=Foo&status=new' http://localhost:7000/thing
 
-### Response
+### High-level design
+Our system should allow us to create, view, search and assess jobs at a high level. To create jobs, we need to upload and store job content, and upon fetching, we need to retrieve the data from the storage.
 
-    HTTP/1.1 201 Created
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 201 Created
-    Connection: close
-    Content-Type: application/json
-    Location: /thing/1
-    Content-Length: 36
+workflow:
+Posting jobs:
 
-    {"id":1,"name":"Foo","status":"new"}
+Applying to jobs:
 
-## Get a specific Thing
+Company Ranking system:
 
-### Request
+Recommendation system:
 
-`GET /thing/id`
+Search feature:
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/1
 
-### Response
+### API design
+This section describes APIs invoked by the users to perform different tasks (upload, like, and view courses, create and take test, view progress,  ) on NGRP. We’ll implement REST APIs for these tasks. Let’s develop APIs for each of the following features:
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 36
 
-    {"id":1,"name":"Foo","status":"new"}
+Post a job
+Apply to job
+review on employers/company
+Search
 
-## Get a non-existent Thing
 
-### Request
 
-`GET /thing/id`
+All of the following calls will have a userID, that uniquely specifies the user performing the action. We’ll only discuss new parameters in the calls.
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/9999
+#### Post a job
 
-### Response
+The POST method of HTTP is used to call the /postJob API:
 
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 35
+postJob(user_id, job_content)
 
-    {"status":404,"reason":"Not found"}
+    - job_content( employer_id,  title,  description, qualification, complimentary_qualification, job_type, visa_sponsorship, remote_posible, preferred_timezones, location, salary, date_posted, relocation, skills, employer_hiring_contact )
 
-## Create another new Thing
+| Parameter | Description |
+| ---------------------------------- | ---------------------------------- |
+| employer_id                | Identifier of the employer posting the job.             |
+| title                | Course topic and sub topic              |
+| description                | Description of the job.            |
+| location                | Location of the job.             |
+| salary                | Salary offered for the job.              |
 
-### Request
 
-`POST /thing/`
+<!-- course content -->
+<!-- course_content: {
+    section: string
+    subsection: {
+        topic: string,
+        content_type: video|pdf|slide,
+    }[]
+}[] -->
 
-    curl -i -H 'Accept: application/json' -d 'name=Bar&junk=rubbish' http://localhost:7000/thing
+#### Apply to job
 
-### Response
+The POST method of HTTP is used to call the /postJobApplication API:
 
-    HTTP/1.1 201 Created
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 201 Created
-    Connection: close
-    Content-Type: application/json
-    Location: /thing/2
-    Content-Length: 35
+postJobApplicationr(user_id, job_id, application_text, resume, cover_letter, referral_information)
 
-    {"id":2,"name":"Bar","status":null}
 
-## Get list of Things again
+| Parameter | Description |
+| ---------------------------------- | ---------------------------------- |
+| application_text               | Applicants introduction        |
+| resume               | a pdf or word resume document       |
+| cover_letter               | a pdf or word document       |
 
-### Request
 
-`GET /thing/`
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/
 
-### Response
+#### Search jobs
+The GET method is used to get course from the server through the /searchJob API. The /searchJob API is as follows:
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 74
+searchJob(keyword)
 
-    [{"id":1,"name":"Foo","status":"new"},{"id":2,"name":"Bar","status":null}]
+| Parameter | Description |
+| ---------------------------------- | ---------------------------------- |
+| keyword               | keyword could be title of job, category or caption        |
 
-## Change a Thing's state
 
-### Request
 
-`PUT /thing/:id/status/changed`
 
-    curl -i -H 'Accept: application/json' -X PUT http://localhost:7000/thing/1/status/changed
+#### Create Review
+The POST method is used to post Review to the server from the user through the /postReview API. The /postReview API is as follows:
 
-### Response
+postReview(userID, job_id, rating, review_topic, review_text)
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 40
+| Parameter | Description |
+| ---------------------------------- | ---------------------------------- |
+| user_id         | It indicates the id of employer   |
+| rating                | Title of each sub topic               |
+| review_topic                | Title of review              |
+| review_text              | User comment for the compaany applied or worked             |
 
-    {"id":1,"name":"Foo","status":"changed"}
 
-## Get changed Thing
+#### View Reviews
+The GET method is used to get Review from the server through the /getReviews API. The /getReviews API is as follows:
 
-### Request
+getReviews(userID, employer_iD)
 
-`GET /thing/id`
+| Parameter | Description |
+| ---------------------------------- | ---------------------------------- |
+| job_id         | The unique ID of the job   |
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/1
+<!-- 
+#### View User Progres (Tracking)
+The POST method is used to post photos/videos to the server from the user through the /postCourse API. The /postCourse API is as follows:
 
-### Response
+getProgress(userID, job_id)
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 40
+| Parameter | Description |
+| ---------------------------------- | ---------------------------------- |
+| job_id         | The unique ID of the course   |
+ -->
 
-    {"id":1,"name":"Foo","status":"changed"}
 
-## Change a Thing
+#### View General Performance
+The GET method is used to get data about courses to the user using the userID from the server. The getGeneralPerformance API is as follows:
 
-### Request
+getGeneralPerformance(userID, job_id)
 
-`PUT /thing/:id`
 
-    curl -i -H 'Accept: application/json' -X PUT -d 'name=Foo&status=changed2' http://localhost:7000/thing/1
 
-### Response
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
 
-    {"id":1,"name":"Foo","status":"changed2"}
 
-## Attempt to change a Thing using partial params
+## Storage schema
+Let’s define our data model now:
 
-### Request
+Relational or non-relational database#
+It is essential to choose the right kind of database for our NGRP system, but which is the right choice — SQL or NoSQL? Our data is inherently relational, and we need an order for the data (posts should appear in chronological order) and no data loss even in case of failures (data durability). Moreover, in our case, we would benefit from relational queries like fetching the followers or images based on a user ID. Hence, SQL-based databases fulfill these requirements.
 
-`PUT /thing/:id`
+So, we’ll opt for a relational database and store our relevant data in that database.
 
-    curl -i -H 'Accept: application/json' -X PUT -d 'status=changed3' http://localhost:7000/thing/1
+### Define tables#
+On a basic level, we need the following tables:
 
-### Response
+Users: This stores all user-related data such as ID, name, email, bio, location, date of account creation, time of the last login, and so on.
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
+Job Listing: This stores all job informatin such as job title, location, description, salary and so on.  We also need to keep the user ID to determine which job posting belongs to which user. The user ID is a foreign key from the users table.
 
-    {"id":1,"name":"Foo","status":"changed3"}
+Messages: This stores all message information such as message text, sender, receiver, timestamp, and so on. We also need to keep the user ID to determine which message belongs to which user. The user ID is a foreign key from the users table.
 
-## Attempt to change a Thing using invalid params
+Applications: This stores all application-related information such as ID, location, caption, time of creation, and so on. We also need to keep the user ID to determine which application belongs to which user. The user ID is a foreign key from the users table.
 
-### Request
 
-`PUT /thing/:id`
 
-    curl -i -H 'Accept: application/json' -X PUT -d 'id=99&status=changed4' http://localhost:7000/thing/1
 
-### Response
+#### Entities and Attributes of the Online Job Search and Recruitment Platform
+1. Users:
+user_id (Primary Key): Unique identifier for each user.
+username: Username of the user.
+email: Email address of the user.
+password: Encrypted password of the user.
+role: Role of the user (job seeker or employer).
+2. Job Listings:
+job_id (Primary Key): Unique identifier for each job listing.
+employer_id (Foreign Key referencing Users): Identifier of the employer posting the job.
+title: Title of the job listing.
+description: Description of the job.
+location: Location of the job.
+salary: Salary offered for the job.
+3. Applications:
+application_id (Primary Key): Unique identifier for each job application.
+job_id (Foreign Key referencing Job Listings): Identifier of the job listing to which the application is made.
+user_id (Foreign Key referencing Users): Identifier of the user (job seeker) who made the application.
+status: Status of the application (e.g., pending, accepted, rejected).
+4. Messages:
+message_id (Primary Key): Unique identifier for each message.
+sender_id (Foreign Key referencing Users): Identifier of the user sending the message.
+receiver_id (Foreign Key referencing Users): Identifier of the user receiving the message.
+message_text: Text of the message.
+timestamp: Timestamp of when the message was sent.
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
 
-    {"id":1,"name":"Foo","status":"changed4"}
+#### Relationships Between These Entities
+1. Job Listings to Employers Relationship:
+One-to-many relationship: Each employer can post multiple job listings.
+Foreign key: employer_id in JobListings table referencing user_id in Users table.
+2. Applications to Job Listings Relationship:
+One-to-many relationship: Each job listing can receive multiple applications.
+Foreign keys: job_id in Applications table referencing job_id in JobListings table, user_id in Applications table referencing user_id in Users table.
+3. Messages between Users Relationship:
+One-to-many relationship: Each user can send and receive multiple messages.
+Foreign keys: sender_id and receiver_id in Messages table referencing user_id in Users table.
 
-## Change a Thing using the _method hack
 
-### Request
+### ER Diagram for Online Job Search and Recruitment Platforms
 
-`POST /thing/:id?_method=POST`
+### Entities Structures in SQL Format
 
-    curl -i -H 'Accept: application/json' -X POST -d 'name=Baz&_method=PUT' http://localhost:7000/thing/1
+-- Create Users table
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL
+);
 
-### Response
+-- Create JobListings table
+CREATE TABLE JobListings (
+    job_id INT PRIMARY KEY,
+    employer_id INT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    location VARCHAR(255),
+    salary DECIMAL(10, 2),
+    FOREIGN KEY (employer_id) REFERENCES Users(user_id)
+);
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
+-- Create Applications table
+CREATE TABLE Applications (
+    application_id INT PRIMARY KEY,
+    job_id INT,
+    user_id INT,
+    status VARCHAR(50),
+    FOREIGN KEY (job_id) REFERENCES JobListings(job_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
 
-    {"id":1,"name":"Baz","status":"changed4"}
+-- Create Messages table
+CREATE TABLE Messages (
+    message_id INT PRIMARY KEY,
+    sender_id INT,
+    receiver_id INT,
+    message_text TEXT,
+    timestamp TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES Users(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES Users(user_id)
+);
 
-## Change a Thing using the _method hack in the url
 
-### Request
+### Database Model For Online Job Search and Recruitment Platforms
 
-`POST /thing/:id?_method=POST`
+## Detailed Design
 
-    curl -i -H 'Accept: application/json' -X POST -d 'name=Qux' http://localhost:7000/thing/1?_method=PUT
+### Add more components
+Let’s add a few more components to our design:
 
-### Response
+Load balancer: To balance the load of the requests from the end-users.
 
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: text/html;charset=utf-8
-    Content-Length: 35
+Application servers: To host our service to the end-users.
 
-    {"status":404,"reason":"Not found"}
+Relational database: To store our data.
 
-## Delete a Thing
+Blob storage: To store the photos and videos uploaded by the users.
 
-### Request
+databases
 
-`DELETE /thing/id`
 
-    curl -i -H 'Accept: application/json' -X DELETE http://localhost:7000/thing/1/
 
-### Response
 
-    HTTP/1.1 204 No Content
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 204 No Content
-    Connection: close
 
 
-## Try to delete same Thing again
 
-### Request
 
-`DELETE /thing/id`
 
-    curl -i -H 'Accept: application/json' -X DELETE http://localhost:7000/thing/1/
 
-### Response
 
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 35
 
-    {"status":404,"reason":"Not found"}
 
-## Get deleted Thing
 
-### Request
 
-`GET /thing/1`
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/1
 
-### Response
 
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:33 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 35
 
-    {"status":404,"reason":"Not found"}
 
-## Delete a Thing using the _method hack
 
-### Request
 
-`DELETE /thing/id`
 
-    curl -i -H 'Accept: application/json' -X POST -d'_method=DELETE' http://localhost:7000/thing/2/
+<!-- 
 
-### Response
 
-    HTTP/1.1 204 No Content
-    Date: Thu, 24 Feb 2011 12:36:33 GMT
-    Status: 204 No Content
-    Connection: close
+## Higher Learning Startup - DevOps 
+- Time it takes for building multiple environments
+- Issues we face with different environments
+- Scale-Up and Scale-Down On-Demand
 
+## Higher Learning Startup - DevOps 
+- Visibility
+- Stability
+- Scalability
+- Security
+- Audit
 
+## Higher Learning Startup - Backend
+- Time it takes for building multiple environments
+- Issues we face with different environments
+- Scale-Up and Scale-Down On-Demand
 
-
+## Higher Learning Startup - Frontend
+- Visibility
+- Stability
+- Scalability
+- Security
+- Audit -->
