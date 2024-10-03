@@ -1,4 +1,13 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BeforeInsert,
+} from "typeorm";
+import bcrypt from "bcrypt";
+import config from "config";
+import log from "../utils/logger";
 
 @Entity()
 export class Person {
@@ -6,7 +15,7 @@ export class Person {
   username: string;
 
   @Column()
-  hashed_pasword: string;
+  hashed_password: string;
 
   @Column()
   first_name: string;
@@ -30,7 +39,10 @@ export class Person {
   country: string;
 
   @Column()
-  verificationCode: boolean;
+  verificationCode: string;
+
+  @Column()
+  passwordResetCode: string;
 
   @Column()
   is_email_verified: boolean;
@@ -43,4 +55,18 @@ export class Person {
 
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
+
+  @BeforeInsert()
+  async beforeInsert() {
+    try {
+      const salt = await bcrypt.genSalt(config.get<number>("saltWorkFactor"));
+
+      const hash = await bcrypt.hashSync(this.hashed_password, salt);
+
+      this.hashed_password = hash;
+    } catch (e) {
+      log.error(e, "Could not validate password");
+      return false;
+    }
+  }
 }
