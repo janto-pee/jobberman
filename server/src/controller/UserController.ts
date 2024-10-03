@@ -5,11 +5,11 @@ import { User } from "../entity/User";
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
 
-  async allPerson(request: Request, response: Response, next: NextFunction) {
+  async allUser(request: Request, response: Response, next: NextFunction) {
     return this.userRepository.find();
   }
 
-  async onePerson(request: Request, response: Response, next: NextFunction) {
+  async oneUser(request: Request, response: Response, next: NextFunction) {
     const id = parseInt(request.params.id);
 
     const user = await this.userRepository.findOne({
@@ -22,7 +22,7 @@ export class UserController {
     return user;
   }
 
-  async createPerson(request: Request, response: Response, next: NextFunction) {
+  async createUser(request: Request, response: Response, next: NextFunction) {
     const { first_name, last_name, email, address, address2, city, country } =
       request.body;
 
@@ -39,7 +39,7 @@ export class UserController {
     return this.userRepository.save(user);
   }
 
-  async removePerson(request: Request, response: Response, next: NextFunction) {
+  async removeUser(request: Request, response: Response, next: NextFunction) {
     const id = parseInt(request.params.id);
 
     let userToRemove = await this.userRepository.findOneBy({ id });

@@ -8,7 +8,7 @@ import {
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   sender_username: string;

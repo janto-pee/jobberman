@@ -29,6 +29,7 @@
       "jsonwebtoken": "^9.0.2",
       "lodash": "^4.17.21",
       "nanoid": "^5.0.7",
+      "nodemailer": "^6.9.15",
       "pg": "^8.4.0",
       "pino": "^9.4.0",
       "pino-pretty": "^11.2.2",

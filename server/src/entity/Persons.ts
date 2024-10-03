@@ -30,6 +30,9 @@ export class Person {
   country: string;
 
   @Column()
+  verificationCode: boolean;
+
+  @Column()
   is_email_verified: boolean;
 
   @Column()

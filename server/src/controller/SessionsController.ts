@@ -5,22 +5,22 @@ import { Sessions } from "../entity/Sessions";
 export class UserController {
   private sessionRepository = AppDataSource.getRepository(Sessions);
 
-  //   async allSession(request: Request, response: Response, next: NextFunction) {
-  //     return this.sessionRepository.find();
+  // async allSession(request: Request, response: Response, next: NextFunction) {
+  //   return this.sessionRepository.find();
+  // }
+
+  // async oneSession(request: Request, response: Response, next: NextFunction) {
+  //   const id = parseInt(request.params.id);
+
+  //   const user = await this.sessionRepository.findOne({
+  //     where: { id },
+  //   });
+
+  //   if (!user) {
+  //     return "unregistered user";
   //   }
-
-  //   async oneSession(request: Request, response: Response, next: NextFunction) {
-  //     const id = parseInt(request.params.id);
-
-  //     const user = await this.sessionRepository.findOne({
-  //       where: { id },
-  //     });
-
-  //     if (!user) {
-  //       return "unregistered user";
-  //     }
-  //     return user;
-  //   }
+  //   return user;
+  // }
 
   async createSession(
     request: Request,
@@ -39,7 +39,7 @@ export class UserController {
     return this.sessionRepository.save(session);
   }
 
-  async removeSession(
+  async updateSession(
     request: Request,
     response: Response,
     next: NextFunction

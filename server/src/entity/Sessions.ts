@@ -18,6 +18,9 @@ export class Sessions {
   client_ip: string;
 
   @Column()
+  valid: boolean;
+
+  @Column()
   is_blocked: boolean;
 
   @Column()

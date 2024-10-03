@@ -8,7 +8,7 @@ import {
 @Entity()
 export class Notification {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   username: string;

@@ -41,7 +41,7 @@ export const Routes = [
   {
     method: "post",
     route: "/api/session",
-    controller: SessionC,
+    controller: SessionController,
     action: "currentPerson",
   },
 

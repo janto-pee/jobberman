@@ -8,7 +8,7 @@ import {
 @Entity()
 export class Rating {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   reviewer: string;
