@@ -1,13 +1,12 @@
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import { Request, Response } from "express";
-import * as config from "config";
 import * as dotenv from "dotenv";
 dotenv.config();
+import express from "express";
+import * as bodyParser from "body-parser";
+import { Request, Response } from "express";
+import config from "config";
 
-import { AppDataSource } from "./data-source";
+import AppDataSource from "./data-source";
 import { Routes } from "./routes";
-import { User } from "./entity/User";
 
 AppDataSource.initialize()
   .then(async () => {

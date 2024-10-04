@@ -1,11 +1,15 @@
-import { AppDataSource } from "../data-source";
+import AppDataSource from "../data-source";
 import { NextFunction, Request, Response } from "express";
-import { Person } from "../entity/Persons";
+import { Person } from "../entity/Person";
 import sendEmail from "../utils/sendemail";
 import { nanoid } from "nanoid";
 
 export class PersonController {
   private personRepository = AppDataSource.getRepository(Person);
+
+  async allPersons(request: Request, response: Response, next: NextFunction) {
+    return this.personRepository.find();
+  }
 
   async onePerson(request: Request, response: Response, next: NextFunction) {
     const username = request.params.username;
@@ -20,51 +24,53 @@ export class PersonController {
     return user;
   }
 
-  async savePerson(request: Request, response: Response, next: NextFunction) {
-    const verification = nanoid();
+  // async createPerson(request: Request, response: Response, next: NextFunction) {
+  //   try {
+  //     const person = new Person();
+  //     person.username = request.body.username;
+  //     // // person.description = "I am near polar bears"
+  //     // // person.filename = "person-with-bears.jpg"
+  //     // // person.views = 1
+  //     // // person.isPublished = true
+  //     // console.log(person);
 
+  //     const photoRepository = AppDataSource.getRepository(Person);
+
+  //     const user = await photoRepository.save(person);
+  //     return response.send(user);
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // }
+
+  async createPerson(request: Request, response: Response, next: NextFunction) {
     try {
-      const {
-        username,
-        hashed_password,
-        first_name,
-        last_name,
-        email,
-        address,
-        address2,
-        city,
-        country,
-        is_email_verified,
-        pasword_changed,
-      } = request.body;
+      const verification = "abcd";
 
       const user = Object.assign(new Person(), {
-        username,
-        hashed_password,
-        first_name,
-        last_name,
-        email,
-        address,
-        address2,
-        city,
-        country,
-        is_email_verified,
-
-        pasword_changed,
+        username: request.body.username,
+        hashed_password: request.body.hashed_password,
+        first_name: request.body.first_name,
+        last_name: request.body.last_name,
+        email: request.body.email,
+        address: request.body.address,
+        address2: request.body.address2,
+        city: request.body.city,
+        country: request.body.country,
+        verificationCode: verification,
       });
-      user.verificationCode = verification;
 
       //hash password in model
       await this.personRepository.save(user);
 
       // send verify email
-      await sendEmail({
-        from: `"Jobby Recruitment Platform 👻" <noreply@jobbyrecruitment.com>`,
-        to: user.email,
-        subject: "Kindly verify your email ✔",
-        text: `verification code: ${user.verificationCode}. username: ${user.username}`,
-        html: "<b>Hello world?</b>",
-      });
+      // await sendEmail({
+      //   from: `"Jobby Recruitment Platform 👻" <noreply@jobbyrecruitment.com>`,
+      //   to: user.username,
+      //   subject: "Kindly verify your email ✔",
+      //   // text: `verification code: ${user.verificationCode}. username: ${user.username}`,
+      //   html: "<b>Hello world?</b>",
+      // });
       return response.send("user successfully created");
     } catch (error) {
       if (error.code === 11000) {
@@ -100,7 +106,7 @@ export class PersonController {
     }
   }
 
-  async remove(request: Request, response: Response, next: NextFunction) {
+  async removePerson(request: Request, response: Response, next: NextFunction) {
     try {
       const username = request.params.username;
 

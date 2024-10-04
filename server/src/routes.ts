@@ -1,119 +1,131 @@
-import { JobController } from "./controller/JobController";
+// import { JobController } from "./controller/JobController";
 import { PersonController } from "./controller/PersonController";
 import { UserController } from "./controller/UserController";
 
 export const Routes = [
+  {
+    method: "get",
+    route: "/api/users",
+    controller: UserController,
+    action: "allUsers",
+  },
+  // person
+  {
+    method: "get",
+    route: "/api/persons",
+    controller: PersonController,
+    action: "allPersons",
+  },
   {
     method: "post",
     route: "/api/persons",
     controller: PersonController,
     action: "createPerson",
   },
-  // person
-  {
-    method: "post",
-    route: "/api/persons/:id/:verificationcode",
-    controller: PersonController,
-    action: "verifyPerson",
-  },
-  {
-    method: "post",
-    route: "/api/persons/forgotpassword",
-    controller: PersonController,
-    action: "forgotPassword",
-  },
-  {
-    method: "post",
-    route: "/api/persons/resetpassword/:id/:passwordresetcode",
-    controller: PersonController,
-    action: "resetPassword",
-  },
-  {
-    method: "post",
-    route: "/api/persons/me",
-    controller: UserController,
-    action: "accessAccount",
-    // getcurrentuser
-  },
+  // {
+  //   method: "post",
+  //   route: "/api/persons/:id/:verificationcode",
+  //   controller: PersonController,
+  //   action: "verifyPerson",
+  // },
+  // {
+  //   method: "post",
+  //   route: "/api/persons/forgotpassword",
+  //   controller: PersonController,
+  //   action: "forgotPassword",
+  // },
+  // {
+  //   method: "post",
+  //   route: "/api/persons/resetpassword/:id/:passwordresetcode",
+  //   controller: PersonController,
+  //   action: "resetPassword",
+  // },
+  // {
+  //   method: "post",
+  //   route: "/api/persons/me",
+  //   controller: UserController,
+  //   action: "accessAccount",
+  //   // getcurrentuser
+  // },
 
-  //
+  // //
 
-  {
-    method: "post",
-    route: "/api/session",
-    controller: SessionController,
-    action: "currentPerson",
-  },
+  // {
+  //   method: "post",
+  //   route: "/api/session",
+  //   controller: SessionController,
+  //   action: "currentPerson",
+  // },
 
-  {
-    method: "post",
-    route: "/api/session",
-    controller: UserController,
-    action: "updatePerson",
-  },
+  // {
+  //   method: "post",
+  //   route: "/api/session",
+  //   controller: UserController,
+  //   action: "updatePerson",
+  // },
 
-  {
-    method: "get",
-    route: "/api/jobs",
-    controller: JobController,
-    action: "allJob",
-  },
-  {
-    method: "get",
-    route: "/api/jobs/:id",
-    controller: JobController,
-    action: "oneJob",
-  },
-  {
-    method: "put",
-    route: "/api/jobs",
-    controller: JobController,
-    action: "updatePerson",
-  },
-  {
-    method: "delete",
-    route: "/api/jobs/:id",
-    controller: JobController,
-    action: "removeJob",
-  },
+  // {
+  //   method: "get",
+  //   route: "/api/jobs",
+  //   controller: JobController,
+  //   action: "allJob",
+  // },
+  // {
+  //   method: "get",
+  //   route: "/api/jobs/:id",
+  //   controller: JobController,
+  //   action: "oneJob",
+  // },
+  // {
+  //   method: "put",
+  //   route: "/api/jobs",
+  //   controller: JobController,
+  //   action: "updatePerson",
+  // },
+  // {
+  //   method: "delete",
+  //   route: "/api/jobs/:id",
+  //   controller: JobController,
+  //   action: "removeJob",
+  // },
 
-  //   start here
+  // //   start here
 
-  // people routes
+  // // people routes
 
-  {
-    method: "get",
-    route: "/api/users",
-    controller: UserController,
-    action: "all",
-  },
-  {
-    method: "get",
-    route: "/api/users/:id",
-    controller: UserController,
-    action: "one",
-  },
-  {
-    method: "post",
-    route: "/api/users",
-    controller: UserController,
-    action: "save",
-  },
-  {
-    method: "delete",
-    route: "/api/users/:id",
-    controller: UserController,
-    action: "remove",
-  },
+  // {
+  //   method: "get",
+  //   route: "/api/users",
+  //   controller: UserController,
+  //   action: "all",
+  // },
+  // {
+  //   method: "get",
+  //   route: "/api/users/:id",
+  //   controller: UserController,
+  //   action: "one",
+  // },
+  // {
+  //   method: "post",
+  //   route: "/api/users",
+  //   controller: UserController,
+  //   action: "save",
+  // },
+  // {
+  //   method: "delete",
+  //   route: "/api/users/:id",
+  //   controller: UserController,
+  //   action: "remove",
+  // },
 
-  // Sessions
+  // // Sessions
 
-  {
-    method: "delete",
-    route: "/api/users/:id",
-    controller: UserController,
-    action: "remove",
-  },
+  // {
+  //   method: "delete",
+  //   route: "/api/users/:id",
+  //   controller: UserController,
+  //   action: "remove",
+  // },
 
   // Applicants
 

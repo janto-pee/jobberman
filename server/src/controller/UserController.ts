@@ -1,11 +1,11 @@
-import { AppDataSource } from "../data-source";
+import AppDataSource from "../data-source";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../entity/User";
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
 
-  async allUser(request: Request, response: Response, next: NextFunction) {
+  async allUsers(request: Request, response: Response, next: NextFunction) {
     return this.userRepository.find();
   }
 

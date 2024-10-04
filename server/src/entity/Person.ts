@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import bcrypt from "bcrypt";
 import config from "config";
@@ -11,6 +12,9 @@ import log from "../utils/logger";
 
 @Entity()
 export class Person {
+  @PrimaryGeneratedColumn()
+  id: string;
+
   @Column()
   username: string;
 
@@ -41,14 +45,14 @@ export class Person {
   @Column()
   verificationCode: string;
 
-  @Column()
+  @Column({ default: null })
   passwordResetCode: string;
 
-  @Column()
+  @Column({ default: false })
   is_email_verified: boolean;
 
   @Column()
-  pasword_changed_at: Date;
+  password_changed_at: Date;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

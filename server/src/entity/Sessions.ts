@@ -1,7 +1,7 @@
 import { Entity, Column, CreateDateColumn } from "typeorm";
 
 @Entity()
-export class Sessions {
+export class Session {
   @Column()
   id: number;
 

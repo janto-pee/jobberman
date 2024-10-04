@@ -1,8 +1,8 @@
-import { AppDataSource } from "../data-source";
+import AppDataSource from "../data-source";
 import { NextFunction, Request, Response } from "express";
 import { Application } from "../entity/Applications";
 
-export class ApplicationsController {
+export class ApplicationController {
   private applicationRepository = AppDataSource.getRepository(Application);
 
   async allApplications(
@@ -13,7 +13,7 @@ export class ApplicationsController {
     return this.applicationRepository.find();
   }
 
-  async oneApplications(
+  async oneApplication(
     request: Request,
     response: Response,
     next: NextFunction
@@ -30,7 +30,7 @@ export class ApplicationsController {
     return user;
   }
 
-  async createApplications(
+  async createApplication(
     request: Request,
     response: Response,
     next: NextFunction

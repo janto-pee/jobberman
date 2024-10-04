@@ -1,26 +1,9 @@
-import { AppDataSource } from "../data-source";
+import AppDataSource from "../data-source";
 import { NextFunction, Request, Response } from "express";
 import { Sessions } from "../entity/Sessions";
 
-export class UserController {
+export class SessionController {
   private sessionRepository = AppDataSource.getRepository(Sessions);
-
-  // async allSession(request: Request, response: Response, next: NextFunction) {
-  //   return this.sessionRepository.find();
-  // }
-
-  // async oneSession(request: Request, response: Response, next: NextFunction) {
-  //   const id = parseInt(request.params.id);
-
-  //   const user = await this.sessionRepository.findOne({
-  //     where: { id },
-  //   });
-
-  //   if (!user) {
-  //     return "unregistered user";
-  //   }
-  //   return user;
-  // }
 
   async createSession(
     request: Request,
@@ -38,7 +21,18 @@ export class UserController {
 
     return this.sessionRepository.save(session);
   }
+  async findSession(request: Request, response: Response, next: NextFunction) {
+    const { username, user_agent, client_ip, is_blocked } = request.body;
 
+    const session = Object.assign(new Sessions(), {
+      username,
+      user_agent,
+      client_ip,
+      is_blocked,
+    });
+
+    return this.sessionRepository.save(session);
+  }
   async updateSession(
     request: Request,
     response: Response,
@@ -55,5 +49,21 @@ export class UserController {
     await this.sessionRepository.update(userToRemove, { valid: false });
 
     return "user has been removed";
+  }
+  async reIssueAccessToken(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    const { username, user_agent, client_ip, is_blocked } = request.body;
+
+    const session = Object.assign(new Sessions(), {
+      username,
+      user_agent,
+      client_ip,
+      is_blocked,
+    });
+
+    return this.sessionRepository.save(session);
   }
 }
