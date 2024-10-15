@@ -43,7 +43,7 @@ export class UserController {
 
       return response.status(201).json({
         status: true,
-        message: 'user created successfully',
+        message: `user successfully created click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.verificationCode}`,
         data: savedUser,
       });
     } catch (error) {
@@ -125,7 +125,7 @@ export class UserController {
 
       return response.status(201).json({
         status: true,
-        message: 'user created successfully',
+        message: `check your email to reset password  http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.passwordResetCode}`,
         data: savedUser,
       });
     } catch (error) {

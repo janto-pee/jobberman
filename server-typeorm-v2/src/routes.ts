@@ -28,7 +28,7 @@ export const Routes = [
 
   {
     method: 'get',
-    route: '/api/users/:id/:verificationcode',
+    route: '/api/users/verify/:id/:verificationcode',
     controller: UserController,
     action: 'verify',
   },

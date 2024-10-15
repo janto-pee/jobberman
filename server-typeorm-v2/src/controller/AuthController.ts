@@ -1,9 +1,6 @@
 import AppDataSource from '../../data-source';
 import { NextFunction, Request, response, Response } from 'express';
 import { User } from '../entity/User';
-import sendEmail from '../utils/sendemail';
-import log from '../utils/logger';
-import { customAlphabet } from 'nanoid';
 import { Auth } from '../entity/Auth';
 import { comparePassword } from '../utils/hashpassword';
 import { signJwt } from '../utils/jwt';

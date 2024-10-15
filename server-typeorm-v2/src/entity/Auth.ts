@@ -11,7 +11,7 @@ import { User } from './User';
 
 @Entity()
 export class Auth {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -22,4 +22,10 @@ export class Auth {
 
   @ManyToOne(() => User, (user) => user.id)
   userId: User;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

@@ -5,16 +5,21 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  Unique,
 } from 'typeorm';
 import { hashPassword } from '../utils/hashpassword';
 import log from '../utils/logger';
 import { customAlphabet } from 'nanoid';
-// import * as v4 from 'uuid';
+
+const nanoid = customAlphabet('abcdefghij0123456789', 7);
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ unique: true })
+  username: string;
 
   @Column()
   first_name: string;
@@ -25,7 +30,7 @@ export class User {
   @Column()
   last_name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -40,7 +45,7 @@ export class User {
   @Column()
   country: string;
 
-  @Column({ default: customAlphabet('abcdefghij0123456789', 7) })
+  @Column({ default: nanoid() })
   verificationCode: string;
 
   @Column({ default: null })

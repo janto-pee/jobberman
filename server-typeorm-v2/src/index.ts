@@ -49,19 +49,19 @@ AppDataSource.initialize()
     //   }),
     // );
 
-    await AppDataSource.manager.save(
-      AppDataSource.manager.create(User, {
-        first_name: 'laka',
-        hashed_password: 'abcd',
-        last_name: 'bosch',
-        email: 'lakabosch@gmail.com',
-        address: 'address name',
-        address2: '',
-        city: 'cityname',
-        country: 'country name',
-        verificationCode: 'vc',
-      }),
-    );
+    // await AppDataSource.manager.save(
+    //   AppDataSource.manager.create(User, {
+    //     username: 'laka',
+    //     first_name: 'laka',
+    //     hashed_password: 'abcd',
+    //     last_name: 'bosch',
+    //     email: 'lakabosch@gmail.com',
+    //     address: 'address name',
+    //     address2: '',
+    //     city: 'cityname',
+    //     country: 'country name',
+    //   }),
+    // );
 
     console.log(
       'Express server has started on port 3000. Open http://localhost:3000/api/users to see results',
