@@ -1,3 +1,4 @@
+import { AuthController } from './controller/AuthController';
 import { UserController } from './controller/UserController';
 
 export const Routes = [
@@ -39,9 +40,28 @@ export const Routes = [
     action: 'forgotPassword',
   },
   {
-    method: 'delete',
-    route: '/api/users/:id/:passwordresetcode',
+    method: 'put',
+    route: '/api/users/reset/:id/:passwordresetcode',
     controller: UserController,
     action: 'resetPassword',
+  },
+  // session
+  {
+    method: 'post',
+    route: '/api/auth',
+    controller: AuthController,
+    action: 'saveAuth',
+  },
+  {
+    method: 'get',
+    route: '/api/auth',
+    controller: AuthController,
+    action: 'findAuth',
+  },
+  {
+    method: 'put',
+    route: '/api/auth',
+    controller: AuthController,
+    action: 'deleteAuth',
   },
 ];

@@ -4,12 +4,15 @@ import { Request, Response } from 'express';
 import AppDataSource from '../data-source';
 import { Routes } from './routes';
 import { User } from './entity/User';
+import deserializeUser from './middleware/deserializeUser';
+import { Auth } from './entity/Auth';
 
 AppDataSource.initialize()
   .then(async () => {
     // create express app
     const app = express();
     app.use(bodyParser.json());
+    app.use(deserializeUser);
 
     // register express routes from defined application routes
     Routes.forEach((route) => {
@@ -42,26 +45,31 @@ AppDataSource.initialize()
 
     // insert new users for test
     // await AppDataSource.manager.save(
-    //   AppDataSource.manager.create(User, {
-    //     firstName: 'Timber',
-    //     lastName: 'Saw',
+    //   AppDataSource.manager.create(Auth, {
+    //     userId: 'Timber',
+    //     user_agent: ""
     //     age: 27,
     //   }),
     // );
 
-    // await AppDataSource.manager.save(
+    // const user = await AppDataSource.manager.save(
     //   AppDataSource.manager.create(User, {
-    //     username: 'laka',
-    //     first_name: 'laka',
+    //     username: 'laka4',
+    //     first_name: 'laka4',
     //     hashed_password: 'abcd',
     //     last_name: 'bosch',
-    //     email: 'lakabosch@gmail.com',
+    //     email: 'lakabosch@gmail.com4',
     //     address: 'address name',
     //     address2: '',
     //     city: 'cityname',
     //     country: 'country name',
     //   }),
     // );
+    // AppDataSource.manager.create(Auth, {
+    //   userId: user,
+    //   user_agent: '',
+    //   age: 27,
+    // });
 
     console.log(
       'Express server has started on port 3000. Open http://localhost:3000/api/users to see results',

@@ -4,7 +4,6 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  BeforeInsert,
   ManyToOne,
 } from 'typeorm';
 import { User } from './User';
@@ -17,7 +16,7 @@ export class Auth {
   @Column()
   user_agent: string;
 
-  @Column()
+  @Column({ default: true })
   valid: boolean;
 
   @ManyToOne(() => User, (user) => user.id)

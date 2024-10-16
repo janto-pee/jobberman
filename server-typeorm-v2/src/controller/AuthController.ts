@@ -5,12 +5,17 @@ import { Auth } from '../entity/Auth';
 import { comparePassword } from '../utils/hashpassword';
 import { signJwt } from '../utils/jwt';
 import config from 'config';
+import { createSessionInput } from '../schema/SessionSchema';
 
 export class AuthController {
   private authRepository = AppDataSource.getRepository(Auth);
   private userRepository = AppDataSource.getRepository(User);
 
-  async saveAuth(request: Request, response: Response, next: NextFunction) {
+  async saveAuth(
+    request: Request<{}, {}, createSessionInput['body']>,
+    response: Response,
+    next: NextFunction,
+  ) {
     try {
       const user = await this.userRepository.findOneBy({
         email: request.body.email,
@@ -18,6 +23,7 @@ export class AuthController {
 
       if (!user) {
         response.status(400).send('invalid username or email');
+        return;
       }
 
       const match = await comparePassword(
@@ -26,15 +32,15 @@ export class AuthController {
       );
 
       if (!match) {
-        return response.status(400).send('invalid username or email');
+        response.status(400).send('invalid username or email');
+        return;
       }
 
-      const userAgent = request.get('userAgent') || '';
+      const userAgent = request.get('userAgent') || 'vc';
 
       const auth = Object.assign(new Auth(), {
         userId: user.id,
-        userAgent: userAgent,
-        valid: true,
+        user_agent: userAgent,
       });
       const session = await this.authRepository.save(auth);
 
@@ -50,11 +56,12 @@ export class AuthController {
         { expiresIn: config.get<string>('refreshTokenTtl') },
       );
 
-      return response.status(200).send({
+      response.status(200).send({
         session,
         accessToken: accessToken,
         refreshToken: refreshToken,
       });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -88,19 +95,18 @@ export class AuthController {
 
   async deleteAuth(req: Request, res: Response, next: NextFunction) {
     try {
-      const id = res.locals.user.id;
+      const id = res.locals.user.session;
       const session = await this.authRepository.findOneBy({
         id,
       });
       session.valid = false;
-      const updatedSession = await this.authRepository.update(
+      await this.authRepository.update(
         { id: id, valid: true },
         { valid: false },
       );
       res.status(201).json({
         status: true,
         message: 'session expired',
-        data: updatedSession,
       });
     } catch (error) {
       console.log(error);

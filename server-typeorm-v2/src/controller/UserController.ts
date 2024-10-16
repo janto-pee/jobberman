@@ -4,6 +4,12 @@ import { User } from '../entity/User';
 import sendEmail from '../utils/sendemail';
 import log from '../utils/logger';
 import { customAlphabet } from 'nanoid';
+import {
+  createUserInput,
+  forgotPasswordInput,
+  resetPasswordInput,
+  verifyParam,
+} from '../schema/UserSchema';
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -25,7 +31,11 @@ export class UserController {
     return user;
   }
 
-  async save(request: Request, response: Response, next: NextFunction) {
+  async save(
+    request: Request<{}, {}, createUserInput['body']>,
+    response: Response,
+    next: NextFunction,
+  ) {
     try {
       const user = Object.assign(new User(), {
         ...request.body,
@@ -41,11 +51,12 @@ export class UserController {
         html: `<b>Hello, click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.verificationCode}</b>`,
       });
 
-      return response.status(201).json({
+      response.status(201).json({
         status: true,
         message: `user successfully created click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.verificationCode}`,
         data: savedUser,
       });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -56,7 +67,11 @@ export class UserController {
     }
   }
 
-  async verify(request: Request, response: Response, next: NextFunction) {
+  async verify(
+    request: Request<verifyParam>,
+    response: Response,
+    next: NextFunction,
+  ) {
     try {
       const { id, verificationcode } = request.params;
 
@@ -75,7 +90,8 @@ export class UserController {
       if (user.verificationCode === verificationcode) {
         user.is_email_verified = true;
         await this.userRepository.save(user);
-        return response.status(201).send('user registered successfully');
+        response.status(201).json({ status: 'user registered successfully' });
+        return;
       }
     } catch (error) {
       console.log(error);
@@ -88,7 +104,7 @@ export class UserController {
   }
 
   async forgotPassword(
-    request: Request,
+    request: Request<{}, {}, forgotPasswordInput['body']>,
     response: Response,
     next: NextFunction,
   ) {
@@ -123,11 +139,12 @@ export class UserController {
         html: `<b>Hello, click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.passwordResetCode}</b>`,
       });
 
-      return response.status(201).json({
+      response.status(201).json({
         status: true,
         message: `check your email to reset password  http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.passwordResetCode}`,
         data: savedUser,
       });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -139,7 +156,11 @@ export class UserController {
   }
 
   async resetPassword(
-    request: Request,
+    request: Request<
+      resetPasswordInput['params'],
+      {},
+      resetPasswordInput['body']
+    >,
     response: Response,
     next: NextFunction,
   ) {
@@ -169,11 +190,12 @@ export class UserController {
       user.hashed_password = password;
       const savedUser = await this.userRepository.save(user);
 
-      return response.status(201).json({
+      response.status(201).json({
         status: true,
         message: 'password changed successfully',
         data: savedUser,
       });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -184,7 +206,11 @@ export class UserController {
     }
   }
 
-  async remove(request: Request, response: Response, next: NextFunction) {
+  async remove(
+    request: Request<{ id: string }>,
+    response: Response,
+    next: NextFunction,
+  ) {
     const id = request.params.id;
 
     let userToRemove = await this.userRepository.findOneBy({ id });

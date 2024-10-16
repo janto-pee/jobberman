@@ -6,10 +6,14 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   Unique,
+  AfterUpdate,
+  BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
 import { hashPassword } from '../utils/hashpassword';
 import log from '../utils/logger';
 import { customAlphabet } from 'nanoid';
+import { Auth } from './Auth';
 
 const nanoid = customAlphabet('abcdefghij0123456789', 7);
 
@@ -63,7 +67,11 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
+  @OneToMany(() => Auth, (auth) => auth.userId)
+  auths: Auth[];
+
   @BeforeInsert()
+  @BeforeUpdate()
   async beforeInsert() {
     try {
       const hash = await hashPassword(this.hashed_password);
