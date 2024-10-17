@@ -14,7 +14,7 @@ export async function comparePassword(
 ) {
   const check = await bcrypt
     .compare(confirm_password, password)
-    .catch((e) => false);
+    .catch((_) => false);
   console.log(check);
   return check;
 }

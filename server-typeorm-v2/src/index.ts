@@ -1,11 +1,10 @@
-import express from 'express';
+import express, { NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import { Request, Response } from 'express';
 import AppDataSource from '../data-source';
 import { Routes } from './routes';
-import { User } from './entity/User';
 import deserializeUser from './middleware/deserializeUser';
-import { Auth } from './entity/Auth';
+import config from 'config';
 
 AppDataSource.initialize()
   .then(async () => {
@@ -18,7 +17,7 @@ AppDataSource.initialize()
     Routes.forEach((route) => {
       (app as any)[route.method](
         route.route,
-        (req: Request, res: Response, next: Function) => {
+        (req: Request, res: Response, next: NextFunction) => {
           const result = new (route.controller as any)()[route.action](
             req,
             res,
@@ -41,7 +40,8 @@ AppDataSource.initialize()
     // ...
 
     // start express server
-    app.listen(3000);
+    const port = config.get<number>('port');
+    app.listen(port);
 
     // insert new users for test
     // await AppDataSource.manager.save(
@@ -72,7 +72,7 @@ AppDataSource.initialize()
     // });
 
     console.log(
-      'Express server has started on port 3000. Open http://localhost:3000/api/users to see results',
+      `Express server has started on port 3000. Open http://localhost:${port}/api/users to see results`,
     );
   })
   .catch((error) => console.log(error));

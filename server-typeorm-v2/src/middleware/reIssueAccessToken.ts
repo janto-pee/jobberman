@@ -1,8 +1,8 @@
 import { get } from 'lodash';
 import { signJwt, verifyJwt } from '../utils/jwt';
 import AppDataSource from '../../data-source';
-import { Auth } from '../entity/Auth';
-import { User } from '../entity/User';
+import { Auth } from '../entity/Auth.entity';
+import { User } from '../entity/User.entity';
 import config from 'config';
 
 export async function reIssueAccessToken(refreshToken: string) {

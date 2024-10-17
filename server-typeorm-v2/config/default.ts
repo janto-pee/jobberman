@@ -1,25 +1,11 @@
-// export default {
-//   port: process.env.PORT,
-//   logLevel: 'info',
-//   saltWorkFactor: Number(process.env.SALTWORKFACTOR),
-//   accessTokenPrivate: process.env.accessTokenPrivate,
-//   refreshTokenPrivate: process.env.refreshokenPrivate,
-//   accessTokenPublic: process.env.accessTokenPublic,
-//   refreshTokenPublic: process.env.refreshTokenPublic,
-//   accessTokenTtl: '15m',
-//   refreshTokenTtl: '1y',
-//   smtp: {
-//     host: 'smtp.ethereal.email',
-//     port: 587,
-//     secure: false,
-//     user: '',
-//     pass: '',
-//   },
-// };
 import dotenv from 'dotenv';
 dotenv.config();
 
 export default {
+  dbPort: Number(process.env.DB_PORT),
+  dbUsername: process.env.DB_USERNAME,
+  dbPassword: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   port: process.env.PORT,
   logLevel: process.env.LOGLEVEL,
   saltWorkFactor: Number(process.env.SALTWORKFACTOR),

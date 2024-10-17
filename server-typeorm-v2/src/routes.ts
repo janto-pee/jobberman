@@ -1,5 +1,5 @@
-import { AuthController } from './controller/AuthController';
-import { UserController } from './controller/UserController';
+import { AuthController } from './controller/auth.controller';
+import { UserController } from './controller/user.controller';
 
 export const Routes = [
   {
