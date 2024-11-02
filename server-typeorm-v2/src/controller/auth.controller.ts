@@ -31,7 +31,7 @@ export class AuthController {
       );
 
       if (!match) {
-        response.status(400).send('invalid username or email');
+        response.status(400).send('invalid email or password');
         return;
       }
 
@@ -75,7 +75,8 @@ export class AuthController {
     try {
       const id = res.locals.user.session;
       const session = await this.authRepository.findOneBy({
-        id,
+        id: id,
+        valid: true,
       });
       res.status(201).json({
         status: true,

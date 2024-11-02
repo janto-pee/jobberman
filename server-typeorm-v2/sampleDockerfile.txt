@@ -1,0 +1,158 @@
+# base
+FROM node:17.9.0 AS base
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+    
+RUN npm install
+
+COPY . .
+
+# for lint
+
+FROM base as linter
+
+WORKDIR /usr/src/app
+
+RUN npm run lint
+
+# for build
+
+FROM linter as builder
+
+WORKDIR /usr/src/app
+
+RUN npm run build
+
+
+# for production
+
+FROM node:17.9.0-alpine3.15
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY --from=builder /usr/src/app/dist ./
+
+EXPOSE 3000
+
+ENTRYPOINT ["node","./app.js"]
+
+# version: '3'
+# services:
+
+#   postgres:
+#     image: "postgres:14.5"
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_USER: "test"
+#       POSTGRES_PASSWORD: "test"
+#       POSTGRES_DB: "test"
+
+version: '3.8'
+
+services:
+  postgresdb:
+    image: postgres
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_DATABASE
+    ports:
+      - $POSTGRESDB_LOCAL_PORT:$DB_PORT
+    volumes:
+      - db:/var/lib/postgres
+  app:
+    depends_on:
+      - postgresdb
+    build: ./bezkoder-app
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=postgresdb
+      - DB_USER=$POSTGRESDB_USER
+      - DB_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - DB_NAME=$POSTGRESDB_DATABASE
+      - DB_PORT=$POSTGRESDB_DOCKER_PORT
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
+
+
+
+
+version: '3.8'
+
+services:
+  postgresdb:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=recruitmentplatform
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready']
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  api:
+    depends_on:
+      - postgresdb
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - '1337:1337'
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    networks:
+      - app-network
+    command: ./start.sh postgresdb:5432 -- [ "node", "./build/src/index.js"]
+    environment:
+      - DATABASE_URL=postgresql://root:secret@postgres12:5432/recruitmentplatform?sslmode=disable
+    stdin_open: true
+    tty: true
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  node_modules:
+
+
+FROM node:23-alpine3.19 AS builder
+# RUN apk add curl
+# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+# RUN nvm --version
+# RUN nvm 20.18.0
+# RUN nvm use 20.18.0
+# RUN mkdir app
+# WORKDIR /app
+# COPY . .
+# COPY package*.json .
+# RUN npm install
+# RUN npm run build
+
+# FROM node:10-alpine AS runner
+# COPY --chown=node:node --from=builder /app/package*.json .
+# RUN npm install --omit=dev
+# COPY --from=builder /app/build .
+EXPOSE 1337
+CMD [ "node", "./build/src/index.js"]

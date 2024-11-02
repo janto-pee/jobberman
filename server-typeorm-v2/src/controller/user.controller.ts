@@ -16,7 +16,7 @@ export class UserController {
 
   async all(_: Request, response: Response) {
     try {
-      const users = this.userRepository.find();
+      const users = await this.userRepository.find();
       response.status(201).json({
         status: true,
         message: `user successfully fetched`,

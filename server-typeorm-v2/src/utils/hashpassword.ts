@@ -8,13 +8,11 @@ export async function hashPassword(password: string) {
   return password;
 }
 
-export async function comparePassword(
-  confirm_password: string,
-  password: string,
-) {
-  const check = await bcrypt
-    .compare(confirm_password, password)
-    .catch((_) => false);
-  console.log(check);
-  return check;
+export async function comparePassword(password: string, hash: any) {
+  try {
+    const isMatch = await bcrypt.compare(password, hash);
+    return isMatch;
+  } catch (error) {
+    return false;
+  }
 }

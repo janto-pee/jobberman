@@ -5,6 +5,7 @@ import AppDataSource from '../data-source';
 import { Routes } from './routes';
 import deserializeUser from './middleware/deserializeUser';
 import config from 'config';
+// import { User } from './entity/User.entity';
 
 AppDataSource.initialize()
   .then(async () => {
@@ -52,7 +53,7 @@ AppDataSource.initialize()
     //   }),
     // );
 
-    // const user = await AppDataSource.manager.save(
+    // await AppDataSource.manager.save(
     //   AppDataSource.manager.create(User, {
     //     username: 'laka4',
     //     first_name: 'laka4',

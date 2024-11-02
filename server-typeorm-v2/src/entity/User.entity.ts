@@ -7,11 +7,14 @@ import {
   BeforeInsert,
   BeforeUpdate,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { hashPassword } from '../utils/hashpassword';
 import log from '../utils/logger';
 import { customAlphabet } from 'nanoid';
 import { Auth } from './Auth.entity';
+import { Applicant } from './Applicants.entity';
 
 const nanoid = customAlphabet('abcdefghij0123456789', 7);
 
@@ -68,12 +71,15 @@ export class User {
   @OneToMany(() => Auth, (auth) => auth.userId)
   auths: Auth[];
 
+  @OneToOne(() => Applicant)
+  @JoinColumn()
+  applicant: Applicant;
+
   @BeforeInsert()
   @BeforeUpdate()
   async beforeInsert() {
     try {
       const hash = await hashPassword(this.hashed_password);
-
       this.hashed_password = hash;
     } catch (e) {
       log.error(e, 'Could not validate password');
