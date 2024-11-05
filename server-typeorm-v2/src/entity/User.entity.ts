@@ -7,14 +7,12 @@ import {
   BeforeInsert,
   BeforeUpdate,
   OneToMany,
-  OneToOne,
-  JoinColumn,
 } from 'typeorm';
 import { hashPassword } from '../utils/hashpassword';
 import log from '../utils/logger';
 import { customAlphabet } from 'nanoid';
 import { Auth } from './Auth.entity';
-import { Applicant } from './Applicants.entity';
+import { Message } from './Messages.entity';
 
 const nanoid = customAlphabet('abcdefghij0123456789', 7);
 
@@ -38,18 +36,6 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  address: string;
-
-  @Column()
-  address2: string;
-
-  @Column()
-  city: string;
-
-  @Column()
-  country: string;
-
   @Column({ default: nanoid() })
   verificationCode: string;
 
@@ -68,12 +54,14 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @OneToMany(() => Auth, (auth) => auth.userId)
+  @OneToMany(() => Auth, (auth) => auth.user)
   auths: Auth[];
 
-  @OneToOne(() => Applicant)
-  @JoinColumn()
-  applicant: Applicant;
+  // @OneToMany(() => Message, (message) => message.sender_username)
+  // message: Message[];
+
+  // @OneToMany(() => Notification, (notification) => notification.user)
+  // notifications: Notification[];
 
   @BeforeInsert()
   @BeforeUpdate()

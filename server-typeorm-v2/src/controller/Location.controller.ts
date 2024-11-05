@@ -5,7 +5,7 @@ import { Location } from '../entity/Location.entity';
 export class LocationController {
   private locationRepository = AppDataSource.getRepository(Location);
 
-  async all(_: Request, response: Response) {
+  async allLocations(_: Request, response: Response) {
     try {
       const locations = this.locationRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class LocationController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneLocation(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class LocationController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveLocation(request: Request, response: Response) {
     try {
       const location = Object.assign(new Location(), {
         ...request.body,
@@ -69,7 +69,7 @@ export class LocationController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeLocation(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

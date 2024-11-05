@@ -10,6 +10,7 @@ import {
   resetPasswordInput,
   verifyParam,
 } from '../schema/user.schema';
+import { omit } from 'lodash';
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -65,6 +66,7 @@ export class UserController {
       });
 
       const savedUser = await this.userRepository.save(user);
+      const res = omit(savedUser, 'hashed_password');
 
       await sendEmail({
         from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
@@ -77,7 +79,7 @@ export class UserController {
       response.status(201).json({
         status: true,
         message: `user successfully created click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.verificationCode}`,
-        data: savedUser,
+        data: res,
       });
       return;
     } catch (error) {
@@ -153,14 +155,13 @@ export class UserController {
         from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
         to: user.email,
         subject: 'Kindly verify your email ✔',
-        text: `click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.passwordResetCode}`,
-        html: `<b>Hello, click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.passwordResetCode}</b>`,
+        text: `click on the link http://localhost:1337/api/users/resetpassword/${savedUser.id}/${savedUser.passwordResetCode}`,
+        html: `<b>Hello, click on the link http://localhost:1337/api/users/resetpassword/${savedUser.id}/${savedUser.passwordResetCode}</b>`,
       });
 
       response.status(201).json({
         status: true,
-        message: `check your email to reset password  http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.passwordResetCode}`,
-        data: savedUser,
+        message: `check your email to reset password  http://localhost:1337/api/users/resetpassword/${savedUser.id}/${savedUser.passwordResetCode}`,
       });
       return;
     } catch (error) {
@@ -202,15 +203,15 @@ export class UserController {
           'user not verified, please check your email to verify',
         );
       }
-
       user.passwordResetCode = null;
       user.hashed_password = password;
       const savedUser = await this.userRepository.save(user);
+      const res = omit(savedUser, 'hashed_password');
 
       response.status(201).json({
         status: true,
         message: 'password changed successfully',
-        data: savedUser,
+        data: res,
       });
       return;
     } catch (error) {

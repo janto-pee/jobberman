@@ -4,15 +4,24 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToOne,
+  JoinColumn,
+  OneToMany,
 } from 'typeorm';
+import { User } from './User.entity';
+import { Application } from './Application.entity';
 
 @Entity()
 export class Applicant {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  username: string;
+  @OneToOne(() => User)
+  @JoinColumn()
+  username: User;
+
+  @OneToMany(() => Application, (application) => application.applicant)
+  application: Application[];
 
   @Column()
   isActive: boolean;

@@ -4,7 +4,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Address } from './Address.entity';
 
 @Entity()
 export class Location {
@@ -25,6 +28,10 @@ export class Location {
 
   @Column()
   cityRegionPostal: string;
+
+  @OneToOne(() => Address)
+  @JoinColumn()
+  profile: Address;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

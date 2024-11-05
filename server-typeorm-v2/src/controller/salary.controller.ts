@@ -2,10 +2,10 @@ import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Salary } from '../entity/Salary.entity';
 
-export class ApplicationController {
+export class SalaryController {
   private salaryRepository = AppDataSource.getRepository(Salary);
 
-  async all(_: Request, response: Response) {
+  async allSalary(_: Request, response: Response) {
     try {
       const salarys = this.salaryRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class ApplicationController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneSalary(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class ApplicationController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveSalary(request: Request, response: Response) {
     try {
       const salary = Object.assign(new Salary(), {
         ...request.body,
@@ -69,7 +69,7 @@ export class ApplicationController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeSalary(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

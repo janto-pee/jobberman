@@ -5,7 +5,7 @@ import { Application } from '../entity/Application.entity';
 export class ApplicationController {
   private applicationRepository = AppDataSource.getRepository(Application);
 
-  async all(_: Request, response: Response) {
+  async allApplications(_: Request, response: Response) {
     try {
       const applications = this.applicationRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class ApplicationController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneApplication(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class ApplicationController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveApplication(request: Request, response: Response) {
     try {
       const application = Object.assign(new Application(), {
         ...request.body,
@@ -70,7 +70,10 @@ export class ApplicationController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeApplication(
+    request: Request<{ id: string }>,
+    response: Response,
+  ) {
     try {
       const id = request.params.id;
 

@@ -75,7 +75,7 @@ export class ApplicantController {
     }
   }
 
-  async updateApplicants(request: Request, response: Response) {
+  async updateApplicant(request: Request, response: Response) {
     try {
       const { id } = request.params;
       const { country } = request.body;

@@ -4,34 +4,46 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  ManyToOne,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './User.entity';
-import { Applicant } from './Applicants.entity';
-import { Job } from './Job.entity';
 
 @Entity()
-export class Application {
+export class Address {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Applicant, (applicant) => applicant.application)
-  applicant: Applicant;
-
-  @ManyToOne(() => Job, (job) => job.applications)
-  job: Job;
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
 
   @Column()
-  application_text: string;
+  street: string;
 
   @Column()
-  resume: boolean;
+  street2: string;
 
   @Column()
-  cover_letter: boolean;
+  city: string;
 
   @Column()
-  referral_information: string;
+  state_province_code: string;
+
+  @Column()
+  state_province_name: string;
+
+  @Column()
+  postal_code: string;
+
+  @Column()
+  country_code: string;
+
+  @Column()
+  location: string;
+
+  @Column()
+  country: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -5,7 +5,7 @@ import { Message } from '../entity/Messages.entity';
 export class MessageController {
   private messageRepository = AppDataSource.getRepository(Message);
 
-  async all(_: Request, response: Response) {
+  async allMessages(_: Request, response: Response) {
     try {
       const messages = this.messageRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class MessageController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneMessage(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class MessageController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveMessage(request: Request, response: Response) {
     try {
       const message = Object.assign(new Message(), {
         ...request.body,

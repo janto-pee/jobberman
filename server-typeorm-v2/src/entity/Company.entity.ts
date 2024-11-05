@@ -4,30 +4,26 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Job } from './Job.entity';
-import { Applicant } from './Applicants.entity';
 
 @Entity()
-export class Rating {
+export class Company {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToMany(() => Applicant)
-  @JoinTable()
-  applicants: Applicant[];
+  @Column()
+  company_name: string;
 
-  @ManyToMany(() => Job)
-  @JoinTable()
+  @Column()
+  employer_type: string;
+
+  @Column()
+  about_us: string;
+
+  @OneToMany(() => Job, (job) => job.company)
   jobs: Job[];
-
-  @Column()
-  ratings: number;
-
-  @Column()
-  review_text: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -4,18 +4,20 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
 } from 'typeorm';
+import { User } from './User.entity';
 
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
-  sender_username: string;
+  @ManyToOne(() => User, (user) => user.message)
+  sender_username: User;
 
-  @Column()
-  reciever_username: string;
+  @ManyToOne(() => User, (user) => user.message)
+  reciever_username: User;
 
   @Column()
   content: string;

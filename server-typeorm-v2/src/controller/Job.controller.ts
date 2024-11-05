@@ -5,7 +5,7 @@ import { Job } from '../entity/Job.entity';
 export class JobController {
   private jobRepository = AppDataSource.getRepository(Job);
 
-  async all(_: Request, response: Response) {
+  async allJobs(_: Request, response: Response) {
     try {
       const jobs = this.jobRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class JobController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneJob(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class JobController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveJob(request: Request, response: Response) {
     try {
       const job = Object.assign(new Job(), {
         ...request.body,
@@ -69,7 +69,7 @@ export class JobController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeJob(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

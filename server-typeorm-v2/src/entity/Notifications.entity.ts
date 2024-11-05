@@ -4,15 +4,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
 } from 'typeorm';
+import { User } from './User.entity';
 
 @Entity()
 export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  username: string;
+  @ManyToOne(() => User, (user) => user.notifications)
+  user: User;
 
   @Column()
   content: string;

@@ -4,12 +4,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Job } from './Job.entity';
 
 @Entity()
 export class Probation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToOne(() => Job)
+  @JoinColumn()
+  job: Job;
 
   @Column()
   status: boolean;

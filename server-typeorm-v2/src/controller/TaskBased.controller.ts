@@ -1,12 +1,12 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Applicant } from '../entity/Applicants.entity';
-import { TaskGrained } from '../entity/TaskGrained.entity';
+import { TaskBased } from '../entity/TaskBased.entity';
 
-export class TaskGrainedController {
-  private taskgrainedRepository = AppDataSource.getRepository(TaskGrained);
+export class TaskBasedController {
+  private taskgrainedRepository = AppDataSource.getRepository(TaskBased);
 
-  async all(_: Request, response: Response) {
+  async allTaskBased(_: Request, response: Response) {
     try {
       const taskgraineds = this.taskgrainedRepository.find();
       response.status(201).json({
@@ -25,7 +25,7 @@ export class TaskGrainedController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneTaskBased(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -47,7 +47,7 @@ export class TaskGrainedController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveTaskBased(request: Request, response: Response) {
     try {
       const taskgrained = Object.assign(new Applicant(), {
         ...request.body,
@@ -70,7 +70,7 @@ export class TaskGrainedController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeTaskBased(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

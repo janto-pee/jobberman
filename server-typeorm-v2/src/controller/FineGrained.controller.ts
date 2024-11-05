@@ -6,7 +6,7 @@ export class FineGrainedController {
   private finegrainedRepository =
     AppDataSource.getRepository(FineGrainedSalary);
 
-  async all(_: Request, response: Response) {
+  async allFineGraineds(_: Request, response: Response) {
     try {
       const finegraineds = this.finegrainedRepository.find();
       response.status(201).json({
@@ -25,7 +25,7 @@ export class FineGrainedController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneFineGrained(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -47,7 +47,7 @@ export class FineGrainedController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveFineGrained(request: Request, response: Response) {
     try {
       const finegrained = Object.assign(new FineGrainedSalary(), {
         ...request.body,
@@ -71,7 +71,10 @@ export class FineGrainedController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeFineGrained(
+    request: Request<{ id: string }>,
+    response: Response,
+  ) {
     try {
       const id = request.params.id;
 

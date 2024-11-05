@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class TaskGrained {
+export class TaskBased {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

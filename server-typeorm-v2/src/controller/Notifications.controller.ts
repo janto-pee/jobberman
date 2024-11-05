@@ -5,7 +5,7 @@ import { Notification } from '../entity/Notifications.entity';
 export class NotificationsController {
   private notificationRepository = AppDataSource.getRepository(Notification);
 
-  async all(_: Request, response: Response) {
+  async allNotifications(_: Request, response: Response) {
     try {
       const notifications = this.notificationRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class NotificationsController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneNotifications(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class NotificationsController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveNotifications(request: Request, response: Response) {
     try {
       const notification = Object.assign(new Notification(), {
         ...request.body,
@@ -70,7 +70,10 @@ export class NotificationsController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeNotifications(
+    request: Request<{ id: string }>,
+    response: Response,
+  ) {
     try {
       const id = request.params.id;
 

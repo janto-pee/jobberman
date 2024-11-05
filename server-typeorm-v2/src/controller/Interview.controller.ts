@@ -5,7 +5,7 @@ import { Interview } from '../entity/Interview.entity';
 export class InterviewController {
   private interviewRepository = AppDataSource.getRepository(Interview);
 
-  async all(_: Request, response: Response) {
+  async allInterviews(_: Request, response: Response) {
     try {
       const interviews = this.interviewRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class InterviewController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneInterview(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class InterviewController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveInterview(request: Request, response: Response) {
     try {
       const interview = Object.assign(new Interview(), {
         ...request.body,
@@ -69,7 +69,7 @@ export class InterviewController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeInterview(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

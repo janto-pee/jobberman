@@ -5,7 +5,7 @@ import { Probation } from '../entity/Probation.entity';
 export class ProbationController {
   private probationRepository = AppDataSource.getRepository(Probation);
 
-  async all(_: Request, response: Response) {
+  async allProbation(_: Request, response: Response) {
     try {
       const probations = this.probationRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class ProbationController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneProbation(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class ProbationController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveProbation(request: Request, response: Response) {
     try {
       const probation = Object.assign(new Probation(), {
         ...request.body,
@@ -69,7 +69,7 @@ export class ProbationController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeProbation(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

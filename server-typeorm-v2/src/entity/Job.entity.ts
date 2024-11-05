@@ -4,15 +4,28 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToOne,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
+import { Company } from './Company.entity';
+import { Employer } from './Employer.entity';
+import { Application } from './Application.entity';
 
 @Entity()
 export class Job {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  employer_id: string;
+  @ManyToOne(() => Employer, (employer) => employer.jobs)
+  employer: Employer;
+
+  @ManyToOne(() => Company, (company) => company.jobs)
+  company: Company;
+
+  @OneToMany(() => Application, (application) => application.job)
+  applications: Application[];
 
   @Column()
   title: string;

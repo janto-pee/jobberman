@@ -20,7 +20,7 @@ export class Auth {
   valid: boolean;
 
   @ManyToOne(() => User, (user) => user.id)
-  userId: User;
+  user: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

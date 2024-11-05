@@ -2,10 +2,10 @@ import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Metadata } from '../entity/Metadata.entity';
 
-export class ApplicationController {
+export class MetadataController {
   private metadataRepository = AppDataSource.getRepository(Metadata);
 
-  async all(_: Request, response: Response) {
+  async allMetadatas(_: Request, response: Response) {
     try {
       const metadatas = this.metadataRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class ApplicationController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneMetadata(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class ApplicationController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveMetadata(request: Request, response: Response) {
     try {
       const metadata = Object.assign(new Metadata(), {
         ...request.body,
@@ -69,7 +69,7 @@ export class ApplicationController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeMetadata(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

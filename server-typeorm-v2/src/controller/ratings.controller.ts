@@ -5,7 +5,7 @@ import { Rating } from '../entity/Ratings.entity';
 export class RatingController {
   private ratingRepository = AppDataSource.getRepository(Rating);
 
-  async all(_: Request, response: Response) {
+  async allRatings(_: Request, response: Response) {
     try {
       const ratings = this.ratingRepository.find();
       response.status(201).json({
@@ -24,7 +24,7 @@ export class RatingController {
     }
   }
 
-  async one(request: Request, response: Response) {
+  async oneRating(request: Request, response: Response) {
     try {
       const id = request.params.id;
 
@@ -46,7 +46,7 @@ export class RatingController {
     }
   }
 
-  async save(request: Request, response: Response) {
+  async saveRating(request: Request, response: Response) {
     try {
       const rating = Object.assign(new Rating(), {
         ...request.body,
@@ -69,7 +69,7 @@ export class RatingController {
     }
   }
 
-  async remove(request: Request<{ id: string }>, response: Response) {
+  async removeRating(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
 

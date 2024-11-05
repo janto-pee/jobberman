@@ -4,12 +4,21 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Job } from './Job.entity';
+import { FineGrainedSalary } from './FineGrained.entity';
+import { TaskBased } from './TaskBased.entity';
 
 @Entity()
 export class Salary {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToOne(() => Job)
+  @JoinColumn()
+  job: Job;
 
   @Column()
   currency: string;
@@ -23,11 +32,13 @@ export class Salary {
   @Column()
   period: string;
 
-  @Column()
-  fineGrainedSalaryInformation: string;
+  @OneToOne(() => FineGrainedSalary)
+  @JoinColumn()
+  finegrained: FineGrainedSalary;
 
-  @Column()
-  taskBasedSalaryInformation: string;
+  @OneToOne(() => TaskBased)
+  @JoinColumn()
+  taskBased: TaskBased;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

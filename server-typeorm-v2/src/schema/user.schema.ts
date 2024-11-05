@@ -6,10 +6,6 @@ const user = {
   ),
   username: string({ required_error: `the field username is required` }),
   first_name: string({ required_error: `the field first_name is required` }),
-  address: string({ required_error: `the field address is required` }),
-  address2: string({ required_error: `the field address2e is required` }),
-  city: string({ required_error: `the field city is required` }),
-  country: string({ required_error: `the field country is required` }),
   last_name: string({ required_error: `the field last_name is required` }),
   hashed_password: string({ required_error: `password is required` }).min(
     8,
