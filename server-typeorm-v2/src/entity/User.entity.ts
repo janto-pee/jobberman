@@ -12,7 +12,6 @@ import { hashPassword } from '../utils/hashpassword';
 import log from '../utils/logger';
 import { customAlphabet } from 'nanoid';
 import { Auth } from './Auth.entity';
-import { Message } from './Messages.entity';
 
 const nanoid = customAlphabet('abcdefghij0123456789', 7);
 

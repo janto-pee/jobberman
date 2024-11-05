@@ -6,6 +6,7 @@ export default {
   dbUsername: process.env.DB_USERNAME,
   dbPassword: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
+  testDatabase: process.env.DB_TEST_DATABASE,
   port: process.env.PORT,
   logLevel: process.env.LOGLEVEL,
   saltWorkFactor: Number(process.env.SALTWORKFACTOR),

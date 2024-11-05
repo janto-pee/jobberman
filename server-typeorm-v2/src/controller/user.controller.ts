@@ -11,9 +11,13 @@ import {
   verifyParam,
 } from '../schema/user.schema';
 import { omit } from 'lodash';
+import { Applicant } from '../entity/Applicants.entity';
+import { Employer } from '../entity/Employer.entity';
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
+  private applicantRepository = AppDataSource.getRepository(Applicant);
+  private employerRepository = AppDataSource.getRepository(Employer);
 
   async all(_: Request, response: Response) {
     try {
@@ -66,7 +70,30 @@ export class UserController {
       });
 
       const savedUser = await this.userRepository.save(user);
+      // save aplicnt data too
+      const applicant = Object.assign(new Applicant(), {
+        user: user,
+        isActive: true,
+      });
+      const employer = Object.assign(new Employer(), {
+        user: user,
+        isActive: true,
+      });
+
+      let savedEmployerorApplicant;
+      if (request.body.role == 'employer') {
+        savedEmployerorApplicant = await this.employerRepository.save({
+          ...employer,
+          user: user,
+        });
+      } else {
+        savedEmployerorApplicant = await this.applicantRepository.save({
+          ...applicant,
+          user: user,
+        });
+      }
       const res = omit(savedUser, 'hashed_password');
+      console.log(savedEmployerorApplicant);
 
       await sendEmail({
         from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
@@ -237,6 +264,65 @@ export class UserController {
       await this.userRepository.remove(userToRemove);
 
       response.status(201).send('user deleted successfully');
+      return;
+    } catch (error) {
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async updateUser(request: Request, response: Response) {
+    try {
+      const { username } = request.params;
+
+      const userToUpdate = await this.userRepository.findOneBy({
+        username: username,
+      });
+      userToUpdate.first_name = request.body.first_name;
+      const savedUser = await this.userRepository.save(userToUpdate);
+
+      response
+        .status(201)
+        .json({ status: 'user updated successfully', data: savedUser });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async removeUser(request: Request<{ username: string }>, response: Response) {
+    try {
+      const username = request.params.username;
+
+      const userToRemove = await this.userRepository.findOneBy({
+        username: username,
+      });
+      if (userToRemove) {
+        return 'this user does not exist';
+      }
+      let applicantToRemove = await this.applicantRepository.findOneBy({
+        user: { username },
+      });
+      if (applicantToRemove) {
+        await this.applicantRepository.remove(applicantToRemove);
+      } else {
+        const employerToRemove = await this.employerRepository.findOneBy({
+          user: { username },
+        });
+        await this.employerRepository.remove(employerToRemove);
+      }
+
+      await this.userRepository.remove(userToRemove);
+
+      response.status(201).send('applicant deleted successfully');
       return;
     } catch (error) {
       response.status(500).json({

@@ -4,6 +4,9 @@ const user = {
   email: string({ required_error: `email is required` }).email(
     'must be a valid email',
   ),
+  role: string({
+    required_error: `the field role should be either employer or applicant`,
+  }),
   username: string({ required_error: `the field username is required` }),
   first_name: string({ required_error: `the field first_name is required` }),
   last_name: string({ required_error: `the field last_name is required` }),

@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { User } from './User.entity';
 import { Company } from './Company.entity';
-import { Job } from './Job.entity';
 
 @Entity()
 export class Employer {
@@ -22,14 +21,14 @@ export class Employer {
 
   @OneToOne(() => User)
   @JoinColumn()
-  username: User;
+  user: User;
 
-  @OneToOne(() => Company)
-  @JoinColumn()
-  company: Company;
+  // @OneToOne(() => Company)
+  // @JoinColumn()
+  // company: Company;
 
-  @OneToMany(() => Job, (job) => job.employer)
-  jobs: Job[];
+  // @OneToMany(() => Job, (job) => job.employer)
+  // jobs: Job[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

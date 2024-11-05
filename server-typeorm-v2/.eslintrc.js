@@ -36,7 +36,9 @@ module.exports = {
         "ignoreRestSiblings": true
       }
     ]
-  },"prettier/prettier": [
+  }
+  
+  ,"prettier/prettier": [
     "error",
     {
       "endOfLine": "auto"

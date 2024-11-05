@@ -18,10 +18,10 @@ export class Applicant {
 
   @OneToOne(() => User)
   @JoinColumn()
-  username: User;
+  user: User;
 
-  @OneToMany(() => Application, (application) => application.applicant)
-  application: Application[];
+  // @OneToMany(() => Application, (application) => application.applicant)
+  // application: Application[];
 
   @Column()
   isActive: boolean;
