@@ -12,6 +12,8 @@ import {
 import { Company } from './Company.entity';
 import { Employer } from './Employer.entity';
 import { Application } from './Application.entity';
+import { Salary } from './Salary.entity';
+import { Applicant } from './Applicants.entity';
 
 @Entity()
 export class Job {
@@ -21,11 +23,15 @@ export class Job {
   @ManyToOne(() => Employer, (employer) => employer.jobs)
   employer: Employer;
 
-  @ManyToOne(() => Company, (company) => company.jobs)
-  company: Company;
-
-  @OneToMany(() => Application, (application) => application.job)
+  @OneToMany(() => Application, (applicantion) => applicantion.job)
   applications: Application[];
+
+  // @ManyToOne(() => Company, (company) => company.jobs)
+  // company: Company;
+
+  @OneToOne(() => Job)
+  @JoinColumn()
+  salary: Salary;
 
   @Column()
   title: string;
@@ -56,9 +62,6 @@ export class Job {
 
   @Column()
   location: string;
-
-  @Column()
-  salary: string;
 
   @Column()
   date_posted: string;

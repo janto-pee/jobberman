@@ -5,13 +5,13 @@ import { Probation } from '../entity/Probation.entity';
 export class ProbationController {
   private probationRepository = AppDataSource.getRepository(Probation);
 
-  async allProbation(_: Request, response: Response) {
+  async allProbations(_: Request, response: Response) {
     try {
-      const probations = this.probationRepository.find();
+      const users = await this.probationRepository.find();
       response.status(201).json({
         status: true,
-        message: `probation successfully fetched`,
-        data: probations,
+        message: `user successfully fetched`,
+        data: users,
       });
       return;
     } catch (error) {
@@ -26,16 +26,16 @@ export class ProbationController {
 
   async oneProbation(request: Request, response: Response) {
     try {
-      const id = request.params.id;
-
-      const probation = await this.probationRepository.findOne({
-        where: { id },
+      const address = await this.probationRepository.findOne({
+        where: {
+          id: request.params.id,
+        },
       });
 
-      if (!probation) {
-        return 'unregistered probation';
+      if (!address) {
+        return 'unregistered address';
       }
-      return probation;
+      return address;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -52,11 +52,44 @@ export class ProbationController {
         ...request.body,
       });
 
-      const savedProbation = await this.probationRepository.save(probation);
+      const savedProbation = await this.probationRepository.save({
+        ...probation,
+      });
+
       response.status(201).json({
         status: true,
-        message: `probation successfully created click on the`,
+        message: `probation updated successfully`,
         data: savedProbation,
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async updateProbation(request: Request, response: Response) {
+    try {
+      const { id } = request.params;
+      const probation = await this.probationRepository.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!probation) {
+        return 'probation does not exist';
+      }
+      probation.status = request.body.status;
+      const res = await this.probationRepository.save(probation);
+      response.status(201).json({
+        status: true,
+        message: 'probation updated successfully',
+        data: res,
       });
       return;
     } catch (error) {
@@ -72,16 +105,14 @@ export class ProbationController {
   async removeProbation(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
-
-      const probationToRemove = await this.probationRepository.findOneBy({
-        id,
+      const probation = await this.probationRepository.findOne({
+        where: { id },
       });
-
-      if (!probationToRemove) {
-        return 'this probation not exist';
+      if (!probation) {
+        return response.status(400).send('probation not found');
       }
 
-      await this.probationRepository.remove(probationToRemove);
+      await this.probationRepository.remove(probation);
 
       response.status(201).send('probation deleted successfully');
       return;

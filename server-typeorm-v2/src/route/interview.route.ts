@@ -17,7 +17,7 @@ export const interviewRoute = [
     method: 'get',
     route: '/api/interview/:id',
     controller: InterviewController,
-    action: 'findInterview',
+    action: 'oneInterview',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const interviewRoute = [
     method: 'put',
     route: '/api/interview/:id',
     controller: InterviewController,
-    action: 'deleteInterview',
+    action: 'removeInterview',
   },
 ];

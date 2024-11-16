@@ -3,12 +3,19 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Column,
 } from 'typeorm';
 
 @Entity()
-export class Session {
+export class ApplicantRating {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  jobId: string;
+
+  @Column()
+  RatingId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

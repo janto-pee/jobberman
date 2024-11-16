@@ -13,11 +13,11 @@ export class Message {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.message)
-  sender_username: User;
+  // @ManyToOne(() => User, (user) => user.message)
+  // sender_username: User;
 
-  @ManyToOne(() => User, (user) => user.message)
-  reciever_username: User;
+  // @ManyToOne(() => User, (user) => user.message)
+  // reciever_username: User;
 
   @Column()
   content: string;

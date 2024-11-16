@@ -5,13 +5,13 @@ import { Salary } from '../entity/Salary.entity';
 export class SalaryController {
   private salaryRepository = AppDataSource.getRepository(Salary);
 
-  async allSalary(_: Request, response: Response) {
+  async allSalarys(_: Request, response: Response) {
     try {
-      const salarys = this.salaryRepository.find();
+      const users = await this.salaryRepository.find();
       response.status(201).json({
         status: true,
-        message: `salary successfully fetched`,
-        data: salarys,
+        message: `user successfully fetched`,
+        data: users,
       });
       return;
     } catch (error) {
@@ -26,16 +26,16 @@ export class SalaryController {
 
   async oneSalary(request: Request, response: Response) {
     try {
-      const id = request.params.id;
-
-      const salary = await this.salaryRepository.findOne({
-        where: { id },
+      const address = await this.salaryRepository.findOne({
+        where: {
+          id: request.params.id,
+        },
       });
 
-      if (!salary) {
-        return 'unregistered salary';
+      if (!address) {
+        return 'unregistered address';
       }
-      return salary;
+      return address;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -51,12 +51,47 @@ export class SalaryController {
       const salary = Object.assign(new Salary(), {
         ...request.body,
       });
+      const savedSalary = await this.salaryRepository.save({
+        ...salary,
+      });
 
-      const savedSalary = await this.salaryRepository.save(salary);
       response.status(201).json({
         status: true,
-        message: `salary successfully created click on the`,
+        message: `salary updated successfully`,
         data: savedSalary,
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async updateSalary(request: Request, response: Response) {
+    try {
+      const { id } = request.params;
+      const salary = await this.salaryRepository.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!salary) {
+        return 'salary does not exist';
+      }
+      salary.currency = request.body.currency;
+      salary.maximumMinor = request.body.maximumMinor;
+      salary.minimumMinor = request.body.minimumMinor;
+      salary.period = request.body.period;
+      const res = await this.salaryRepository.save(salary);
+      response.status(201).json({
+        status: true,
+        message: 'salary updated successfully',
+        data: res,
       });
       return;
     } catch (error) {
@@ -78,7 +113,7 @@ export class SalaryController {
       });
 
       if (!salaryToRemove) {
-        return 'this salary not exist';
+        return 'this address not exist';
       }
 
       await this.salaryRepository.remove(salaryToRemove);

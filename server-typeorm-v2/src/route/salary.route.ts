@@ -17,7 +17,7 @@ export const salaryRoute = [
     method: 'get',
     route: '/api/salary/:id',
     controller: SalaryController,
-    action: 'findSalary',
+    action: 'oneSalary',
   },
   {
     method: 'put',
@@ -25,11 +25,10 @@ export const salaryRoute = [
     controller: SalaryController,
     action: 'updateSalary',
   },
-
   {
     method: 'put',
     route: '/api/salary/:id',
     controller: SalaryController,
-    action: 'deleteSalary',
+    action: 'removeSalary',
   },
 ];

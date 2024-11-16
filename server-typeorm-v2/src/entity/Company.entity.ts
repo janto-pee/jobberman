@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Job } from './Job.entity';
+import { Employer } from './Employer.entity';
 
 @Entity()
 export class Company {
@@ -22,8 +23,11 @@ export class Company {
   @Column()
   about_us: string;
 
-  @OneToMany(() => Job, (job) => job.company)
-  jobs: Job[];
+  @OneToMany(() => Employer, (employer) => employer.company)
+  employer: Employer[];
+
+  // @OneToMany(() => Job, (job) => job.company)
+  // jobs: Job[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

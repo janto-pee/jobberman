@@ -4,14 +4,13 @@ import { Notification } from '../entity/Notifications.entity';
 
 export class NotificationsController {
   private notificationRepository = AppDataSource.getRepository(Notification);
-
   async allNotifications(_: Request, response: Response) {
     try {
-      const notifications = this.notificationRepository.find();
+      const Notification = await this.notificationRepository.find();
       response.status(201).json({
         status: true,
-        message: `notification successfully fetched`,
-        data: notifications,
+        message: `user successfully fetched`,
+        data: Notification,
       });
       return;
     } catch (error) {
@@ -24,18 +23,18 @@ export class NotificationsController {
     }
   }
 
-  async oneNotifications(request: Request, response: Response) {
+  async oneNotification(request: Request, response: Response) {
     try {
-      const id = request.params.id;
-
-      const notification = await this.notificationRepository.findOne({
-        where: { id },
+      const Notification = await this.notificationRepository.findOne({
+        where: {
+          id: request.params.id,
+        },
       });
 
-      if (!notification) {
-        return 'unregistered notification';
+      if (!Notification) {
+        return 'no Notification';
       }
-      return notification;
+      return Notification;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -46,50 +45,24 @@ export class NotificationsController {
     }
   }
 
-  async saveNotifications(request: Request, response: Response) {
+  async saveNotification(request: Request, response: Response) {
     try {
-      const notification = Object.assign(new Notification(), {
+      const address = Object.assign(new Notification(), {
         ...request.body,
       });
 
-      const savedNotification =
-        await this.notificationRepository.save(notification);
+      const savedAddress = await this.notificationRepository.save({
+        ...address,
+      });
+
       response.status(201).json({
         status: true,
-        message: `notification successfully created click on the`,
-        data: savedNotification,
+        message: `address updated successfully`,
+        data: savedAddress,
       });
       return;
     } catch (error) {
       console.log(error);
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async removeNotifications(
-    request: Request<{ id: string }>,
-    response: Response,
-  ) {
-    try {
-      const id = request.params.id;
-
-      const notificationToRemove = await this.notificationRepository.findOneBy({
-        id,
-      });
-
-      if (!notificationToRemove) {
-        return 'this notification not exist';
-      }
-
-      await this.notificationRepository.remove(notificationToRemove);
-
-      response.status(201).send('notification deleted successfully');
-      return;
-    } catch (error) {
       response.status(500).json({
         status: false,
         message: 'server error',

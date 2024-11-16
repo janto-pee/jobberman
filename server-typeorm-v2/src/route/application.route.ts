@@ -3,7 +3,7 @@ import { ApplicationController } from '../controller/application.controller';
 export const applicationRoute = [
   {
     method: 'post',
-    route: '/api/application',
+    route: '/api/application/:jobId/:applicantId',
     controller: ApplicationController,
     action: 'saveApplication',
   },
@@ -17,7 +17,7 @@ export const applicationRoute = [
     method: 'get',
     route: '/api/application/:id',
     controller: ApplicationController,
-    action: 'findApplication',
+    action: 'oneApplication',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const applicationRoute = [
     method: 'put',
     route: '/api/application/:id',
     controller: ApplicationController,
-    action: 'deleteApplication',
+    action: 'removeApplication',
   },
 ];

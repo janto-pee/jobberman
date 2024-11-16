@@ -15,13 +15,13 @@ export class Rating {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToMany(() => Applicant)
-  @JoinTable()
-  applicants: Applicant[];
+  // @ManyToMany(() => Applicant)
+  // @JoinTable()
+  // applicants: Applicant[];
 
-  @ManyToMany(() => Job)
-  @JoinTable()
-  jobs: Job[];
+  // @ManyToMany(() => Job)
+  // @JoinTable()
+  // jobs: Job[];
 
   @Column()
   ratings: number;

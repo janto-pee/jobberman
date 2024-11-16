@@ -1,16 +1,20 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Interview } from '../entity/Interview.entity';
+import { Employer } from '../entity/Employer.entity';
+import { Applicant } from '../entity/Applicants.entity';
 
 export class InterviewController {
   private interviewRepository = AppDataSource.getRepository(Interview);
+  private employerRepository = AppDataSource.getRepository(Employer);
+  private applicantRepository = AppDataSource.getRepository(Applicant);
 
   async allInterviews(_: Request, response: Response) {
     try {
-      const interviews = this.interviewRepository.find();
+      const interviews = await this.interviewRepository.find();
       response.status(201).json({
         status: true,
-        message: `interview successfully fetched`,
+        message: `user interviews for this job post`,
         data: interviews,
       });
       return;
@@ -27,15 +31,17 @@ export class InterviewController {
   async oneInterview(request: Request, response: Response) {
     try {
       const id = request.params.id;
-
       const interview = await this.interviewRepository.findOne({
-        where: { id },
+        where: {
+          id: id,
+        },
       });
-
-      if (!interview) {
-        return 'unregistered interview';
-      }
-      return interview;
+      response.status(201).json({
+        status: true,
+        message: `interview found`,
+        data: interview,
+      });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -48,15 +54,60 @@ export class InterviewController {
 
   async saveInterview(request: Request, response: Response) {
     try {
-      const interview = Object.assign(new Interview(), {
-        ...request.body,
+      const employer = await this.employerRepository.findOne({
+        where: { id: request.params.employerId },
       });
 
-      const savedInterview = await this.interviewRepository.save(interview);
+      const applicant = await this.applicantRepository.findOne({
+        where: { id: request.params.applicantId },
+      });
+
+      if (!employer || !applicant) {
+        return response
+          .status(400)
+          .send(
+            'applicant or interviewer does not exist, please check the applicant id or interviewer id?',
+          );
+      }
+      const savedInterview = await this.interviewRepository.save({
+        ...request.body,
+        applicant: applicant,
+        employer: employer,
+      });
       response.status(201).json({
         status: true,
-        message: `interview successfully created click on the`,
+        message: `application created successfully`,
         data: savedInterview,
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async updateInterview(request: Request, response: Response) {
+    try {
+      const { id } = request.params;
+      const interview = await this.interviewRepository.findOne({
+        where: { id },
+      });
+      if (!interview) {
+        return response.status(400).json('interview not found');
+      }
+      interview.startTime = request.body.startTime;
+      interview.timezone = request.body.timezone;
+      interview.endTime = request.body.endTime;
+      interview.title = request.body.title;
+      const res = await this.interviewRepository.save(interview);
+      response.status(201).json({
+        status: true,
+        message: 'interview data changed successfully',
+        data: res,
       });
       return;
     } catch (error) {
@@ -72,17 +123,14 @@ export class InterviewController {
   async removeInterview(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
-
-      const interviewToRemove = await this.interviewRepository.findOneBy({
-        id,
+      const interview = await this.interviewRepository.findOne({
+        where: { id },
       });
 
-      if (!interviewToRemove) {
-        return 'this interview not exist';
+      if (!interview) {
+        return response.status(400).send('interview not found');
       }
-
-      await this.interviewRepository.remove(interviewToRemove);
-
+      await this.interviewRepository.remove(interview);
       response.status(201).send('interview deleted successfully');
       return;
     } catch (error) {

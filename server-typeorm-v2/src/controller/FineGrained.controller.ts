@@ -6,13 +6,13 @@ export class FineGrainedController {
   private finegrainedRepository =
     AppDataSource.getRepository(FineGrainedSalary);
 
-  async allFineGraineds(_: Request, response: Response) {
+  async allFineGrained(_: Request, response: Response) {
     try {
-      const finegraineds = this.finegrainedRepository.find();
+      const FineGrainedSalary = await this.finegrainedRepository.find();
       response.status(201).json({
         status: true,
-        message: `finegrained successfully fetched`,
-        data: finegraineds,
+        message: `FineGrainedSalarys for this job post`,
+        data: FineGrainedSalary,
       });
       return;
     } catch (error) {
@@ -28,15 +28,17 @@ export class FineGrainedController {
   async oneFineGrained(request: Request, response: Response) {
     try {
       const id = request.params.id;
-
-      const finegrained = await this.finegrainedRepository.findOne({
-        where: { id },
+      const fineGrained = await this.finegrainedRepository.findOne({
+        where: {
+          id: id,
+        },
       });
-
-      if (!finegrained) {
-        return 'unregistered finegrained';
-      }
-      return finegrained;
+      response.status(201).json({
+        status: true,
+        message: `fineGrained found`,
+        data: fineGrained,
+      });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -49,16 +51,44 @@ export class FineGrainedController {
 
   async saveFineGrained(request: Request, response: Response) {
     try {
-      const finegrained = Object.assign(new FineGrainedSalary(), {
+      const savedFinedGrained = await this.finegrainedRepository.save({
         ...request.body,
       });
-
-      const savedFinegrained =
-        await this.finegrainedRepository.save(finegrained);
       response.status(201).json({
         status: true,
-        message: `finegrained successfully created click on the`,
-        data: savedFinegrained,
+        message: `application created successfully`,
+        data: savedFinedGrained,
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async updateFineGrained(request: Request, response: Response) {
+    try {
+      const { id } = request.params;
+      const fineGrained = await this.finegrainedRepository.findOne({
+        where: { id },
+      });
+      if (!fineGrained) {
+        return response.status(400).json('fine grained for salary not found');
+      }
+      fineGrained.fixedOvertimePay = request.body.fixedOvertimePay;
+      fineGrained.fixedOvertimeSalaryMinor = request.body.cover_letter;
+      fineGrained.statutoryOvertimeHours = request.body.statutoryOvertimeHours;
+      fineGrained.totalSalaryMinor = request.body.totalSalaryMinor;
+
+      const res = await this.finegrainedRepository.save(fineGrained);
+      response.status(201).json({
+        status: true,
+        message: 'password changed successfully',
+        data: res,
       });
       return;
     } catch (error) {
@@ -77,18 +107,15 @@ export class FineGrainedController {
   ) {
     try {
       const id = request.params.id;
-
-      const finegrainedToRemove = await this.finegrainedRepository.findOneBy({
-        id,
+      const fineGrained = await this.finegrainedRepository.findOne({
+        where: { id },
       });
 
-      if (!finegrainedToRemove) {
-        return 'this finegrained not exist';
+      if (!fineGrained) {
+        return response.status(400).send('fineGrained not found');
       }
-
-      await this.finegrainedRepository.remove(finegrainedToRemove);
-
-      response.status(201).send('finegrained deleted successfully');
+      await this.finegrainedRepository.remove(fineGrained);
+      response.status(201).send('address deleted successfully');
       return;
     } catch (error) {
       response.status(500).json({

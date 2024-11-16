@@ -9,11 +9,11 @@ export class AddressController {
 
   async allAddress(_: Request, response: Response) {
     try {
-      const users = await this.addressRepository.find();
+      const address = await this.addressRepository.find();
       response.status(201).json({
         status: true,
-        message: `user successfully fetched`,
-        data: users,
+        message: `address successfully fetched`,
+        data: address,
       });
       return;
     } catch (error) {

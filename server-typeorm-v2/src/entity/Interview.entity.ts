@@ -4,9 +4,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  ManyToOne,
   ManyToMany,
   JoinTable,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Employer } from './Employer.entity';
 import { Applicant } from './Applicants.entity';
@@ -16,13 +17,13 @@ export class Interview {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @ManyToMany(() => Employer)
-  // @JoinTable()
-  // interviewer: Employer[];
+  @OneToOne(() => Employer)
+  @JoinColumn()
+  employer: Employer;
 
   @ManyToMany(() => Applicant)
   @JoinTable()
-  interviewee: Applicant[];
+  applicant: Applicant[];
 
   @Column()
   startTime: Date;

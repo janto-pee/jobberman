@@ -8,11 +8,11 @@ export class TaskBasedController {
 
   async allTaskBased(_: Request, response: Response) {
     try {
-      const taskgraineds = this.taskgrainedRepository.find();
+      const users = await this.taskgrainedRepository.find();
       response.status(201).json({
         status: true,
-        message: `taskgrained successfully fetched`,
-        data: taskgraineds,
+        message: `user successfully fetched`,
+        data: users,
       });
       return;
     } catch (error) {
@@ -27,16 +27,16 @@ export class TaskBasedController {
 
   async oneTaskBased(request: Request, response: Response) {
     try {
-      const id = request.params.id;
-
-      const taskgrained = await this.taskgrainedRepository.findOne({
-        where: { id },
+      const task = await this.taskgrainedRepository.findOne({
+        where: {
+          id: request.params.id,
+        },
       });
 
-      if (!taskgrained) {
-        return 'unregistered taskgrained';
+      if (!task) {
+        return 'unregistered task';
       }
-      return taskgrained;
+      return task;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -49,15 +49,47 @@ export class TaskBasedController {
 
   async saveTaskBased(request: Request, response: Response) {
     try {
-      const taskgrained = Object.assign(new Applicant(), {
+      const task = Object.assign(new TaskBased(), {
         ...request.body,
       });
+      const savedtask = await this.taskgrainedRepository.save({
+        ...task,
+      });
 
-      const savedApplicant = await this.taskgrainedRepository.save(taskgrained);
       response.status(201).json({
         status: true,
-        message: `taskgrained successfully created click on the`,
-        data: savedApplicant,
+        message: `Task based salary updated successfully`,
+        data: savedtask,
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async updateTaskBased(request: Request, response: Response) {
+    try {
+      const { id } = request.params;
+      const TBS = await this.taskgrainedRepository.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!TBS) {
+        return 'TBS not found';
+      }
+      TBS.updatedAt = request.body.updatedAt;
+      const res = await this.taskgrainedRepository.save(TBS);
+      response.status(201).json({
+        status: true,
+        message: 'TBS updated successfully',
+        data: res,
       });
       return;
     } catch (error) {
@@ -73,18 +105,17 @@ export class TaskBasedController {
   async removeTaskBased(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
-
-      const taskgrainedToRemove = await this.taskgrainedRepository.findOneBy({
+      const TBS = await this.taskgrainedRepository.findOneBy({
         id,
       });
 
-      if (!taskgrainedToRemove) {
-        return 'this taskgrained not exist';
+      if (!TBS) {
+        return 'task based salary does not exist';
       }
 
-      await this.taskgrainedRepository.remove(taskgrainedToRemove);
+      await this.taskgrainedRepository.remove(TBS);
 
-      response.status(201).send('taskgrained deleted successfully');
+      response.status(201).send('task based salary deleted successfully');
       return;
     } catch (error) {
       response.status(500).json({

@@ -1,46 +1,46 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  web1:
-    build: .
-    volumes:
-      - .:/usr/app/
-      - /usr/app/node_modules
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=recruitmentplatform
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '1337:1337'
+    depends_on:
+      - postgres
+    restart: unless-stopped
     environment:
-      DB_USERNAME: todoapp
-      DB_PASSWORD: secret
-      DB_DATABASE: todos
-      PORT: 1337
-    env_file: .env
-  # postgres:
-  #   image: postgres:12-alpine
-  #   container_name: postgres12c
-  #   environment:
-  #     POSTGRES_USER: todoapp
-  #     POSTGRES_PASSWORD: secret
-  #     POSTGRES_DB: todos
-  # api:
-  #   depends_on:
-  #     - postgres12
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   image: nodejs
-  #   container_name: api
-  #   restart: unless-stopped
-  #   env_file: .env
-  #   environment:
-  #     DB_USERNAME: $DB_USERNAME
-  #     DB_PASSWORD: $DB_PASSWORD
-  #     DB_DATABASE: $DB_DATABASE
-  #     PORT: $PORT
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    # command:
+    #   ['./wait-for.sh', 'postgres:5432', '--', 'node', 'build/src/index.js']
+    # ./wait-for.sh postgres:5432 -- node build/src/index.js
+    # volumes:
+    #   - .:/home/node/app
+    #   - node_modules:/home/node/app/node_modules
+    # env_file: .env
+  # web1:
+  #   build: .
+  #   volumes:
+  #     - .:/usr/app/
+  #     - /usr/app/node_modules
   #   ports:
   #     - '1337:1337'
-  #   volumes:
-  #     - .:/home/node/app
-  #     - node_modules:/home/node/app/node_modules
-
-volumes:
-  node_modules:
+  #   environment:
+  #     DB_USERNAME: todoapp
+  #     DB_PASSWORD: secret
+  #     DB_DATABASE: todos
+  #     PORT: 1337
+  #   env_file: .env
+  #   # image: nodejs
+  # container_name: api
+  # restart: unless-stopped
+# volumes:
+#   node_modules:

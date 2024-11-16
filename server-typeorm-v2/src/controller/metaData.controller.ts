@@ -5,13 +5,13 @@ import { Metadata } from '../entity/Metadata.entity';
 export class MetadataController {
   private metadataRepository = AppDataSource.getRepository(Metadata);
 
-  async allMetadatas(_: Request, response: Response) {
+  async allMetaDatas(_: Request, response: Response) {
     try {
-      const metadatas = this.metadataRepository.find();
+      const metaData = await this.metadataRepository.find();
       response.status(201).json({
         status: true,
-        message: `metadata successfully fetched`,
-        data: metadatas,
+        message: `metaDatas for this job`,
+        data: metaData,
       });
       return;
     } catch (error) {
@@ -24,18 +24,20 @@ export class MetadataController {
     }
   }
 
-  async oneMetadata(request: Request, response: Response) {
+  async oneMetaData(request: Request, response: Response) {
     try {
       const id = request.params.id;
-
-      const metadata = await this.metadataRepository.findOne({
-        where: { id },
+      const metaData = await this.metadataRepository.findOne({
+        where: {
+          id: id,
+        },
       });
-
-      if (!metadata) {
-        return 'unregistered metadata';
-      }
-      return metadata;
+      response.status(201).json({
+        status: true,
+        message: `user metaData for this job post`,
+        data: metaData,
+      });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -46,16 +48,14 @@ export class MetadataController {
     }
   }
 
-  async saveMetadata(request: Request, response: Response) {
+  async saveMetaData(request: Request, response: Response) {
     try {
-      const metadata = Object.assign(new Metadata(), {
+      const savedMetaData = await this.metadataRepository.save({
         ...request.body,
       });
-
-      const savedMetaData = await this.metadataRepository.save(metadata);
       response.status(201).json({
         status: true,
-        message: `metadata successfully created click on the`,
+        message: `meta data created successfully`,
         data: savedMetaData,
       });
       return;
@@ -69,21 +69,46 @@ export class MetadataController {
     }
   }
 
-  async removeMetadata(request: Request<{ id: string }>, response: Response) {
+  async updateMetaData(request: Request, response: Response) {
+    try {
+      const { id } = request.params;
+      const metaData = await this.metadataRepository.findOne({
+        where: { id },
+      });
+      if (!metaData) {
+        return response.status(400).json('meta data not found');
+      }
+      metaData.atsName = request.body.atsName;
+      metaData.employersName = request.body.employersName;
+      const res = await this.metadataRepository.save(metaData);
+      response.status(201).json({
+        status: true,
+        message: 'meta data changed successfully',
+        data: res,
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async removeMetaData(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
-
-      const metadataToRemove = await this.metadataRepository.findOneBy({
-        id,
+      const metaData = await this.metadataRepository.findOne({
+        where: { id },
       });
 
-      if (!metadataToRemove) {
-        return 'this metadata not exist';
+      if (!metaData) {
+        return response.status(400).send('metaData not found');
       }
-
-      await this.metadataRepository.remove(metadataToRemove);
-
-      response.status(201).send('metadata deleted successfully');
+      await this.metadataRepository.remove(metaData);
+      response.status(201).send('job metadata deleted successfully');
       return;
     } catch (error) {
       response.status(500).json({

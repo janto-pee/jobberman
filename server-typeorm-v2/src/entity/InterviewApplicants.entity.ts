@@ -4,23 +4,18 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  ManyToOne,
-  OneToOne,
-  JoinColumn,
 } from 'typeorm';
-import { User } from './User.entity';
 
 @Entity()
-export class Notification {
+export class InterviewApplicant {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => User)
-  @JoinColumn()
-  user: User;
+  @Column()
+  interviewId: string;
 
   @Column()
-  content: string;
+  ApplicantUsername: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

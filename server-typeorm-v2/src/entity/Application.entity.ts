@@ -5,8 +5,8 @@ import {
   UpdateDateColumn,
   Column,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
-import { User } from './User.entity';
 import { Applicant } from './Applicants.entity';
 import { Job } from './Job.entity';
 

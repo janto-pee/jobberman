@@ -3,7 +3,7 @@ import { JobController } from '../controller/Job.controller';
 export const jobRoute = [
   {
     method: 'post',
-    route: '/api/job',
+    route: '/api/job/:employerId',
     controller: JobController,
     action: 'saveJob',
   },
@@ -17,7 +17,7 @@ export const jobRoute = [
     method: 'get',
     route: '/api/job/:id',
     controller: JobController,
-    action: 'findJob',
+    action: 'oneJob',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const jobRoute = [
     method: 'put',
     route: '/api/job/:id',
     controller: JobController,
-    action: 'deleteJob',
+    action: 'removeJob',
   },
 ];

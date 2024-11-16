@@ -5,11 +5,11 @@ export const metadataRoute = [
     method: 'post',
     route: '/api/metadata',
     controller: MetadataController,
-    action: 'saveMetadata',
+    action: 'saveMetaData',
   },
   {
     method: 'get',
-    route: '/api/metadata',
+    route: '/api/metaData',
     controller: MetadataController,
     action: 'allMetadatas',
   },
@@ -17,19 +17,19 @@ export const metadataRoute = [
     method: 'get',
     route: '/api/metadata/:id',
     controller: MetadataController,
-    action: 'findMetadata',
+    action: 'oneMetaData',
   },
   {
     method: 'put',
     route: '/api/metadata/:id',
     controller: MetadataController,
-    action: 'updateMetadata',
+    action: 'updateMetaData',
   },
 
   {
     method: 'put',
     route: '/api/metadata/:id',
     controller: MetadataController,
-    action: 'deleteMetadata',
+    action: 'removeMetaData',
   },
 ];

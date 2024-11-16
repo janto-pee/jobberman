@@ -17,7 +17,7 @@ export const ratingRoute = [
     method: 'get',
     route: '/api/rating/:id',
     controller: RatingController,
-    action: 'findRating',
+    action: 'oneRating',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const ratingRoute = [
     method: 'put',
     route: '/api/rating/:id',
     controller: RatingController,
-    action: 'deleteRating',
+    action: 'removeRating',
   },
 ];

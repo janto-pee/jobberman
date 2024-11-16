@@ -19,7 +19,7 @@ export async function reIssueAccessToken(refreshToken: string) {
 
   if (!session || !session.valid) return false;
 
-  const user = await userRepository.findOneBy({ id: String(session.userId) });
+  const user = await userRepository.findOneBy({ id: String(session.user.id) });
 
   if (!user) return false;
 

@@ -17,7 +17,7 @@ export const probationRoute = [
     method: 'get',
     route: '/api/probation/:id',
     controller: ProbationController,
-    action: 'findProbation',
+    action: 'oneProbation',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const probationRoute = [
     method: 'put',
     route: '/api/probation/:id',
     controller: ProbationController,
-    action: 'deleteProbation',
+    action: 'removeProbation',
   },
 ];

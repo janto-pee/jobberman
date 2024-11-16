@@ -1,16 +1,19 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Job } from '../entity/Job.entity';
+import { Salary } from '../entity/Salary.entity';
+import { Employer } from '../entity/Employer.entity';
 
 export class JobController {
   private jobRepository = AppDataSource.getRepository(Job);
+  private employerRepository = AppDataSource.getRepository(Employer);
 
   async allJobs(_: Request, response: Response) {
     try {
-      const jobs = this.jobRepository.find();
+      const jobs = await this.jobRepository.find();
       response.status(201).json({
         status: true,
-        message: `job successfully fetched`,
+        message: `jobs for this job post`,
         data: jobs,
       });
       return;
@@ -27,15 +30,17 @@ export class JobController {
   async oneJob(request: Request, response: Response) {
     try {
       const id = request.params.id;
-
       const job = await this.jobRepository.findOne({
-        where: { id },
+        where: {
+          id: id,
+        },
       });
-
-      if (!job) {
-        return 'unregistered job';
-      }
-      return job;
+      response.status(201).json({
+        status: true,
+        message: `job found`,
+        data: job,
+      });
+      return;
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -48,15 +53,65 @@ export class JobController {
 
   async saveJob(request: Request, response: Response) {
     try {
+      const id = request.params.employerId;
+      const employer = await this.employerRepository.findOne({
+        where: {
+          id: id,
+        },
+      });
+      if (!employer) {
+        return response.status(400).json('employer not found');
+      }
       const job = Object.assign(new Job(), {
         ...request.body,
       });
+      const salary = Object.assign(new Salary(), {
+        currency: request.body.currency,
+        maximumMinor: request.body.maximumMinor,
+        minimumMinor: request.body.minimumMinor,
+        period: request.body.period,
+      });
 
-      const savedJob = await this.jobRepository.save(job);
+      const savedJob = await this.jobRepository.save({
+        ...job,
+        salary: salary,
+      });
       response.status(201).json({
         status: true,
-        message: `job successfully created click on the`,
+        message: `job created successfully`,
         data: savedJob,
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async updateJob(request: Request, response: Response) {
+    try {
+      const { id } = request.params;
+      const job = await this.jobRepository.findOne({
+        where: { id },
+      });
+      if (!job) {
+        return response.status(400).json('job not found');
+      }
+      job.complimentary_qualification =
+        request.body.complimentary_qualification;
+      job.description = request.body.description;
+      job.employer_hiring_contact = request.body.employer_hiring_contact;
+      job.relocation = request.body.relocation;
+      job.qualification = request.body.qualification;
+      const res = await this.jobRepository.save(job);
+      response.status(201).json({
+        status: true,
+        message: 'password changed successfully',
+        data: res,
       });
       return;
     } catch (error) {
@@ -72,18 +127,15 @@ export class JobController {
   async removeJob(request: Request<{ id: string }>, response: Response) {
     try {
       const id = request.params.id;
-
-      const jobToRemove = await this.jobRepository.findOneBy({
-        id,
+      const job = await this.jobRepository.findOne({
+        where: { id },
       });
 
-      if (!jobToRemove) {
-        return 'this job not exist';
+      if (!job) {
+        return response.status(400).send('job not found');
       }
-
-      await this.jobRepository.remove(jobToRemove);
-
-      response.status(201).send('job deleted successfully');
+      await this.jobRepository.remove(job);
+      response.status(201).send('job post deleted successfully');
       return;
     } catch (error) {
       response.status(500).json({

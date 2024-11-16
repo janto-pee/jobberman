@@ -11,13 +11,13 @@ export const finegrainedRoute = [
     method: 'get',
     route: '/api/finegrained',
     controller: FineGrainedController,
-    action: 'allFineGraineds',
+    action: 'allFineGrained',
   },
   {
     method: 'get',
     route: '/api/finegrained/:id',
     controller: FineGrainedController,
-    action: 'findFineGrained',
+    action: 'oneFineGrained',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const finegrainedRoute = [
     method: 'put',
     route: '/api/finegrained/:id',
     controller: FineGrainedController,
-    action: 'deleteFineGrained',
+    action: 'removeFineGrained',
   },
 ];

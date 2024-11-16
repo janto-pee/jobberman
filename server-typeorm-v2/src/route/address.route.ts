@@ -15,7 +15,7 @@ export const addressRoute = [
   },
   {
     method: 'post',
-    route: '/api/address',
+    route: '/api/address/:username',
     controller: AddressController,
     action: 'saveAddress',
   },

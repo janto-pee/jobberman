@@ -31,7 +31,7 @@ export class Location {
 
   @OneToOne(() => Address)
   @JoinColumn()
-  profile: Address;
+  address: Address;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

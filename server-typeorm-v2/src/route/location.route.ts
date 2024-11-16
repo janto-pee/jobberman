@@ -17,7 +17,7 @@ export const locationRoute = [
     method: 'get',
     route: '/api/location/:id',
     controller: LocationController,
-    action: 'findLocation',
+    action: 'oneLocation',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const locationRoute = [
     method: 'put',
     route: '/api/location/:id',
     controller: LocationController,
-    action: 'deleteLocation',
+    action: 'removeLocation',
   },
 ];

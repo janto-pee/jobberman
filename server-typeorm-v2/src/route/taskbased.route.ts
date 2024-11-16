@@ -11,13 +11,13 @@ export const taskbasedRoute = [
     method: 'get',
     route: '/api/taskbased',
     controller: TaskBasedController,
-    action: 'allTaskBaseds',
+    action: 'allTaskBased',
   },
   {
     method: 'get',
     route: '/api/taskbased/:id',
     controller: TaskBasedController,
-    action: 'findTaskBased',
+    action: 'oneTaskBased',
   },
   {
     method: 'put',
@@ -30,6 +30,6 @@ export const taskbasedRoute = [
     method: 'put',
     route: '/api/taskbased/:id',
     controller: TaskBasedController,
-    action: 'deleteTaskBased',
+    action: 'removeTaskBased',
   },
 ];
