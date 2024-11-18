@@ -3,7 +3,7 @@ import { InterviewController } from '../controller/Interview.controller';
 export const interviewRoute = [
   {
     method: 'post',
-    route: '/api/interview',
+    route: '/api/interview/:jobId/:applicantId/:applicationId',
     controller: InterviewController,
     action: 'saveInterview',
   },

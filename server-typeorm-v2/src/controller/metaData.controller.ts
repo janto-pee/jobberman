@@ -1,9 +1,11 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Metadata } from '../entity/Metadata.entity';
+import { Job } from '../entity/Job.entity';
 
 export class MetadataController {
   private metadataRepository = AppDataSource.getRepository(Metadata);
+  private jobRepository = AppDataSource.getRepository(Job);
 
   async allMetaDatas(_: Request, response: Response) {
     try {
@@ -50,8 +52,24 @@ export class MetadataController {
 
   async saveMetaData(request: Request, response: Response) {
     try {
-      const savedMetaData = await this.metadataRepository.save({
+      const job = await this.jobRepository.findOne({
+        where: { id: request.params.jobId },
+      });
+
+      if (!job) {
+        response.status(500).json({
+          status: 'error',
+          message: 'job with id does not exist',
+        });
+        return;
+      }
+      const metadata = Object.assign(new Metadata(), {
         ...request.body,
+      });
+
+      const savedMetaData = await this.metadataRepository.save({
+        ...metadata,
+        job: job,
       });
       response.status(201).json({
         status: true,

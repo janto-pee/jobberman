@@ -71,7 +71,7 @@ export const serverSetup = async () => {
   // });
 
   console.log(
-    `Express server has started on port 3000. Open http://localhost:${port}/api/users to see results`,
+    `Express server has started on port ${port}. Open http://localhost:${port}/api/users to see results`,
   );
 };
 AppDataSource.initialize()

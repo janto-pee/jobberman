@@ -7,7 +7,11 @@ export class LocationController {
 
   async allLocations(_: Request, response: Response) {
     try {
-      const location = await this.locationRepository.find();
+      const location = await this.locationRepository.find({
+        relations: {
+          address: true,
+        },
+      });
       response.status(201).json({
         status: true,
         message: `all locations`,
@@ -31,6 +35,9 @@ export class LocationController {
         where: {
           id: id,
         },
+        relations: {
+          address: true,
+        },
       });
       response.status(201).json({
         status: true,
@@ -50,6 +57,16 @@ export class LocationController {
 
   async saveLocation(request: Request, response: Response) {
     try {
+      const address = await this.locationRepository.findOne({
+        where: { id: request.params.addressId },
+      });
+      if (!address) {
+        response.status(201).json({
+          status: 'error',
+          message: `address not found`,
+        });
+        return;
+      }
       const savedAddress = await this.locationRepository.save({
         ...request.body,
       });
@@ -78,11 +95,8 @@ export class LocationController {
       if (!location) {
         return response.status(400).json('job not found');
       }
-      location.country = request.body.country;
-      location.cityRegionPostal = request.body.cityRegionPostal;
       location.latitude = request.body.latitude;
       location.longitude = request.body.longitude;
-      location.streetAddress = request.body.streetAddress;
       const res = await this.locationRepository.save(location);
       response.status(201).json({
         status: true,

@@ -3,11 +3,13 @@ import { Request, Response } from 'express';
 import { Interview } from '../entity/Interview.entity';
 import { Employer } from '../entity/Employer.entity';
 import { Applicant } from '../entity/Applicants.entity';
+import { Application } from '../entity/Application.entity';
 
 export class InterviewController {
   private interviewRepository = AppDataSource.getRepository(Interview);
   private employerRepository = AppDataSource.getRepository(Employer);
   private applicantRepository = AppDataSource.getRepository(Applicant);
+  private applicationRepository = AppDataSource.getRepository(Application);
 
   async allInterviews(_: Request, response: Response) {
     try {
@@ -62,12 +64,26 @@ export class InterviewController {
         where: { id: request.params.applicantId },
       });
 
-      if (!employer || !applicant) {
-        return response
-          .status(400)
-          .send(
-            'applicant or interviewer does not exist, please check the applicant id or interviewer id?',
-          );
+      const application = await this.applicationRepository.findOne({
+        where: {
+          id: request.params.applicationId,
+        },
+        relations: {
+          applicant: true,
+        },
+      });
+      console.log('save interview', employer, applicant, application);
+
+      if (
+        !employer ||
+        !applicant ||
+        applicant.id !== application.applicant.id
+      ) {
+        response.status(500).json({
+          status: 'error',
+          message: `applicant or interviewer does not exist, please check the applicant id or interviewer id?`,
+        });
+        return;
       }
       const savedInterview = await this.interviewRepository.save({
         ...request.body,

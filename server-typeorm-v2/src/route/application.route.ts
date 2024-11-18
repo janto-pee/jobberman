@@ -11,7 +11,7 @@ export const applicationRoute = [
     method: 'get',
     route: '/api/application',
     controller: ApplicationController,
-    action: 'allApplications',
+    action: 'allApplication',
   },
   {
     method: 'get',

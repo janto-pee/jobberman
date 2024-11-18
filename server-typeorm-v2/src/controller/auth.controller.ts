@@ -30,6 +30,12 @@ export class AuthController {
         user.hashed_password,
       );
 
+      console.log(
+        'checking password ...',
+        request.body.password,
+        user.hashed_password,
+      );
+
       if (!match) {
         response.status(400).send('invalid email or password');
         return;

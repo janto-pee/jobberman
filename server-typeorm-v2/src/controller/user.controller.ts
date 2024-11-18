@@ -92,7 +92,12 @@ export class UserController {
           user: user,
         });
       }
-      const res = omit(savedUser, 'hashed_password');
+      const res = omit(
+        savedUser,
+        'hashed_password',
+        'verificationCode',
+        'passwordResetCode',
+      );
       console.log(savedEmployerorApplicant);
 
       await sendEmail({

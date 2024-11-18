@@ -3,7 +3,7 @@ import { MetadataController } from '../controller/metaData.controller';
 export const metadataRoute = [
   {
     method: 'post',
-    route: '/api/metadata',
+    route: '/api/metadata/:jobId',
     controller: MetadataController,
     action: 'saveMetaData',
   },
@@ -11,7 +11,7 @@ export const metadataRoute = [
     method: 'get',
     route: '/api/metaData',
     controller: MetadataController,
-    action: 'allMetadatas',
+    action: 'allMetaDatas',
   },
   {
     method: 'get',

@@ -69,6 +69,20 @@ export class ApplicationController {
       if (!applicant) {
         return response.status(400).json('applicant not found');
       }
+
+      const checkapplication = await this.applicationRepository.findOne({
+        where: {
+          applicant: { id: applicant.id },
+          job: { id: job.id },
+        },
+      });
+
+      if (checkapplication) {
+        return response
+          .status(400)
+          .json('you cant apply to the same job twice');
+      }
+
       const application = Object.assign(new Application(), {
         ...request.body,
       });
@@ -109,7 +123,7 @@ export class ApplicationController {
       const res = await this.applicationRepository.save(application);
       response.status(201).json({
         status: true,
-        message: 'password changed successfully',
+        message: 'application updated successfully',
         data: res,
       });
       return;

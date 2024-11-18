@@ -14,24 +14,15 @@ export class Location {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @OneToOne(() => Address)
+  @JoinColumn()
+  address: Address;
+
   @Column()
   latitude: number;
 
   @Column()
   longitude: number;
-
-  @Column()
-  country: string;
-
-  @Column()
-  streetAddress: string;
-
-  @Column()
-  cityRegionPostal: string;
-
-  @OneToOne(() => Address)
-  @JoinColumn()
-  address: Address;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

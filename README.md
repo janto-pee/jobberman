@@ -1,6 +1,8 @@
 # Next Generation Recruitment Platform - Architecture
 <!-- Node TypeORM -->
-<!-- coursera api -->
+<!-- indeed -->
+<!-- https://docusaurus.io/showcase -->
+<!-- https://dev.to/themeselection/api-documentation-tools-1fjk -->
 
 ## What is Next Generation Recruitment Platform (NGRP)?
 NGRP is a a web-based software application that offers a comprehensive suite of tools and features designed to help recruiters and hiring managers streamline their hiring process. At it core, NGRP provide a centralized hub for recruiters to manage job postings, resumes, and candidate communication. 

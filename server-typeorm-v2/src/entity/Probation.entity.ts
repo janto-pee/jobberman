@@ -14,10 +14,6 @@ export class Probation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => Job)
-  @JoinColumn()
-  job: Job;
-
   @Column()
   status: boolean;
 

@@ -14,6 +14,7 @@ import { Employer } from './Employer.entity';
 import { Application } from './Application.entity';
 import { Salary } from './Salary.entity';
 import { Applicant } from './Applicants.entity';
+import { Probation } from './Probation.entity';
 
 @Entity()
 export class Job {
@@ -25,6 +26,10 @@ export class Job {
 
   @OneToMany(() => Application, (applicantion) => applicantion.job)
   applications: Application[];
+
+  @OneToOne(() => Probation)
+  @JoinColumn()
+  probation: Probation;
 
   // @ManyToOne(() => Company, (company) => company.jobs)
   // company: Company;

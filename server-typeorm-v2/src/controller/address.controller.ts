@@ -2,10 +2,12 @@ import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Address } from '../entity/Address.entity';
 import { User } from '../entity/User.entity';
+import { Location } from '../entity/Location.entity';
 
 export class AddressController {
   private addressRepository = AppDataSource.getRepository(Address);
   private userRepository = AppDataSource.getRepository(User);
+  private locationRepository = AppDataSource.getRepository(Location);
 
   async allAddress(_: Request, response: Response) {
     try {
@@ -64,20 +66,30 @@ export class AddressController {
         ...request.body,
       });
       const user = await this.userRepository.findOne({
-        where: { username: request.body.username },
+        where: { username: request.params.username },
       });
 
       if (!user) {
-        return response
-          .status(400)
-          .send(
+        response.status(500).json({
+          status: 'error',
+          message:
             'user with username does not exist, do you have an account with username?',
-          );
+        });
+        return;
       }
+      const location = Object.assign(new Location(), {
+        latitude: request.body.latitude,
+        longitude: request.body.longitude,
+      });
 
       const savedAddress = await this.addressRepository.save({
         ...address,
         user: user,
+      });
+
+      await this.locationRepository.save({
+        ...location,
+        address: savedAddress,
       });
 
       response.status(201).json({
@@ -125,7 +137,6 @@ export class AddressController {
       address.state_province_name = request.body.state_province_name;
       address.postal_code = request.body.postal_code;
       address.country_code = request.body.country_code;
-      address.location = request.body.location;
       address.country = request.body.country;
       const res = await this.addressRepository.save(address);
       response.status(201).json({

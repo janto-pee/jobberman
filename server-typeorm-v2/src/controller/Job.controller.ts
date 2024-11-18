@@ -3,10 +3,12 @@ import { Request, Response } from 'express';
 import { Job } from '../entity/Job.entity';
 import { Salary } from '../entity/Salary.entity';
 import { Employer } from '../entity/Employer.entity';
+import { Probation } from '../entity/Probation.entity';
 
 export class JobController {
   private jobRepository = AppDataSource.getRepository(Job);
   private employerRepository = AppDataSource.getRepository(Employer);
+  private probationRepository = AppDataSource.getRepository(Probation);
 
   async allJobs(_: Request, response: Response) {
     try {
@@ -71,10 +73,16 @@ export class JobController {
         minimumMinor: request.body.minimumMinor,
         period: request.body.period,
       });
-
+      const probation = Object.assign(new Probation(), {
+        ...request.body,
+      });
+      // const savedProbation = await this.probationRepository.save({
+      //   ...probation,
+      // });
       const savedJob = await this.jobRepository.save({
         ...job,
         salary: salary,
+        probation: probation,
       });
       response.status(201).json({
         status: true,
@@ -110,7 +118,7 @@ export class JobController {
       const res = await this.jobRepository.save(job);
       response.status(201).json({
         status: true,
-        message: 'password changed successfully',
+        message: 'job updated successfully',
         data: res,
       });
       return;
