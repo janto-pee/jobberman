@@ -3,7 +3,8 @@
 		"_postman_id": "0bceac1e-91a3-4500-8124-ebaeb199c683",
 		"name": "Next Generation Recruitment Platform Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20491153"
+		"_exporter_id": "20491153",
+		"_collection_link": "https://ok2222-2860.postman.co/workspace/ok-Workspace~a1510e3e-e3a9-481f-a38d-cb2dc2eb5c79/collection/20491153-0bceac1e-91a3-4500-8124-ebaeb199c683?action=share&source=collection_link&creator=20491153"
 	},
 	"item": [
 		{
@@ -37,7 +38,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"username\": \"laka2\",\r\n        \"first_name\": \"laka2\",\r\n        \"hashed_password\": \"abcd\",\r\n        \"last_name\": \"bosch\",\r\n        \"email\": \"lakabosch2@gmail.com\",\r\n        \"address\": \"address name\",\r\n        \"address2\": \"\",\r\n        \"city\": \"cityname\",\r\n        \"country\": \"country name\"\r\n}",
+							"raw": "{\r\n        \"username\": \"laka7\",\r\n        \"first_name\": \"laka7\",\r\n        \"hashed_password\": \"abcd\",\r\n        \"last_name\": \"bosch\",\r\n        \"email\": \"lakabosch7@gmail.com\",\r\n        \"address\": \"address name\",\r\n        \"address2\": \"\",\r\n        \"city\": \"cityname\",\r\n        \"country\": \"country name\",\r\n        \"role\": \"employer\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -45,7 +46,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/users/",
+							"raw": "http://localhost:1337/api/users",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -53,8 +54,7 @@
 							"port": "1337",
 							"path": [
 								"api",
-								"users",
-								""
+								"users"
 							]
 						}
 					},
@@ -112,7 +112,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"pasword\": \"secret\"\r\n}",
+							"raw": "{\r\n    \"password\": \"abcde\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -164,6 +164,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"lakabosch6@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "http://localhost:1337/api/users/forgotpassword",
 							"protocol": "http",
@@ -190,6 +199,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"lakabosch6@gmail.com\",\r\n    \"password\": \"abcde\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{localurl}}/api/auth",
 							"host": [
@@ -288,7 +306,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n    \"street\": \"string;\",\r\n    \"street2\": \"string;\",\r\n    \"city\": \"string;\",\r\n    \"state_province_code\": \"string;\",\r\n    \"state_province_name\": \"string;\",\r\n    \"postal_code\": \"string;\",\r\n    \"country_code\": \"string;\",\r\n    \"location\": \"string;\",\r\n    \"country\": \"string;\",\r\n    \"latitude\": 0.0000,\r\n    \"longitude\": 0.000\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -296,13 +314,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/address",
+							"raw": "{{localurl}}/api/address/{{username}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
-								"address"
+								"address",
+								"{{username}}"
 							]
 						}
 					},
@@ -488,13 +507,33 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n    \"application_text\": \"string\",\r\n  \"resume\": false,\r\n  \"cover_letter\": false,\r\n  \"referral_information\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "{{localurl}}/api/application/{{job_id}}/{{applicant_id}}",
+							"host": [
+								"{{localurl}}"
+							],
+							"path": [
+								"api",
+								"application",
+								"{{job_id}}",
+								"{{applicant_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{localurl}}/api/application",
+					"request": {
+						"method": "GET",
+						"header": [],
 						"url": {
 							"raw": "{{localurl}}/api/application",
 							"host": [
@@ -514,25 +553,6 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/application/",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"application",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/application",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
 							"raw": "{{localurl}}/api/application/{{username}}",
 							"host": [
 								"{{localurl}}"
@@ -547,13 +567,13 @@
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/application/{{username}}",
+					"name": "{{localurl}}/api/application/{{id}}",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n    \"application_text\": \"string 1\",\r\n  \"resume\": false,\r\n  \"cover_letter\": false,\r\n  \"referral_information\": \"string 1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -561,33 +581,33 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/application/{{username}}",
+							"raw": "{{localurl}}/api/application/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"application",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/application/{{username}}",
+					"name": "{{localurl}}/api/application/{{id}}",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/application/{{username}}",
+							"raw": "{{localurl}}/api/application/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"application",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -664,7 +684,7 @@
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/applicationrating/{{username}}",
+					"name": "{{localurl}}/api/applicationrating/{{id}}",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -678,150 +698,33 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/applicationrating/{{username}}",
+							"raw": "{{localurl}}/api/applicationrating/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"applicationrating",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/applicationrating/{{username}}",
+					"name": "{{localurl}}/api/applicationrating/{{id}}",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/applicationrating/{{username}}",
+							"raw": "{{localurl}}/api/applicationrating/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"applicationrating",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "FineGrainedSalary",
-			"item": [
-				{
-					"name": "{{localurl}}/api/finegrained",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/finegrained",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"finegrained"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/finegrained",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/finegrained/",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"finegrained",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/finegrained",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/finegrained/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"finegrained",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/finegrained/{{username}}",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/finegrained/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"finegrained",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/finegrained/{{username}}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/finegrained/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"finegrained",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -839,13 +742,34 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n  \"startTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"endTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"timezone\": \"string\",\r\n\"title\": \"string\",\r\n\"requestMetadata\": \"string\",\r\n\"languageCode\": \"string\",\r\n\"countryCode\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "{{localurl}}/api/interview/{{employer_id}}/{{applicant_id}}/{{application_id}}",
+							"host": [
+								"{{localurl}}"
+							],
+							"path": [
+								"api",
+								"interview",
+								"{{employer_id}}",
+								"{{applicant_id}}",
+								"{{application_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{localurl}}/api/interview",
+					"request": {
+						"method": "GET",
+						"header": [],
 						"url": {
 							"raw": "{{localurl}}/api/interview",
 							"host": [
@@ -865,25 +789,6 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/interview/",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"interview",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/interview",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
 							"raw": "{{localurl}}/api/interview/{{username}}",
 							"host": [
 								"{{localurl}}"
@@ -904,7 +809,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n  \"startTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"endTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"timezone\": \"string\",\r\n\"title\": \"string\",\r\n\"requestMetadata\": \"string\",\r\n\"languageCode\": \"string\",\r\n\"countryCode\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -912,33 +817,33 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/interview/{{username}}",
+							"raw": "{{localurl}}/api/interview/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"interview",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/interview/{{username}}",
+					"name": "{{localurl}}/api/interview/{{id}}",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/interview/{{username}}",
+							"raw": "{{localurl}}/api/interview/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"interview",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -956,13 +861,32 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n  \"currency\": \"currency\",\r\n  \"maximumMinor\": \"maximumMinor\",\r\n  \"minimumMinor\": \"minimumMinor\",\r\n   \"period\": \"period\",\r\n  \"title\": \"string\",\r\n  \"subtitle\": \"string\",\r\n  \"description\": \"string\",\r\n  \"qualification\": \"string\",\r\n  \"complimentary_qualification\": \"string\",\r\n  \"job_type\": \"string\",\r\n  \"visa_sponsorship\": \"string\",\r\n  \"remote_posible\": \"string\",\r\n  \"preferred_timezones\": \"string\",\r\n  \"location\": \"string\",\r\n  \"date_posted\": \"string\",\r\n  \"relocation\": \"string\",\r\n  \"skills\": \"string\",\r\n  \"employer_hiring_contact\": \"string\",\r\n  \"probationaryPeriod\": \"string\",\r\n  \"hasProbationaryPeriod\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "{{localurl}}/api/job/0369048d-ca82-46e7-8f09-319f56878da4",
+							"host": [
+								"{{localurl}}"
+							],
+							"path": [
+								"api",
+								"job",
+								"0369048d-ca82-46e7-8f09-319f56878da4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{localurl}}/api/job",
+					"request": {
+						"method": "GET",
+						"header": [],
 						"url": {
 							"raw": "{{localurl}}/api/job",
 							"host": [
@@ -982,46 +906,27 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/job/",
+							"raw": "{{localurl}}/api/job/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"job",
-								""
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/job",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/job/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"job",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/job/{{username}}",
+					"name": "{{localurl}}/api/job/{{id}}",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n  \"currency\": \"currency\",\r\n  \"maximumMinor\": \"maximumMinor\",\r\n  \"minimumMinor\": \"minimumMinor\",\r\n   \"period\": \"period\",\r\n  \"title\": \"string\",\r\n  \"subtitle\": \"string\",\r\n  \"description\": \"string\",\r\n  \"qualification\": \"string\",\r\n  \"complimentary_qualification\": \"string\",\r\n  \"job_type\": \"string\",\r\n  \"visa_sponsorship\": \"string\",\r\n  \"remote_posible\": \"string\",\r\n  \"preferred_timezones\": \"string\",\r\n  \"location\": \"string\",\r\n  \"date_posted\": \"string\",\r\n  \"relocation\": \"string\",\r\n  \"skills\": \"string\",\r\n  \"employer_hiring_contact\": \"string\",\r\n  \"probationaryPeriod\": \"string\",\r\n  \"hasProbationaryPeriod\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1029,33 +934,33 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/job/{{username}}",
+							"raw": "{{localurl}}/api/job/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"job",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/job/{{username}}",
+					"name": "{{localurl}}/api/job/{{id}}",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/job/{{username}}",
+							"raw": "{{localurl}}/api/job/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"job",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -1099,14 +1004,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/location/",
+							"raw": "{{localurl}}/api/location",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
-								"location",
-								""
+								"location"
 							]
 						}
 					},
@@ -1132,13 +1036,13 @@
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/location/{{username}}",
+					"name": "{{localurl}}/api/location/{{id}}",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n    \"latitude\": 9999.0000,\r\n    \"longitude\": 99999.000\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1146,33 +1050,33 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/location/{{username}}",
+							"raw": "{{localurl}}/api/location/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"location",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/location/{{username}}",
+					"name": "{{localurl}}/api/location/{{id}}",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/location/{{username}}",
+							"raw": "{{localurl}}/api/location/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"location",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -1190,13 +1094,32 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n  \"atsName\": \"string\",\r\n  \"employersName\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "{{localurl}}/api/metadata/{{job_id}}",
+							"host": [
+								"{{localurl}}"
+							],
+							"path": [
+								"api",
+								"metadata",
+								"{{job_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{localurl}}/api/metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
 						"url": {
 							"raw": "{{localurl}}/api/metadata",
 							"host": [
@@ -1216,40 +1139,21 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/metadata/",
+							"raw": "{{localurl}}/api/metadata/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"metadata",
-								""
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/metadata",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/metadata/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"metadata",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/metadata/{{username}}",
+					"name": "{{localurl}}/api/metadata/{{id}}",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1263,14 +1167,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/metadata/{{username}}",
+							"raw": "{{localurl}}/api/metadata/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"metadata",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -1289,123 +1193,6 @@
 							"path": [
 								"api",
 								"metadata",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Notification",
-			"item": [
-				{
-					"name": "{{localurl}}/api/notification",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/notification",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"notification"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/notification",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/notification/",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"notification",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/notification",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/notification/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"notification",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/notification/{{username}}",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/notification/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"notification",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/notification/{{username}}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/notification/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"notification",
 								"{{username}}"
 							]
 						}
@@ -1483,7 +1270,7 @@
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/probation/{{username}}",
+					"name": "{{localurl}}/api/probation/{{id}}",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1497,150 +1284,33 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/probation/{{username}}",
+							"raw": "{{localurl}}/api/probation/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"probation",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/probation/{{username}}",
+					"name": "{{localurl}}/api/probation/{{id}}",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/probation/{{username}}",
+							"raw": "{{localurl}}/api/probation/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"probation",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Rating",
-			"item": [
-				{
-					"name": "{{localurl}}/api/rating",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/rating",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"rating"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/rating",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/rating/",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"rating",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/rating",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/rating/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"rating",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/rating/{{username}}",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/rating/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"rating",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/rating/{{username}}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/rating/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"rating",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -1721,7 +1391,7 @@
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/salary/{{username}}",
+					"name": "{{localurl}}/api/salary/{{id}}",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1735,149 +1405,32 @@
 							}
 						},
 						"url": {
-							"raw": "{{localurl}}/api/salary/{{username}}",
+							"raw": "{{localurl}}/api/salary/{{id}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"salary",
-								"{{username}}"
+								"{{id}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{localurl}}/api/salary/{{username}}",
+					"name": "{{localurl}}/api/salary/{{id}}",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{localurl}}/api/salary/{{username}}",
+							"raw": "{{localurl}}/api/salary/{{id}}",
 							"host": [
 								"{{localurl}}"
 							],
 							"path": [
 								"api",
 								"salary",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TaskedBasedSalary",
-			"item": [
-				{
-					"name": "{{localurl}}/api/taskbased",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/taskbased",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"taskbased"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/taskbased",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/taskbased/",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"taskbased",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/taskbased",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/taskbased/{{username}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"taskbased",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/taskbased/{{id}}",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localurl}}/api/taskbased/{{id}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"taskbased",
-								"{{id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{localurl}}/api/taskbased/{{id}}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{localurl}}/api/taskbased/{{id}}",
-							"host": [
-								"{{localurl}}"
-							],
-							"path": [
-								"api",
-								"taskbased",
 								"{{id}}"
 							]
 						}
