@@ -1,23 +1,26 @@
 version: '3.9'
 
 services:
-  postgres:
-    image: postgres:12-alpine
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=recruitmentplatform
+  # postgres:
+  #   image: postgres:12-alpine
+  #   environment:
+  #     - POSTGRES_USER=root
+  #     - POSTGRES_PASSWORD=secret
+  #     - POSTGRES_DB=recruitmentplatform
   api:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - '1337:1337'
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
     restart: unless-stopped
     env_file:
       - .env
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      - DB_DATABASE=recruitmentplatform
