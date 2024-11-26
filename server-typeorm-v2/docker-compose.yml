@@ -16,31 +16,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
-    # command:
-    #   ['./wait-for.sh', 'postgres:5432', '--', 'node', 'build/src/index.js']
-    # ./wait-for.sh postgres:5432 -- node build/src/index.js
-    # volumes:
-    #   - .:/home/node/app
-    #   - node_modules:/home/node/app/node_modules
-    # env_file: .env
-  # web1:
-  #   build: .
-  #   volumes:
-  #     - .:/usr/app/
-  #     - /usr/app/node_modules
-  #   ports:
-  #     - '1337:1337'
-  #   environment:
-  #     DB_USERNAME: todoapp
-  #     DB_PASSWORD: secret
-  #     DB_DATABASE: todos
-  #     PORT: 1337
-  #   env_file: .env
-  #   # image: nodejs
-  # container_name: api
-  # restart: unless-stopped
-# volumes:
-#   node_modules:
