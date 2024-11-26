@@ -4,9 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  ManyToOne,
 } from 'typeorm';
-import { User } from './User.entity';
 
 @Entity()
 export class Message {

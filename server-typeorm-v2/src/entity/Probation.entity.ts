@@ -4,10 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  OneToOne,
-  JoinColumn,
 } from 'typeorm';
-import { Job } from './Job.entity';
 
 @Entity()
 export class Probation {

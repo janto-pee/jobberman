@@ -1,6 +1,5 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
-import { Applicant } from '../entity/Applicants.entity';
 import { TaskBased } from '../entity/TaskBased.entity';
 
 export class TaskBasedController {

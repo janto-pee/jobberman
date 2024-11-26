@@ -7,7 +7,6 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Job } from './Job.entity';
 import { FineGrainedSalary } from './FineGrained.entity';
 import { TaskBased } from './TaskBased.entity';
 

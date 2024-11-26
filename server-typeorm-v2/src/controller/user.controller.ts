@@ -313,7 +313,7 @@ export class UserController {
       if (userToRemove) {
         return 'this user does not exist';
       }
-      let applicantToRemove = await this.applicantRepository.findOneBy({
+      const applicantToRemove = await this.applicantRepository.findOneBy({
         user: { username },
       });
       if (applicantToRemove) {

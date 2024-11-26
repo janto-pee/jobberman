@@ -9,11 +9,9 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Company } from './Company.entity';
 import { Employer } from './Employer.entity';
 import { Application } from './Application.entity';
 import { Salary } from './Salary.entity';
-import { Applicant } from './Applicants.entity';
 import { Probation } from './Probation.entity';
 
 @Entity()

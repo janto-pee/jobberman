@@ -1,6 +1,5 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
-import { Address } from '../entity/Address.entity';
 import { InterviewApplicant } from '../entity/InterviewApplicants.entity';
 
 export class InterviewApplicantController {

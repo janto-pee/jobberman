@@ -8,7 +8,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './User.entity';
-import { Location } from './Location.entity';
 
 @Entity()
 export class Address {

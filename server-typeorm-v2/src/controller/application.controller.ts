@@ -2,7 +2,6 @@ import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { Application } from '../entity/Application.entity';
 import { Job } from '../entity/Job.entity';
-import { Salary } from '../entity/Salary.entity';
 import { Applicant } from '../entity/Applicants.entity';
 
 export class ApplicationController {

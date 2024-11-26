@@ -4,11 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
-import { Job } from './Job.entity';
-import { Applicant } from './Applicants.entity';
 
 @Entity()
 export class Rating {

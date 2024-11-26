@@ -6,7 +6,6 @@ import {
   Column,
   OneToMany,
 } from 'typeorm';
-import { Job } from './Job.entity';
 import { Employer } from './Employer.entity';
 
 @Entity()
