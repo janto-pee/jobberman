@@ -1,4 +1,11 @@
 import { JobController } from '../controller/Job.controller';
+// get job xyz
+// get similar jobs
+// get tbs jobs
+// get fbs jobs
+// get jobs with xyz ratings
+// -- wishlist
+// -- single wishlist
 
 export const jobRoute = [
   {

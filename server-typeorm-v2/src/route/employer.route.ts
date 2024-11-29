@@ -1,4 +1,6 @@
 import { EmployeerController } from '../controller/employer.controller';
+// employer company
+
 export const employerRoute = [
   {
     method: 'get',

@@ -1,5 +1,5 @@
 import { ApplicationController } from '../controller/application.controller';
-
+// upload and remove cover letter
 export const applicationRoute = [
   {
     method: 'post',
