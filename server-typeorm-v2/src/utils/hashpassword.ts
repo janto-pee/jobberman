@@ -1,5 +1,5 @@
 import config from 'config';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 export async function hashPassword(password: string) {
   const salt = await bcrypt.genSalt(config.get<number>('saltWorkFactor'));
@@ -8,7 +8,7 @@ export async function hashPassword(password: string) {
   return password;
 }
 
-export async function comparePassword(password: string, hash: any) {
+export async function comparePassword(password: string, hash: string) {
   try {
     const isMatch = await bcrypt.compare(password, hash);
     return isMatch;

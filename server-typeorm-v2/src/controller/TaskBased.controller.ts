@@ -15,7 +15,6 @@ export class TaskBasedController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -37,7 +36,6 @@ export class TaskBasedController {
       }
       return task;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -62,7 +60,6 @@ export class TaskBasedController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -92,7 +89,6 @@ export class TaskBasedController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',

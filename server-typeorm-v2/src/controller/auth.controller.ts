@@ -6,6 +6,7 @@ import { comparePassword } from '../utils/hashpassword';
 import { signJwt } from '../utils/jwt';
 import config from 'config';
 import { createSessionInput } from '../schema/auth.schema';
+import { omit } from 'lodash';
 
 export class AuthController {
   private authRepository = AppDataSource.getRepository(Auth);
@@ -30,18 +31,18 @@ export class AuthController {
         user.hashed_password,
       );
 
-      console.log(
-        'checking password ...',
-        request.body.password,
-        user.hashed_password,
-      );
-
       if (!match) {
         response.status(400).send('invalid email or password');
         return;
       }
 
-      const userAgent = request.get('userAgent') || 'vc';
+      const userAgent = request.get('userAgent') || '';
+      const res = omit(
+        user,
+        'hashed_password',
+        'verificationCode',
+        'passwordResetCode',
+      );
 
       const auth = Object.assign(new Auth(), {
         userId: user.id,
@@ -50,7 +51,7 @@ export class AuthController {
       const session = await this.authRepository.save(auth);
 
       const accessToken = signJwt(
-        { user: user.id, session: session.id },
+        { ...res, session: session.id },
         'accessTokenPrivate',
         { expiresIn: config.get<string>('accessTokenTtl') },
       );
@@ -68,7 +69,6 @@ export class AuthController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -91,7 +91,6 @@ export class AuthController {
       });
       return;
     } catch (error) {
-      console.log(error);
       res.status(500).json({
         status: false,
         message: 'server error',
@@ -102,10 +101,12 @@ export class AuthController {
   async deleteAuth(_, res: Response) {
     try {
       const id = res.locals.user.session;
-      const session = await this.authRepository.findOneBy({
-        id,
-      });
-      session.valid = false;
+      if (!id) {
+        res.send('unuthorised');
+      }
+      res.locals.user = null;
+
+      // update session to setvalid to false
       await this.authRepository.update(
         { id: id, valid: true },
         { valid: false },
@@ -115,7 +116,7 @@ export class AuthController {
         message: 'session expired',
       });
     } catch (error) {
-      console.log(error);
+      //on error
       res.status(500).json({
         status: false,
         message: 'server error',

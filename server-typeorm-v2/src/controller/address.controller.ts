@@ -19,7 +19,6 @@ export class AddressController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -51,7 +50,6 @@ export class AddressController {
       }
       return address;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -99,7 +97,6 @@ export class AddressController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -146,7 +143,6 @@ export class AddressController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',

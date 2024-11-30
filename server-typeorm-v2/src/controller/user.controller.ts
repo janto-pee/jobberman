@@ -19,47 +19,6 @@ export class UserController {
   private applicantRepository = AppDataSource.getRepository(Applicant);
   private employerRepository = AppDataSource.getRepository(Employer);
 
-  async all(_: Request, response: Response) {
-    try {
-      const users = await this.userRepository.find();
-      response.status(201).json({
-        status: true,
-        message: `user successfully fetched`,
-        data: users,
-      });
-      return;
-    } catch (error) {
-      console.log(error);
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async one(request: Request, response: Response) {
-    try {
-      const id = request.params.id;
-
-      const user = await this.userRepository.findOne({
-        where: { id },
-      });
-
-      if (!user) {
-        return 'unregistered user';
-      }
-      return user;
-    } catch (error) {
-      console.log(error);
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
   async save(
     request: Request<{}, {}, createUserInput['body']>,
     response: Response,
@@ -98,7 +57,6 @@ export class UserController {
         'verificationCode',
         'passwordResetCode',
       );
-      console.log(savedEmployerorApplicant);
 
       await sendEmail({
         from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
@@ -115,7 +73,6 @@ export class UserController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -142,12 +99,12 @@ export class UserController {
 
       if (user.verificationCode === verificationcode) {
         user.is_email_verified = true;
+        user.verificationCode = null;
         await this.userRepository.save(user);
         response.status(201).json({ status: 'user registered successfully' });
         return;
       }
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -174,9 +131,8 @@ export class UserController {
       }
 
       if (!user.is_email_verified) {
-        return response.send(
-          'user not verified, please check your email to verify',
-        );
+        response.send('user not verified, please check your email to verify');
+        return;
       }
 
       const pRC = nanoid();
@@ -197,7 +153,6 @@ export class UserController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -238,7 +193,13 @@ export class UserController {
       user.passwordResetCode = null;
       user.hashed_password = password;
       const savedUser = await this.userRepository.save(user);
-      const res = omit(savedUser, 'hashed_password');
+      const res = omit(
+        user,
+        'hashed_password',
+        'verificationCode',
+        'passwordResetCode',
+        'password_changed_at',
+      );
 
       response.status(201).json({
         status: true,
@@ -247,7 +208,6 @@ export class UserController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -281,20 +241,23 @@ export class UserController {
 
   async updateUser(request: Request, response: Response) {
     try {
-      const { username } = request.params;
-
-      const userToUpdate = await this.userRepository.findOneBy({
-        username: username,
-      });
-      userToUpdate.first_name = request.body.first_name;
-      const savedUser = await this.userRepository.save(userToUpdate);
+      const user = response.locals.user;
+      if (!user) {
+        response.status(500).json({
+          status: false,
+          message: 'unauthorised',
+        });
+        return;
+      }
+      user.first_name = request.body.first_name;
+      user.last_name = request.body.last_name;
+      const savedUser = await this.userRepository.save(user);
 
       response
         .status(201)
         .json({ status: 'user updated successfully', data: savedUser });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -303,6 +266,71 @@ export class UserController {
     }
   }
 
+  async me(_, response: Response) {
+    const user = response.locals.user;
+    if (!user) {
+      response.status(500).json({
+        status: false,
+        message: 'unauthorised',
+      });
+      return;
+    }
+    response.send(user);
+    return;
+  }
+
+  // OTHERS
+
+  async all(_: Request, response: Response) {
+    try {
+      const users = await this.userRepository.find();
+      response.status(201).json({
+        status: true,
+        message: `users successfully fetched`,
+        data: users,
+      });
+      return;
+    } catch (error) {
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
+
+  async one(request: Request, response: Response) {
+    try {
+      const id = request.params.id;
+
+      const user = await this.userRepository.findOne({
+        where: { id },
+      });
+
+      if (!user) {
+        return 'unregistered user';
+      }
+      const res = omit(
+        user,
+        'hashed_password',
+        'verificationCode',
+        'passwordResetCode',
+        'password_changed_at',
+      );
+      response.status(201).json({
+        status: true,
+        message: `user successfully fetched`,
+        data: res,
+      });
+      return;
+    } catch (error) {
+      response.status(500).json({
+        status: false,
+        message: 'server error',
+        error: error,
+      });
+    }
+  }
   async removeUser(request: Request<{ username: string }>, response: Response) {
     try {
       const username = request.params.username;

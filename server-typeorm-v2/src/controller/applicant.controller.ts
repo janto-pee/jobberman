@@ -15,7 +15,6 @@ export class ApplicantController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -37,7 +36,6 @@ export class ApplicantController {
       }
       return applicant;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',

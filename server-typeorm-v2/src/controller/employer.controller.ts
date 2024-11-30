@@ -17,7 +17,6 @@ export class EmployeerController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -39,7 +38,6 @@ export class EmployeerController {
       }
       return Employer;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -75,7 +73,6 @@ export class EmployeerController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',

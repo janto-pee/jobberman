@@ -1,13 +1,13 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
-import { Job } from '../entity/Job.entity';
-import { Applicant } from '../entity/Applicants.entity';
+// import { Job } from '../entity/Job.entity';
+// import { Applicant } from '../entity/Applicants.entity';
 import { Company } from '../entity/Company.entity';
 
 export class CompanyController {
   private companyRepository = AppDataSource.getRepository(Company);
-  private jobRepository = AppDataSource.getRepository(Job);
-  private applicantRepository = AppDataSource.getRepository(Applicant);
+  // private jobRepository = AppDataSource.getRepository(Job);
+  // private applicantRepository = AppDataSource.getRepository(Applicant);
 
   async allCompany(_: Request, response: Response) {
     try {
@@ -19,7 +19,6 @@ export class CompanyController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -43,7 +42,6 @@ export class CompanyController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -54,10 +52,6 @@ export class CompanyController {
 
   async saveCompany(request: Request, response: Response) {
     try {
-      //   const { jobId } = request.params;
-      //   const job = await this.jobRepository.findOne({
-      //     where: { id: jobId },
-      //   });
       const company = Object.assign(new Company(), {
         ...request.body,
       });
@@ -71,7 +65,6 @@ export class CompanyController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',
@@ -99,7 +92,6 @@ export class CompanyController {
       });
       return;
     } catch (error) {
-      console.log(error);
       response.status(500).json({
         status: false,
         message: 'server error',

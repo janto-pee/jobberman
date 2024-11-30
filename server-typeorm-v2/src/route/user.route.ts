@@ -1,30 +1,32 @@
 import { UserController } from '../controller/user.controller';
+import requireUser from '../middleware/requireUser';
 
 export const userRoute = [
-  {
-    method: 'get',
-    route: '/api/users',
-    controller: UserController,
-    action: 'all',
-  },
-  {
-    method: 'get',
-    route: '/api/users/:id',
-    controller: UserController,
-    action: 'one',
-  },
+  // {
+  //   method: 'get',
+  //   route: '/api/users',
+  //   controller: UserController,
+  //   action: 'all',
+  // },
+  // {
+  //   method: 'get',
+  //   route: '/api/users/:id',
+  //   requireUser,
+  //   controller: UserController,
+  //   action: 'one',
+  // },
   {
     method: 'post',
     route: '/api/users',
     controller: UserController,
     action: 'save',
   },
-  {
-    method: 'delete',
-    route: '/api/users/:id',
-    controller: UserController,
-    action: 'remove',
-  },
+  // {
+  //   method: 'delete',
+  //   route: '/api/users/:id',
+  //   controller: UserController,
+  //   action: 'remove',
+  // },
 
   {
     method: 'get',
@@ -34,7 +36,7 @@ export const userRoute = [
   },
   {
     method: 'post',
-    route: '/api/users/forgotpassword',
+    route: '/api/users/forgot-password',
     controller: UserController,
     action: 'forgotPassword',
   },
@@ -43,5 +45,11 @@ export const userRoute = [
     route: '/api/users/resetpassword/:id/:passwordresetcode',
     controller: UserController,
     action: 'resetPassword',
+  },
+  {
+    method: 'get',
+    route: '/api/users/current-user',
+    controller: UserController,
+    action: 'me',
   },
 ];
