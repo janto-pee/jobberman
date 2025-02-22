@@ -90,14 +90,15 @@ export class LocationController {
         where: { id },
       });
       if (!location) {
-        return response.status(400).json('job not found');
+        response.status(400).json('job not found');
+        return;
       }
       location.latitude = request.body.latitude;
       location.longitude = request.body.longitude;
       const res = await this.locationRepository.save(location);
       response.status(201).json({
         status: true,
-        message: 'password changed successfully',
+        message: 'location changed successfully',
         data: res,
       });
       return;
@@ -118,7 +119,8 @@ export class LocationController {
       });
 
       if (!location) {
-        return response.status(400).send('location not found');
+        response.status(400).send('location not found');
+        return;
       }
       await this.locationRepository.remove(location);
       response.status(201).send('location deleted successfully');

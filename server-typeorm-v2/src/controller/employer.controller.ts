@@ -56,11 +56,12 @@ export class EmployeerController {
       });
 
       if (!company) {
-        return response
+        response
           .status(400)
           .send(
             'user with username does not exist, do you have an account with username?',
           );
+        return;
       }
       company.employer = [employer];
 

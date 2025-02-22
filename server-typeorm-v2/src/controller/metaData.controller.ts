@@ -91,7 +91,8 @@ export class MetadataController {
         where: { id },
       });
       if (!metaData) {
-        return response.status(400).json('meta data not found');
+        response.status(400).json('meta data not found');
+        return;
       }
       metaData.atsName = request.body.atsName;
       metaData.employersName = request.body.employersName;
@@ -119,7 +120,8 @@ export class MetadataController {
       });
 
       if (!metaData) {
-        return response.status(400).send('metaData not found');
+        response.status(400).send('metaData not found');
+        return;
       }
       await this.metadataRepository.remove(metaData);
       response.status(201).send('job metadata deleted successfully');

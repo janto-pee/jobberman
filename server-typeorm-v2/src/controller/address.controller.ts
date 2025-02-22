@@ -48,7 +48,12 @@ export class AddressController {
       if (!address) {
         return 'unregistered address';
       }
-      return address;
+      response.status(201).json({
+        status: true,
+        message: `address successfully fetched`,
+        data: address,
+      });
+      return;
     } catch (error) {
       response.status(500).json({
         status: false,
@@ -60,29 +65,31 @@ export class AddressController {
 
   async saveAddress(request: Request, response: Response) {
     try {
+      const authUser = response.locals.user;
+      if (!authUser) {
+        response.status(500).send('unauthorised, please login');
+        return;
+      }
+      const user = await this.userRepository.findOne({
+        where: { username: authUser.username },
+      });
+      if (!user) {
+        response.status(500).send('user not found');
+        return;
+      }
       const address = Object.assign(new Address(), {
         ...request.body,
       });
-      const user = await this.userRepository.findOne({
-        where: { username: request.params.username },
-      });
-
-      if (!user) {
-        response.status(500).json({
-          status: 'error',
-          message:
-            'user with username does not exist, do you have an account with username?',
-        });
-        return;
-      }
-      const location = Object.assign(new Location(), {
-        latitude: request.body.latitude,
-        longitude: request.body.longitude,
-      });
-
+      // save address
       const savedAddress = await this.addressRepository.save({
         ...address,
         user: user,
+      });
+
+      // save the location to its database table
+      const location = Object.assign(new Location(), {
+        latitude: request.body.latitude,
+        longitude: request.body.longitude,
       });
 
       await this.locationRepository.save({
@@ -107,12 +114,17 @@ export class AddressController {
 
   async updateAddress(request: Request, response: Response) {
     try {
-      const { username } = request.params;
+      const authUser = response.locals.user;
+      if (!authUser) {
+        response.status(500).send('unauthorised, please login');
+        return;
+      }
       const user = await this.userRepository.findOne({
-        where: { username },
+        where: { username: authUser.username },
       });
       if (!user) {
-        return response.status(400).json('user name not found');
+        response.status(500).send('user not found');
+        return;
       }
       const address = await this.addressRepository.findOne({
         relations: {
@@ -138,7 +150,7 @@ export class AddressController {
       const res = await this.addressRepository.save(address);
       response.status(201).json({
         status: true,
-        message: 'password changed successfully',
+        message: 'address changed successfully',
         data: res,
       });
       return;
@@ -151,19 +163,20 @@ export class AddressController {
     }
   }
 
-  async removeAddress(
-    request: Request<{ username: string }>,
-    response: Response,
-  ) {
+  async removeAddress(_, response: Response) {
     try {
-      const username = request.params.username;
+      const authUser = response.locals.user;
+      if (!authUser) {
+        response.status(500).send('unauthorised, please login');
+        return;
+      }
       const user = await this.userRepository.findOne({
-        where: { username },
+        where: { username: authUser.username },
       });
       if (!user) {
-        return response.status(400).send('user name not found');
+        response.status(500).send('user not found');
+        return;
       }
-
       const addressToRemove = await this.addressRepository.findOneBy({
         user: { id: user.id },
       });

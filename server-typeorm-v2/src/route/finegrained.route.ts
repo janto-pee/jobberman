@@ -27,7 +27,7 @@ export const finegrainedRoute = [
   },
 
   {
-    method: 'put',
+    method: 'delete',
     route: '/api/finegrained/:id',
     controller: FineGrainedController,
     action: 'removeFineGrained',

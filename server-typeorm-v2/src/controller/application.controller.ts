@@ -11,7 +11,11 @@ export class ApplicationController {
 
   async allApplication(_: Request, response: Response) {
     try {
-      const application = await this.applicationRepository.find();
+      const application = await this.applicationRepository.find({
+        relations: {
+          job: true,
+        },
+      });
       response.status(201).json({
         status: true,
         message: `user applications for this job post`,
@@ -52,21 +56,30 @@ export class ApplicationController {
 
   async saveApplication(request: Request, response: Response) {
     try {
+      // get applicant information
+      const authUser = response.locals.user;
+      console.log(authUser);
+      if (!authUser) {
+        response.status(500).send('unauthorised, please login to apply');
+        return;
+      }
+      const applicant = await this.applicantRepository.findOne({
+        where: { user: { username: authUser.username } },
+      });
+      if (!applicant) {
+        response.status(400).json('applicant not found');
+        return;
+      }
+      // get job information
       const { jobId } = request.params;
       const job = await this.jobRepository.findOne({
         where: { id: jobId },
       });
       if (!job) {
-        return response.status(400).json('job not found');
+        response.status(400).json('job not found');
+        return;
       }
-      const { applicantId } = request.params;
-      const applicant = await this.applicantRepository.findOne({
-        where: { id: applicantId },
-      });
-      if (!applicant) {
-        return response.status(400).json('applicant not found');
-      }
-
+      // check if applicant havent previously applied
       const checkapplication = await this.applicationRepository.findOne({
         where: {
           applicant: { id: applicant.id },
@@ -75,11 +88,10 @@ export class ApplicationController {
       });
 
       if (checkapplication) {
-        return response
-          .status(400)
-          .json('you cant apply to the same job twice');
+        response.status(400).json('you cant apply to the same job twice');
+        return;
       }
-
+      // having passed all checks, create application
       const application = Object.assign(new Application(), {
         ...request.body,
       });
@@ -103,14 +115,33 @@ export class ApplicationController {
     }
   }
 
-  async updateApplication(request: Request, response: Response) {
+  async updateApplication(
+    request: Request<{ jobId: string }>,
+    response: Response,
+  ) {
     try {
-      const { id } = request.params;
+      // get applicant information
+      const authUser = response.locals.user;
+      if (!authUser) {
+        response.status(500).send('unauthorised, please login to update');
+        return;
+      }
+      const applicant = await this.applicantRepository.findOne({
+        where: { user: { username: authUser.username } },
+      });
+      if (!applicant) {
+        response.status(400).json('applicant not found');
+        return;
+      }
       const application = await this.applicationRepository.findOne({
-        where: { id },
+        where: {
+          applicant: { id: applicant.id },
+          job: { id: request.params.jobId },
+        },
       });
       if (!application) {
-        return response.status(400).json('job not found');
+        response.status(400).json('job not found');
+        return;
       }
       application.application_text = request.body.application_text;
       application.cover_letter = request.body.cover_letter;
@@ -133,17 +164,33 @@ export class ApplicationController {
   }
 
   async removeApplication(
-    request: Request<{ id: string }>,
+    request: Request<{ jobId: string }>,
     response: Response,
   ) {
     try {
-      const id = request.params.id;
+      // get applicant information
+      const authUser = response.locals.user;
+      if (!authUser) {
+        response.status(500).send('unauthorised, please login to apply');
+        return;
+      }
+      const applicant = await this.applicantRepository.findOne({
+        where: { user: { username: authUser.username } },
+      });
+      if (!applicant) {
+        response.status(400).json('applicant not found');
+        return;
+      }
       const application = await this.applicationRepository.findOne({
-        where: { id },
+        where: {
+          applicant: { id: applicant.id },
+          job: { id: request.params.jobId },
+        },
       });
 
       if (!application) {
-        return response.status(400).send('application not found');
+        response.status(400).send('application not found');
+        return;
       }
       await this.applicationRepository.remove(application);
       response.status(201).send('address deleted successfully');

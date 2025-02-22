@@ -3,32 +3,32 @@ import { ApplicationController } from '../controller/application.controller';
 export const applicationRoute = [
   {
     method: 'post',
-    route: '/api/application/:jobId/:applicantId',
+    route: '/api/applications/:jobId',
     controller: ApplicationController,
     action: 'saveApplication',
   },
   {
     method: 'get',
-    route: '/api/application',
+    route: '/api/applications',
     controller: ApplicationController,
     action: 'allApplication',
   },
   {
     method: 'get',
-    route: '/api/application/:id',
+    route: '/api/applications/:jobId',
     controller: ApplicationController,
     action: 'oneApplication',
   },
   {
     method: 'put',
-    route: '/api/application/:id',
+    route: '/api/applications/:jobId',
     controller: ApplicationController,
     action: 'updateApplication',
   },
 
   {
-    method: 'put',
-    route: '/api/application/:id',
+    method: 'delete',
+    route: '/api/applications/:jobId',
     controller: ApplicationController,
     action: 'removeApplication',
   },

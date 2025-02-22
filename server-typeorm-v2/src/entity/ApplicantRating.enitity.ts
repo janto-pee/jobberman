@@ -4,15 +4,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
 } from 'typeorm';
+import { Job } from './Job.entity';
 
 @Entity()
 export class ApplicantRating {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  jobId: string;
+  @ManyToOne(() => Job, (job) => job.applications)
+  job: Job;
 
   @Column()
   RatingId: string;

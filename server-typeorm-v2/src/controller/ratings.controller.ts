@@ -75,7 +75,8 @@ export class RatingController {
         where: { id },
       });
       if (!rating) {
-        return response.status(400).json('rating not found');
+        response.status(400).json('rating not found');
+        return;
       }
       rating.ratings = request.body.ratings;
       rating.review_text = request.body.review_text;

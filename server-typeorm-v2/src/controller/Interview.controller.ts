@@ -110,7 +110,8 @@ export class InterviewController {
         where: { id },
       });
       if (!interview) {
-        return response.status(400).json('interview not found');
+        response.status(400).json('interview not found');
+        return;
       }
       interview.startTime = request.body.startTime;
       interview.timezone = request.body.timezone;
@@ -140,7 +141,8 @@ export class InterviewController {
       });
 
       if (!interview) {
-        return response.status(400).send('interview not found');
+        response.status(400).send('interview not found');
+        return;
       }
       await this.interviewRepository.remove(interview);
       response.status(201).send('interview deleted successfully');

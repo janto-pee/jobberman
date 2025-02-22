@@ -105,7 +105,8 @@ export class ProbationController {
         where: { id },
       });
       if (!probation) {
-        return response.status(400).send('probation not found');
+        response.status(400).send('probation not found');
+        return;
       }
 
       await this.probationRepository.remove(probation);

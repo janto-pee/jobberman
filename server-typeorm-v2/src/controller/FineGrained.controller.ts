@@ -74,7 +74,8 @@ export class FineGrainedController {
         where: { id },
       });
       if (!fineGrained) {
-        return response.status(400).json('fine grained for salary not found');
+        response.status(400).json('fine grained for salary not found');
+        return;
       }
       fineGrained.fixedOvertimePay = request.body.fixedOvertimePay;
       fineGrained.fixedOvertimeSalaryMinor = request.body.cover_letter;
@@ -84,7 +85,7 @@ export class FineGrainedController {
       const res = await this.finegrainedRepository.save(fineGrained);
       response.status(201).json({
         status: true,
-        message: 'password changed successfully',
+        message: 'fine grained salary changed successfully',
         data: res,
       });
       return;
@@ -108,7 +109,8 @@ export class FineGrainedController {
       });
 
       if (!fineGrained) {
-        return response.status(400).send('fineGrained not found');
+        response.status(400).send('fineGrained not found');
+        return;
       }
       await this.finegrainedRepository.remove(fineGrained);
       response.status(201).send('address deleted successfully');

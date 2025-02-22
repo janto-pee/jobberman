@@ -80,7 +80,8 @@ export class CompanyController {
         where: { id },
       });
       if (!company) {
-        return response.status(400).json('job not found');
+        response.status(400).json('job not found');
+        return;
       }
       company.company_name = request.body.company_name;
       company.about_us = request.body.about_us;
@@ -108,7 +109,8 @@ export class CompanyController {
       });
 
       if (!company) {
-        return response.status(400).send('company not found');
+        response.status(400).send('company not found');
+        return;
       }
       await this.companyRepository.remove(company);
       response.status(201).send('company deleted successfully');

@@ -182,17 +182,17 @@ export class UserController {
         !user.passwordResetCode ||
         user.passwordResetCode !== passwordresetcode
       ) {
-        return response.status(400).send('error resetting password');
+        response.status(400).send('error resetting password');
+        return;
       }
 
       if (!user.is_email_verified) {
-        return response.send(
-          'user not verified, please check your email to verify',
-        );
+        response.send('user not verified, please check your email to verify');
+        return;
       }
       user.passwordResetCode = null;
       user.hashed_password = password;
-      const savedUser = await this.userRepository.save(user);
+      await this.userRepository.save(user);
       const res = omit(
         user,
         'hashed_password',

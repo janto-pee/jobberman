@@ -1,10 +1,12 @@
 import AppDataSource from '../../data-source';
 import { Request, Response } from 'express';
 import { ApplicantRating } from '../entity/ApplicantRating.enitity';
+import { Job } from '../entity/Job.entity';
 
 export class ApplicantRatingController {
   private applicationRatingRepository =
     AppDataSource.getRepository(ApplicantRating);
+  private jobRepository = AppDataSource.getRepository(Job);
 
   async allApplicationRating(_: Request, response: Response) {
     try {
@@ -48,12 +50,21 @@ export class ApplicantRatingController {
 
   async saveApplicationRating(request: Request, response: Response) {
     try {
-      const address = Object.assign(new ApplicantRating(), {
+      const { jobId } = request.params;
+      const job = await this.jobRepository.findOne({
+        where: { id: jobId },
+      });
+      if (!job) {
+        response.status(400).json('job not found');
+        return;
+      }
+      const rating = Object.assign(new ApplicantRating(), {
         ...request.body,
       });
       const savedApplicationRating =
         await this.applicationRatingRepository.save({
-          ...address,
+          ...rating,
+          job: job,
         });
 
       response.status(201).json({

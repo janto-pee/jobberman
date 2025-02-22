@@ -60,7 +60,8 @@ export class JobController {
         },
       });
       if (!employer) {
-        return response.status(400).json('employer not found');
+        response.status(400).json('employer not found');
+        return;
       }
       const job = Object.assign(new Job(), {
         ...request.body,
@@ -104,7 +105,8 @@ export class JobController {
         where: { id },
       });
       if (!job) {
-        return response.status(400).json('job not found');
+        response.status(400).json('job not found');
+        return;
       }
       job.complimentary_qualification =
         request.body.complimentary_qualification;
@@ -136,7 +138,8 @@ export class JobController {
       });
 
       if (!job) {
-        return response.status(400).send('job not found');
+        response.status(400).send('job not found');
+        return;
       }
       await this.jobRepository.remove(job);
       response.status(201).send('job post deleted successfully');
