@@ -1,15 +1,15 @@
 import { serverSetup } from '..';
-import { TestDataSource } from '../../data-source-test';
+import { AppDataSource } from '../../data-source';
 import supertest = require('supertest');
 
 describe('user', () => {
   beforeEach(async () => {
-    await TestDataSource.initialize();
+    await AppDataSource.initialize();
   });
 
   /* Closing database connection after each test. */
   afterEach(async () => {
-    if (TestDataSource.isInitialized) TestDataSource.destroy();
+    if (AppDataSource.isInitialized) AppDataSource.destroy();
   });
 
   describe('user', () => {

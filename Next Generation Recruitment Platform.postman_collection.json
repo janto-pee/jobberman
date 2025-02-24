@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "a3969ff4-2fb1-429e-8967-28e7de4954e5",
-		"name": "Next Generation Recruitment Platform",
+		"name": "Jobberman Recruitment Platform",
 		"description": "# Introduction\n\nThis collection will allow you to connect to [Next Generation Recruitment Platform](https://github.com/janto-pee/next-generation-recruitment-platform), which enables Employers, Company and Businesses - to post job vacancies and recieve applications from job seekers. This guide will help you to **generate access tokens**, **publish jobs**, **schedule interviews** and **manage an receive job ratings.**\n\nThis token will allow you to manage permissions and objects you manage, you can generate it by creating a session. Afterwards, make sure to select the environment in Postman and paste the resulting token under the `access_token` variable.\n\n# To Get Started\n\nTo test out the Next Generation Recruitment API collection, we recommend giving this guide a look before getting started. After completing the guide, try our sample requests in the Delegated and Application folders.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "20491153",
