@@ -3,7 +3,7 @@ import { prisma } from "../scripts";
 import { userService } from "../schema/user.schema";
 import { comparePassword, hashPassword } from "../utils/hashPasword";
 
-export async function createAddressService(input: userService) {
+export async function createUserService(input: userService) {
   const newpassword = await hashPassword(input.hashed_password);
   const newPayload = omit(input, "confirm_password");
   console.log("...", newPayload, "hashed_password: ", newpassword);
@@ -16,7 +16,7 @@ export async function createAddressService(input: userService) {
   return user;
 }
 
-export async function findAddressService(query: string) {
+export async function findUserService(query: string) {
   const user = await prisma.user.findUnique({
     where: {
       id: query,
@@ -34,7 +34,7 @@ export async function findEmailService(query: string) {
   return user;
 }
 
-export async function verifyAddressService(query: string) {
+export async function verifyUserService(query: string) {
   const updateUser = await prisma.user.update({
     where: {
       id: query,
@@ -46,7 +46,7 @@ export async function verifyAddressService(query: string) {
   return updateUser;
 }
 
-export async function forgotAddressService(query: string, update: string) {
+export async function forgotUserService(query: string, update: string) {
   const updateUser = await prisma.user.update({
     where: {
       email: query,
@@ -90,7 +90,7 @@ export async function validateUser(email: string, password: string) {
   return false;
 }
 
-// export async function updateAddressService(query: string, update: any) {
+// export async function updateUserService(query: string, update: any) {
 //   const updateUser = await prisma.user.update({
 //     where: {
 //       username: query,
@@ -100,7 +100,7 @@ export async function validateUser(email: string, password: string) {
 //   return updateUser;
 // }
 
-// export async function deleteAddressService(query: any) {
+// export async function deleteUserService(query: any) {
 //   const deleteUser = await prisma.user.delete({
 //     where: {
 //       email: query,

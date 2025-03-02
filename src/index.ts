@@ -1,79 +1,29 @@
-import express, { NextFunction } from 'express';
-import bodyParser from 'body-parser';
-import { Request, Response } from 'express';
-import AppDataSource from '../data-source';
-import { Routes } from './routes';
-import deserializeUser from './middleware/deserializeUser';
-import config from 'config';
+import express from "express";
+import config from "config";
+import { prisma } from "./scripts";
+import router from "./routes";
+import deserializeUser from "./middleware/deserializeUser";
 
-export const serverSetup = async () => {
-  // create express app
+async function main() {
   const app = express();
-  app.use(bodyParser.json());
+
+  app.use(express.json());
   app.use(deserializeUser);
+  app.use(router);
 
-  // register express routes from defined application routes
-  Routes.forEach((route) => {
-    (app as any)[route.method](
-      route.route,
-      (req: Request, res: Response, next: NextFunction) => {
-        const result = new (route.controller as any)()[route.action](
-          req,
-          res,
-          next,
-        );
-        if (result instanceof Promise) {
-          result.then((result) =>
-            result !== null && result !== undefined
-              ? res.send(result)
-              : undefined,
-          );
-        } else if (result !== null && result !== undefined) {
-          res.json(result);
-        }
-      },
-    );
+  const port = config.get<number>("port");
+
+  app.listen(port, () => {
+    console.log(`listening on http://localhost:${port}`);
   });
+}
 
-  // setup express app here
-  // ...
-
-  // start express server
-  const port = config.get<number>('port');
-  app.listen(port);
-
-  // insert new users for test
-  // await AppDataSource.manager.save(
-  //   AppDataSource.manager.create(Auth, {
-  //     userId: 'Timber',
-  //     user_agent: ""
-  //     age: 27,
-  //   }),
-  // );
-
-  // await AppDataSource.manager.save(
-  //   AppDataSource.manager.create(User, {
-  //     username: 'laka4',
-  //     first_name: 'laka4',
-  //     hashed_password: 'abcd',
-  //     last_name: 'bosch',
-  //     email: 'lakabosch@gmail.com4',
-  //     address: 'address name',
-  //     address2: '',
-  //     city: 'cityname',
-  //     country: 'country name',
-  //   }),
-  // );
-  // AppDataSource.manager.create(Auth, {
-  //   userId: user,
-  //   user_agent: '',
-  //   age: 27,
-  // });
-
-  console.log(
-    `Express server has started on port ${port}. Open http://localhost:${port}/api/users to see results`,
-  );
-};
-AppDataSource.initialize()
-  .then(serverSetup)
-  .catch((error) => console.log(error));
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

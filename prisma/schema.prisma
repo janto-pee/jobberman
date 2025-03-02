@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// schema.prisma
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  username          String    @unique
+  hashed_password   String    @db.VarChar(255)
+  first_name        String    @db.VarChar(255)
+  last_name         String    @db.VarChar(255)
+  email             String    @unique
+  is_email_verified Boolean   @default(false)
+  verificationCode  String?
+  passwordResetCode String?
+  address           Address?
+  job               Job[]
+  session           Session[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  company           Company?
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  address   String   @db.VarChar(255)
+  website   String   @db.VarChar(255)
+  size      String   @db.VarChar(255)
+  country   String   @db.VarChar(255)
+  user      User     @relation(fields: [username], references: [username])
+  username  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id         String   @id @default(uuid())
+  user_agent String   @db.VarChar(255)
+  client_ip  String   @db.VarChar(255)
+  is_blocked Boolean  @default(false)
+  valid      Boolean  @default(true)
+  user       User     @relation(fields: [username], references: [username])
+  username   String
+  createdAt  DateTime @default(now())
+}
+
+model Job {
+  id                          String                 @id @default(uuid())
+  user                        User                   @relation(fields: [username], references: [username])
+  username                    String                 @unique
+  user_id                     String                 @db.VarChar(255)
+  title                       String                 @db.VarChar(255)
+  subtitle                    String                 @db.VarChar(255)
+  description                 String                 @db.VarChar(255)
+  qualification               String                 @db.VarChar(255)
+  complimentary_qualification String                 @db.VarChar(255)
+  job_type                    String                 @db.VarChar(255)
+  visa_sponsorship            String                 @db.VarChar(255)
+  remote_posible              String                 @db.VarChar(255)
+  preferred_timezones         String                 @db.VarChar(255)
+  location                    String                 @db.VarChar(255)
+  date_posted                 String                 @db.VarChar(255)
+  relocation                  String                 @db.VarChar(255)
+  skills                      String                 @db.VarChar(255)
+  employer_hiring_contact     String                 @db.VarChar(255)
+  descriptionFormatting       String                 @db.VarChar(255)
+  probationaryPeriod          String                 @db.VarChar(255)
+  salary                      Salary?
+  metadata                    MetaData?
+  hasProbationaryPeriod       HasProbationaryPeriod?
+  createdAt                   DateTime               @default(now())
+  updatedAt                   DateTime               @updatedAt
+}
+
+model Address {
+  id                  String @db.VarChar(255)
+  user                User   @relation(fields: [username], references: [username])
+  username            String @unique
+  street              String @db.VarChar(255)
+  street2             String @db.VarChar(255)
+  city                String @db.VarChar(255)
+  state_province_code String @db.VarChar(255)
+  state_province_name String @db.VarChar(255)
+  postal_code         String @db.VarChar(255)
+  country_code        String @db.VarChar(255)
+  latitude            Int
+  longitude           Int
+  country             String @db.VarChar(255)
+}
+
+model Salary {
+  id                           String                        @id @default(uuid())
+  currency                     String                        @db.VarChar(255)
+  maximumMinor                 String                        @db.VarChar(255)
+  minimumMinor                 String                        @db.VarChar(255)
+  period                       String                        @db.VarChar(255)
+  job                          Job                           @relation(fields: [jobId], references: [id])
+  jobId                        String                        @unique
+  fineGrainedSalaryInformation FineGrainedSalaryInformation?
+  taskBasedSalaryInformation   TaskBasedSalaryInformation?
+}
+
+model FineGrainedSalaryInformation {
+  id                       String  @id @default(uuid())
+  totalSalaryMinor         String  @db.VarChar(255)
+  workingHours             Int
+  totalOvertimeHours       Int
+  statutoryOvertimeHours   Int
+  fixedOvertimeSalaryMinor String  @db.VarChar(255)
+  fixedOvertimePay         Boolean
+  salary                   Salary  @relation(fields: [salaryId], references: [id])
+  salaryId                 String  @unique
+}
+
+model TaskBasedSalaryInformation {
+  id                String @id @default(uuid())
+  taskLengthMinutes String @db.VarChar(255)
+  taskDescription   String @db.VarChar(255)
+  salary            Salary @relation(fields: [salaryId], references: [id])
+  salaryId          String @unique
+}
+
+model HasProbationaryPeriod {
+  id     String  @id @default(uuid())
+  period String
+  status Boolean
+  job    Job     @relation(fields: [jobId], references: [id])
+  jobId  String  @unique
+}
+
+model MetaData {
+  id            String @id @default(uuid())
+  atsName       String @db.VarChar(255)
+  employersName String @db.VarChar(255)
+  job           Job    @relation(fields: [job_id], references: [id])
+  job_id        String @unique
+}

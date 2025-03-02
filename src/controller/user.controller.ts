@@ -1,368 +1,184 @@
-import AppDataSource from '../../data-source';
-import { Request, Response } from 'express';
-import { User } from '../entity/User.entity';
-import sendEmail from '../utils/sendemail';
-import log from '../utils/logger';
-import { customAlphabet } from 'nanoid';
+import { Request, Response } from "express";
+import {
+  createUserService,
+  findEmailService,
+  findUserService,
+  forgotUserService,
+  passwordResetService,
+  verifyUserService,
+} from "../service/user.service";
+
 import {
   createUserInput,
   forgotPasswordInput,
   resetPasswordInput,
-  verifyParam,
-} from '../schema/user.schema';
-import { omit } from 'lodash';
-import { Applicant } from '../entity/Applicants.entity';
-import { Employer } from '../entity/Employer.entity';
+  verifyUserInput,
+} from "../schema/user.schema";
+import { v4 } from "uuid";
+import sendEmail from "../utils/sendEmail";
+import { omit } from "lodash";
 
-export class UserController {
-  private userRepository = AppDataSource.getRepository(User);
-  private applicantRepository = AppDataSource.getRepository(Applicant);
-  private employerRepository = AppDataSource.getRepository(Employer);
+export async function CreateUserHandler(
+  req: Request<{}, {}, createUserInput["body"]>,
+  res: Response
+) {
+  try {
+    const body = req.body;
+    const verification = v4();
+    const user = await createUserService({
+      ...body,
+      verificationCode: verification,
+    });
+    await sendEmail({
+      from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
+      to: user.email,
+      subject: "Kindly verify your email ✔",
+      text: `click on the link http://localhost:1337/api/users/verify/${user.id}/${user.verificationCode}`,
+      html: `<b>Hello, click on the link http://localhost:1337/api/users/verify/${user.id}/${user.verificationCode}</b>`,
+    });
+    const savedUser = omit(
+      user,
+      "hashed_password",
+      "verificationCode",
+      "passwordResetCode"
+    );
 
-  async save(
-    request: Request<{}, {}, createUserInput['body']>,
-    response: Response,
-  ) {
-    try {
-      const user = Object.assign(new User(), {
-        ...request.body,
-      });
-
-      const savedUser = await this.userRepository.save(user);
-      // save aplicnt data too
-      const applicant = Object.assign(new Applicant(), {
-        user: user,
-        isActive: true,
-      });
-      const employer = Object.assign(new Employer(), {
-        user: user,
-        isActive: true,
-      });
-
-      let savedEmployerorApplicant;
-      if (request.body.role == 'employer') {
-        savedEmployerorApplicant = await this.employerRepository.save({
-          ...employer,
-          user: user,
-        });
-      } else {
-        savedEmployerorApplicant = await this.applicantRepository.save({
-          ...applicant,
-          user: user,
-        });
-      }
-      const res = omit(
-        savedUser,
-        'hashed_password',
-        'verificationCode',
-        'passwordResetCode',
-      );
-
-      await sendEmail({
-        from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
-        to: user.email,
-        subject: 'Kindly verify your email ✔',
-        text: `click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.verificationCode}`,
-        html: `<b>Hello, click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.verificationCode}</b>`,
-      });
-
-      response.status(201).json({
-        status: true,
-        message: `user successfully created click on the link http://localhost:1337/api/users/verify/${savedUser.id}/${savedUser.verificationCode}`,
-        data: res,
-      });
-      return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async verify(request: Request<verifyParam>, response: Response) {
-    try {
-      const { id, verificationcode } = request.params;
-
-      const user = await this.userRepository.findOne({
-        where: { id },
-      });
-
-      if (!user) {
-        return 'unregistered user';
-      }
-
-      if (user.is_email_verified) {
-        return 'user already verified';
-      }
-
-      if (user.verificationCode === verificationcode) {
-        user.is_email_verified = true;
-        user.verificationCode = null;
-        await this.userRepository.save(user);
-        response.status(201).json({ status: 'user registered successfully' });
-        return;
-      }
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async forgotPassword(
-    request: Request<{}, {}, forgotPasswordInput['body']>,
-    response: Response,
-  ) {
-    try {
-      const nanoid = customAlphabet('1234567890abcdef', 10);
-      const { email } = request.body;
-
-      const user = await this.userRepository.findOne({
-        where: { email },
-      });
-
-      if (!user) {
-        log.debug('user not found');
-        return;
-      }
-
-      if (!user.is_email_verified) {
-        response.send('user not verified, please check your email to verify');
-        return;
-      }
-
-      const pRC = nanoid();
-      user.passwordResetCode = pRC;
-      const savedUser = await this.userRepository.save(user);
-
-      await sendEmail({
-        from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
-        to: user.email,
-        subject: 'Kindly verify your email ✔',
-        text: `click on the link http://localhost:1337/api/users/resetpassword/${savedUser.id}/${savedUser.passwordResetCode}`,
-        html: `<b>Hello, click on the link http://localhost:1337/api/users/resetpassword/${savedUser.id}/${savedUser.passwordResetCode}</b>`,
-      });
-
-      response.status(201).json({
-        status: true,
-        message: `check your email to reset password  http://localhost:1337/api/users/resetpassword/${savedUser.id}/${savedUser.passwordResetCode}`,
-      });
-      return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async resetPassword(
-    request: Request<
-      resetPasswordInput['params'],
-      {},
-      resetPasswordInput['body']
-    >,
-    response: Response,
-  ) {
-    try {
-      const { id, passwordresetcode } = request.params;
-      const { password } = request.body;
-
-      const user = await this.userRepository.findOne({
-        where: { id },
-      });
-
-      if (
-        !user ||
-        !user.passwordResetCode ||
-        user.passwordResetCode !== passwordresetcode
-      ) {
-        response.status(400).send('error resetting password');
-        return;
-      }
-
-      if (!user.is_email_verified) {
-        response.send('user not verified, please check your email to verify');
-        return;
-      }
-      user.passwordResetCode = null;
-      user.hashed_password = password;
-      await this.userRepository.save(user);
-      const res = omit(
-        user,
-        'hashed_password',
-        'verificationCode',
-        'passwordResetCode',
-        'password_changed_at',
-      );
-
-      response.status(201).json({
-        status: true,
-        message: 'password changed successfully',
-        data: res,
-      });
-      return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async remove(request: Request<{ id: string }>, response: Response) {
-    try {
-      const id = request.params.id;
-
-      const userToRemove = await this.userRepository.findOneBy({ id });
-
-      if (!userToRemove) {
-        return 'this user not exist';
-      }
-
-      await this.userRepository.remove(userToRemove);
-
-      response.status(201).send('user deleted successfully');
-      return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async updateUser(request: Request, response: Response) {
-    try {
-      const user = response.locals.user;
-      if (!user) {
-        response.status(500).json({
-          status: false,
-          message: 'unauthorised',
-        });
-        return;
-      }
-      user.first_name = request.body.first_name;
-      user.last_name = request.body.last_name;
-      const savedUser = await this.userRepository.save(user);
-
-      response
-        .status(201)
-        .json({ status: 'user updated successfully', data: savedUser });
-      return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
-    }
-  }
-
-  async me(_, response: Response) {
-    const user = response.locals.user;
-    if (!user) {
-      response.status(500).json({
-        status: false,
-        message: 'unauthorised',
-      });
-      return;
-    }
-    response.send(user);
+    res.status(201).json({
+      status: true,
+      message: `User Successfully Created http://localhost:1337/api/users/verify/${user.id}/${user.verificationCode}`,
+      data: savedUser,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
     return;
   }
+}
 
-  // OTHERS
+export async function verifyUserHandler(
+  req: Request<verifyUserInput["params"]>,
+  res: Response
+) {
+  try {
+    const { id, verificationcode } = req.params;
 
-  async all(_: Request, response: Response) {
-    try {
-      const users = await this.userRepository.find();
-      response.status(201).json({
-        status: true,
-        message: `users successfully fetched`,
-        data: users,
-      });
+    const user = await findUserService(id);
+    if (!user) {
+      res.send("could not find user");
       return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
     }
+    if (user.is_email_verified) {
+      res.send("user already verified");
+      return;
+    }
+
+    if (user.verificationCode === verificationcode) {
+      await verifyUserService(id);
+
+      res.status(201).send("user successfully verified");
+      return;
+    }
+    res.status(201).json({
+      status: true,
+      message: "User now verified",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
   }
+}
 
-  async one(request: Request, response: Response) {
-    try {
-      const id = request.params.id;
-
-      const user = await this.userRepository.findOne({
-        where: { id },
-      });
-
-      if (!user) {
-        return 'unregistered user';
-      }
-      const res = omit(
-        user,
-        'hashed_password',
-        'verificationCode',
-        'passwordResetCode',
-        'password_changed_at',
-      );
-      response.status(201).json({
-        status: true,
-        message: `user successfully fetched`,
-        data: res,
-      });
+export async function forgotPasswordHandler(
+  req: Request<{}, {}, forgotPasswordInput["body"]>,
+  res: Response
+) {
+  try {
+    const { email } = req.body;
+    const user = await findEmailService(email);
+    if (!user) {
+      res.send("could not find user");
       return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
     }
+    if (!user.is_email_verified) {
+      res.send("please verify first");
+      return;
+    }
+    const pRC = v4();
+    const updatedUser = await forgotUserService(email, pRC);
+    await sendEmail({
+      from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
+      to: user.email,
+      subject: "Kindly verify your email ✔",
+      // text: `verification code: ${user.verificationCode}. username: ${user.username}`,
+      text: `click on the link http://localhost:1337/api/users/passwordreset/${updatedUser.id}/${pRC}`,
+      html: "<b>Hello world?</b>",
+    });
+
+    res.status(201).json({
+      status: true,
+      message: `please check your email to reset password http://localhost:1337/api/users/passwordreset/${updatedUser.id}/${pRC}`,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
   }
-  async removeUser(request: Request<{ username: string }>, response: Response) {
-    try {
-      const username = request.params.username;
+}
 
-      const userToRemove = await this.userRepository.findOneBy({
-        username: username,
-      });
-      if (userToRemove) {
-        return 'this user does not exist';
-      }
-      const applicantToRemove = await this.applicantRepository.findOneBy({
-        user: { username },
-      });
-      if (applicantToRemove) {
-        await this.applicantRepository.remove(applicantToRemove);
-      } else {
-        const employerToRemove = await this.employerRepository.findOneBy({
-          user: { username },
-        });
-        await this.employerRepository.remove(employerToRemove);
-      }
-
-      await this.userRepository.remove(userToRemove);
-
-      response.status(201).send('applicant deleted successfully');
+export async function passwordResetHandler(
+  req: Request<resetPasswordInput["params"], {}, resetPasswordInput["body"]>,
+  res: Response
+) {
+  try {
+    const { id, passwordresetcode } = req.params;
+    const { password } = req.body;
+    const user = await findUserService(id);
+    if (
+      !user ||
+      !user.passwordResetCode ||
+      user.passwordResetCode !== passwordresetcode
+    ) {
+      res.sendStatus(400);
       return;
-    } catch (error) {
-      response.status(500).json({
-        status: false,
-        message: 'server error',
-        error: error,
-      });
     }
+
+    const updatedUser = await passwordResetService(id, password);
+    const savedUser = omit(
+      updatedUser,
+      "hashed_password",
+      "verificationCode",
+      "passwordResetCode"
+    );
+    res.status(201).json({
+      status: true,
+      message: "password changed successfully",
+      data: savedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function getCurrentUserHandler(_: Request, res: Response) {
+  try {
+    res.status(201).send(res.locals.user);
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
   }
 }

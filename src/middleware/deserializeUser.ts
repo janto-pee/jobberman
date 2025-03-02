@@ -1,36 +1,36 @@
-import { NextFunction, Request, Response } from 'express';
-import { get } from 'lodash';
-import { verifyJwt } from '../utils/jwt';
-import { reIssueAccessToken } from './reIssueAccessToken';
+import { NextFunction, Request, Response } from "express";
+import { get } from "lodash";
+import { verifyJwt } from "../utils/jwt";
+import { reIssueAccessToken } from "../service/session.service";
 
 const deserializeUser = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
-  const accessToken = get(req, 'headers.authorization', '').replace(
+  const accessToken = get(req, "headers.authorization", "").replace(
     /^Bearer\s/,
-    '',
+    ""
   );
 
   if (!accessToken) {
     return next();
   }
 
-  const { decoded, expired } = verifyJwt(accessToken, 'accessTokenPublic');
+  const { decoded, expired } = verifyJwt(accessToken, "accessTokenPublic");
 
   if (decoded) {
     res.locals.user = decoded;
   }
-  const refreshToken = get(req, 'headers.x-refresh') as string;
+  const refreshToken = get(req, "headers.x-refresh") as string;
 
   if (expired && refreshToken) {
     const newAccessToken = await reIssueAccessToken(refreshToken);
 
     if (newAccessToken) {
-      res.setHeader('x-access-token', newAccessToken as string);
+      res.setHeader("x-access-token", newAccessToken as string);
     }
-    const result = verifyJwt(newAccessToken as string, 'accessTokenPublic');
+    const result = verifyJwt(newAccessToken as string, "accessTokenPublic");
     res.locals.user = result.decoded;
 
     return next();

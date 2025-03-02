@@ -1,0 +1,18 @@
+-- Job
+-- GET - Search Location
+-- GET - Get Job Filter
+-- GET - Search Job
+-- GET - Search Job By Location
+-- GET - Get Job Details
+-- Comapny
+-- GET - Search Company Location
+-- GET - Search Comapny
+-- GET - Get Company Details V2
+-- GET - Get Company Details (Deprecated)
+-- Salaries
+-- GET - salaries/auto-complete
+-- GET - salaries/location
+-- GET - salaries/filters
+-- GET - salaries/search
+-- GET - salaries/details
+-- GET - salaries/report
