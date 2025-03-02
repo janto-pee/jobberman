@@ -2,7 +2,7 @@ import { object, string, TypeOf, number, boolean } from "zod";
 
 const fgsInput = object({
   totalSalaryMinor: string({ required_error: `total salary is required` }),
-  workingHours: string({ required_error: `working hours is required` }),
+  workingHours: number({ required_error: `working hours is required` }),
   totalOvertimeHours: number({
     required_error: `total overtime hour is required`,
   }),
@@ -12,7 +12,7 @@ const fgsInput = object({
   fixedOvertimeSalaryMinor: string({ required_error: `country is required` }),
   fixedOvertimePay: boolean({
     required_error: `country is required`,
-  }).optional(),
+  }),
   salaryId: string({ required_error: `salary is required` }),
 });
 

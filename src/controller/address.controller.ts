@@ -1,22 +1,4 @@
 import { Request, Response } from "express";
-import {
-  createUserService,
-  findEmailService,
-  findUserService,
-  forgotUserService,
-  passwordResetService,
-  verifyUserService,
-} from "../service/user.service";
-
-import {
-  createUserInput,
-  forgotPasswordInput,
-  resetPasswordInput,
-  verifyUserInput,
-} from "../schema/user.schema";
-import { v4 } from "uuid";
-import sendEmail from "../utils/sendEmail";
-import { omit } from "lodash";
 import { createAddressInput } from "../schema/address.schema";
 import {
   createAddressService,

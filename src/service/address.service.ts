@@ -1,6 +1,4 @@
-import { omit } from "lodash";
 import { prisma } from "../scripts";
-import { userService } from "../schema/user.schema";
 import { addressInput } from "../schema/address.schema";
 
 export async function createAddressService(input: addressInput) {
