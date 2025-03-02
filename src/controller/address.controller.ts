@@ -1,110 +1,127 @@
+import { Request, Response } from "express";
+import {
+  createUserService,
+  findEmailService,
+  findUserService,
+  forgotUserService,
+  passwordResetService,
+  verifyUserService,
+} from "../service/user.service";
+
+import {
+  createUserInput,
+  forgotPasswordInput,
+  resetPasswordInput,
+  verifyUserInput,
+} from "../schema/user.schema";
+import { v4 } from "uuid";
+import sendEmail from "../utils/sendEmail";
 import { omit } from "lodash";
-import { prisma } from "../scripts";
-import { userService } from "../schema/user.schema";
-import { comparePassword, hashPassword } from "../utils/hashPasword";
+import { createAddressInput } from "../schema/address.schema";
+import {
+  createAddressService,
+  deleteAddressService,
+  findAddressService,
+  updateAddressService,
+} from "../service/address.service";
 
-export async function createAddressService(input: userService) {
-  const newpassword = await hashPassword(input.hashed_password);
-  const newPayload = omit(input, "confirm_password");
-  console.log("...", newPayload, "hashed_password: ", newpassword);
-  const user = await prisma.user.create({
-    data: {
-      ...newPayload,
-      hashed_password: newpassword,
-    },
-  });
-  return user;
-}
+export async function CreateAddressHandler(
+  req: Request<{}, {}, createAddressInput["body"]>,
+  res: Response
+) {
+  try {
+    const body = req.body;
 
-export async function findAddressService(query: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: query,
-    },
-  });
-  return user;
-}
+    const address = await createAddressService({
+      ...body,
+    });
 
-export async function findEmailService(query: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: query,
-    },
-  });
-  return user;
-}
-
-export async function verifyAddressService(query: string) {
-  const updateUser = await prisma.user.update({
-    where: {
-      id: query,
-    },
-    data: {
-      is_email_verified: true,
-    },
-  });
-  return updateUser;
-}
-
-export async function forgotAddressService(query: string, update: string) {
-  const updateUser = await prisma.user.update({
-    where: {
-      email: query,
-    },
-    data: {
-      passwordResetCode: update,
-    },
-  });
-  return updateUser;
-}
-
-export async function passwordResetService(query: string, update: string) {
-  const newpassword = await hashPassword(update);
-  const updateUser = await prisma.user.update({
-    where: {
-      id: query,
-    },
-    data: {
-      hashed_password: newpassword,
-      passwordResetCode: null,
-    },
-  });
-  return updateUser;
-}
-
-export async function validateUser(email: string, password: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-  });
-
-  if (!user || user.hashed_password === null) return false;
-
-  const match = await comparePassword(password, user.hashed_password);
-
-  if (match) {
-    return user;
+    res.status(201).json({
+      status: true,
+      message: `ddress Successfully Created`,
+      data: address,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+    return;
   }
-
-  return false;
 }
 
-// export async function updateAddressService(query: string, update: any) {
-//   const updateUser = await prisma.user.update({
-//     where: {
-//       username: query,
-//     },
-//     data: update,
-//   });
-//   return updateUser;
-// }
+export async function findAddressHandler(
+  req: Request<{ id: string }>,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
 
-// export async function deleteAddressService(query: any) {
-//   const deleteUser = await prisma.user.delete({
-//     where: {
-//       email: query,
-//     },
-//   });
-//   return deleteUser;
-// }
+    const address = await findAddressService(id);
+    if (!address) {
+      res.send("could not find user's address");
+      return;
+    }
+
+    res.status(201).json({
+      status: true,
+      message: "User address found",
+      address: address,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function updateAddressHandler(
+  req: Request<{ id: string }, {}, createAddressInput["body"]>,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
+    const body = req.body;
+    const address = await findAddressService(id);
+    if (!address) {
+      res.sendStatus(400);
+      return;
+    }
+
+    const updatedAddress = await updateAddressService(id, body);
+
+    res.status(201).json({
+      status: true,
+      message: "password changed successfully",
+      data: updatedAddress,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function deleteAddressHandler(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+
+    const address = await deleteAddressService(id);
+    res.status(201).json({
+      status: true,
+      message: `Address Successfully Deleted`,
+      data: address,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+  }
+}

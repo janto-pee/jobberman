@@ -84,7 +84,7 @@ model Job {
 }
 
 model Address {
-  id                  String @db.VarChar(255)
+  id                  String @id @default(uuid())
   user                User   @relation(fields: [username], references: [username])
   username            String @unique
   street              String @db.VarChar(255)

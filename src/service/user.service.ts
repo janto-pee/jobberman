@@ -6,7 +6,6 @@ import { comparePassword, hashPassword } from "../utils/hashPasword";
 export async function createUserService(input: userService) {
   const newpassword = await hashPassword(input.hashed_password);
   const newPayload = omit(input, "confirm_password");
-  console.log("...", newPayload, "hashed_password: ", newpassword);
   const user = await prisma.user.create({
     data: {
       ...newPayload,
