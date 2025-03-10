@@ -17,6 +17,24 @@ import {
 import { v4 } from "uuid";
 import sendEmail from "../utils/sendEmail";
 import { omit } from "lodash";
+export async function getCurrentUserHandler(_: Request, res: Response) {
+  try {
+    res.status(201).send(res.locals.user);
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+  }
+}
+
+/**
+ *
+ * ! MUTATIONS
+ *
+ */
 
 export async function CreateUserHandler(
   req: Request<{}, {}, createUserInput["body"]>,
@@ -166,19 +184,6 @@ export async function passwordResetHandler(
     res.status(500).json({
       status: false,
       message: "server error",
-    });
-  }
-}
-
-export async function getCurrentUserHandler(_: Request, res: Response) {
-  try {
-    res.status(201).send(res.locals.user);
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
     });
   }
 }

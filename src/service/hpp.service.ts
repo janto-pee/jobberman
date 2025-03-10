@@ -2,19 +2,25 @@ import { omit } from "lodash";
 import { prisma } from "../scripts";
 import { hppInput } from "../schema/hpp.schema";
 
-export async function createHPPService(input: hppInput) {
-  const user = await prisma.hasProbationaryPeriod.create({
-    data: {
-      ...input,
+export async function findHPPService(query: string) {
+  const user = await prisma.hasProbationaryPeriod.findUnique({
+    where: {
+      id: query,
     },
   });
   return user;
 }
 
-export async function findHPPService(query: string) {
-  const user = await prisma.hasProbationaryPeriod.findUnique({
-    where: {
-      id: query,
+/**
+ *
+ * ! MUTATIONS
+ *
+ */
+
+export async function createHPPService(input: hppInput) {
+  const user = await prisma.hasProbationaryPeriod.create({
+    data: {
+      ...input,
     },
   });
   return user;

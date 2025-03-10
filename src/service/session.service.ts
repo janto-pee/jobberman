@@ -4,18 +4,24 @@ import { signJwt, verifyJwt } from "../utils/jwt";
 import { findUserService } from "./user.service";
 import config from "config";
 
-export async function createSession(input: any) {
-  const session = await prisma.session.create({
-    data: input,
-  });
-  return session;
-}
-
 export async function findSession(query: string) {
   const session = await prisma.session.findUnique({
     where: {
       id: query,
     },
+  });
+  return session;
+}
+
+/**
+ *
+ * ! MUTATIONS
+ *
+ */
+
+export async function createSession(input: any) {
+  const session = await prisma.session.create({
+    data: input,
   });
   return session;
 }

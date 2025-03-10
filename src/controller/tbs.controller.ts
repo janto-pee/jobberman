@@ -7,6 +7,37 @@ import {
   updateTBSService,
 } from "../service/tbs.service";
 
+export async function findTBSHandler(
+  req: Request<{ id: string }>,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
+
+    const address = await findTBSService(id);
+    if (!address) {
+      res.send("could not find user's address");
+      return;
+    }
+
+    res.status(201).json({
+      status: true,
+      message: "User address found",
+      address: address,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+/**
+ *
+ * ! MUTATIONS
+ *
+ */
+
 export async function CreateTBSHandler(
   req: Request<{}, {}, createTBS["body"]>,
   res: Response
@@ -31,32 +62,6 @@ export async function CreateTBSHandler(
       error: error,
     });
     return;
-  }
-}
-
-export async function findTBSHandler(
-  req: Request<{ id: string }>,
-  res: Response
-) {
-  try {
-    const { id } = req.params;
-
-    const address = await findTBSService(id);
-    if (!address) {
-      res.send("could not find user's address");
-      return;
-    }
-
-    res.status(201).json({
-      status: true,
-      message: "User address found",
-      address: address,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-    });
   }
 }
 

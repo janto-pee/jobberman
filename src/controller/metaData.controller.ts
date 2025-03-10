@@ -7,6 +7,38 @@ import {
   updateMetadataService,
 } from "../service/metadata.service";
 
+export async function findMetadataHandler(
+  req: Request<{ id: string }>,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
+
+    const address = await findMetadataService(id);
+    if (!address) {
+      res.send("could not find user's address");
+      return;
+    }
+
+    res.status(201).json({
+      status: true,
+      message: "User address found",
+      address: address,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+/**
+ *
+ * ! MUTATIONS
+ *
+ */
+
 export async function CreateMetadataHandler(
   req: Request<{}, {}, createMetadataInput["body"]>,
   res: Response
@@ -31,32 +63,6 @@ export async function CreateMetadataHandler(
       error: error,
     });
     return;
-  }
-}
-
-export async function findMetadataHandler(
-  req: Request<{ id: string }>,
-  res: Response
-) {
-  try {
-    const { id } = req.params;
-
-    const address = await findMetadataService(id);
-    if (!address) {
-      res.send("could not find user's address");
-      return;
-    }
-
-    res.status(201).json({
-      status: true,
-      message: "User address found",
-      address: address,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-    });
   }
 }
 

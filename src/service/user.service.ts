@@ -3,18 +3,6 @@ import { prisma } from "../scripts";
 import { userService } from "../schema/user.schema";
 import { comparePassword, hashPassword } from "../utils/hashPasword";
 
-export async function createUserService(input: userService) {
-  const newpassword = await hashPassword(input.hashed_password);
-  const newPayload = omit(input, "confirm_password");
-  const user = await prisma.user.create({
-    data: {
-      ...newPayload,
-      hashed_password: newpassword,
-    },
-  });
-  return user;
-}
-
 export async function findUserService(query: string) {
   const user = await prisma.user.findUnique({
     where: {
@@ -24,10 +12,45 @@ export async function findUserService(query: string) {
   return user;
 }
 
+export async function validateUser(email: string, password: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user || user.hashed_password === null) return false;
+
+  const match = await comparePassword(password, user.hashed_password);
+
+  if (match) {
+    return user;
+  }
+
+  return false;
+}
+
 export async function findEmailService(query: string) {
   const user = await prisma.user.findUnique({
     where: {
       email: query,
+    },
+  });
+  return user;
+}
+
+/**
+ *
+ * ! MUTATIONS
+ *
+ */
+export async function createUserService(input: userService) {
+  const newpassword = await hashPassword(input.hashed_password);
+  const newPayload = omit(input, "confirm_password");
+  const user = await prisma.user.create({
+    data: {
+      ...newPayload,
+      hashed_password: newpassword,
     },
   });
   return user;
@@ -69,24 +92,6 @@ export async function passwordResetService(query: string, update: string) {
     },
   });
   return updateUser;
-}
-
-export async function validateUser(email: string, password: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-  });
-
-  if (!user || user.hashed_password === null) return false;
-
-  const match = await comparePassword(password, user.hashed_password);
-
-  if (match) {
-    return user;
-  }
-
-  return false;
 }
 
 // export async function updateUserService(query: string, update: any) {

@@ -1,19 +1,24 @@
 import { prisma } from "../scripts";
 import { addressInput } from "../schema/address.schema";
 
-export async function createAddressService(input: addressInput) {
-  const user = await prisma.address.create({
-    data: {
-      ...input,
+export async function findAddressService(query: string) {
+  const user = await prisma.address.findUnique({
+    where: {
+      id: query,
     },
   });
   return user;
 }
 
-export async function findAddressService(query: string) {
-  const user = await prisma.address.findUnique({
-    where: {
-      id: query,
+/**
+ *
+ * ! MUTATIONS
+ *
+ */
+export async function createAddressService(input: addressInput) {
+  const user = await prisma.address.create({
+    data: {
+      ...input,
     },
   });
   return user;
