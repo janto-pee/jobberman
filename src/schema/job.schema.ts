@@ -1,10 +1,9 @@
 import { object, string, TypeOf, number } from "zod";
 
 const jobInput = object({
-  username: string({
-    required_error: `username for completed task is required`,
+  company_id: string({
+    required_error: `company id for completed task is required`,
   }),
-  user_id: string({ required_error: `user id for completed task is required` }),
   title: string({ required_error: `title for completed task is required` }),
   subtitle: string({
     required_error: `subtitle for completed task is required`,
@@ -51,10 +50,43 @@ const jobInput = object({
   }),
 });
 
+const jobQuery = object({
+  company_id: string({
+    required_error: `company id for completed task is required`,
+  }).optional(),
+  title: string({ required_error: `title for completed task is required` }),
+  qualification: string({
+    required_error: `qualification for completed task is required`,
+  }).optional(),
+  job_type: string({
+    required_error: `job type for completed task is required`,
+  }).optional(),
+  visa_sponsorship: string({
+    required_error: `visa sponsorship for completed task is required`,
+  }).optional(),
+  remote_posible: string({
+    required_error: `remote possible for completed task is required`,
+  }).optional(),
+  location: string({
+    required_error: `location for completed task is required`,
+  }).optional(),
+  date_posted: string({
+    required_error: `date posted for completed task is required`,
+  }).optional(),
+  skills: string({
+    required_error: `skills for completed task is required`,
+  }).optional(),
+  probationaryPeriod: string({
+    required_error: `probationary period for completed task is required`,
+  }).optional(),
+});
+
 export const createJobSchema = object({
   body: jobInput,
+  query: jobQuery,
 });
 
 export type jobInput = TypeOf<typeof jobInput>;
+export type jobQuery = TypeOf<typeof jobQuery>;
 
 export type createJobInput = TypeOf<typeof createJobSchema>;

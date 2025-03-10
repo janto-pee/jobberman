@@ -3,9 +3,234 @@ import { createsalaryInput } from "../schema/salary.schema";
 import {
   createSalaryService,
   deleteSalaryService,
+  findAllSalaryService,
+  findManySalaryService,
   findSalaryService,
+  totalSalaryCountService,
   updateSalaryService,
 } from "../service/salary.service";
+
+/**
+ *
+ * QUERY END POINTS
+ * EXPOSED
+ *
+ */
+
+export async function findSalaryHandler(
+  req: Request<{ id: string }>,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
+
+    const salary = await findSalaryService(id);
+    if (!salary) {
+      res.send("No salary found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "Salary found",
+      salary: salary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function findAllSalaryHandler(req: Request, res: Response) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const salary = await findAllSalaryService(page, limit);
+    const total = await totalSalaryCountService();
+    if (!salary) {
+      res.send("Salary not found");
+      return;
+    }
+    res.status(200).json({
+      status: true,
+      total,
+      "Salary limit per page": limit,
+      page: page + 1,
+      salary: salary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function findSalaryByLocationHandler(
+  req: Request<{}, { page: number; lmino: number; location: string }, {}>,
+  res: Response
+) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
+    const location = req.query.location;
+    const salary = await findManySalaryService(
+      {
+        location: {
+          contains: location,
+        },
+      },
+      page,
+      limit
+    );
+    if (!salary) {
+      res.send("Salary not found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      "salary displayed": limit,
+      page: page + 1,
+      salary: salary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function FilterSalaryHandler(
+  req: Request<{}, createsalaryInput["query"], {}>,
+  res: Response
+) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const currency = req.query.currency;
+    const maximumMinor = req.query.maximumMinor;
+    const minimumMinor = req.query.minimumMinor;
+
+    const salary = await findManySalaryService(
+      {
+        currency,
+        maximumMinor,
+        minimumMinor,
+      },
+      page,
+      limit
+    );
+    if (!salary) {
+      res.send("No salary found");
+      return;
+    }
+    res.status(200).json({
+      status: true,
+      "salary displayed per page": limit,
+      page: page + 1,
+      salary: salary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function searchSalaryHandler(
+  req: Request<{}, { page: number; lmino: number; search: string }, {}>,
+  res: Response
+) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
+    const keyword = req.query.search;
+    const salary = await findManySalaryService(
+      {
+        body: {
+          search: keyword,
+        },
+      },
+      page,
+      limit
+    );
+    if (!salary) {
+      res.send("Salary not found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      "salary displayed": limit,
+      page: page + 1,
+      salary: salary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function autocompleteSalaryHandler(
+  req: Request<{}, { page: number; lmino: number; currency: string }, {}>,
+  res: Response
+) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
+    const keyword = req.query.currency;
+    const salary = await findManySalaryService(
+      {
+        currency: {
+          contains: keyword,
+        },
+      },
+      page,
+      limit
+    );
+    if (!salary) {
+      res.send("Salary not found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      "Salary displayed per page": limit,
+      page: page + 1,
+      salary: salary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+/**
+ *
+ *
+ * MUTATIONS END POINT
+ * NOT EXPOSED
+ *
+ */
 
 export async function CreateSalaryHandler(
   req: Request<{}, {}, createsalaryInput["body"]>,
@@ -31,32 +256,6 @@ export async function CreateSalaryHandler(
       error: error,
     });
     return;
-  }
-}
-
-export async function findSalaryHandler(
-  req: Request<{ id: string }>,
-  res: Response
-) {
-  try {
-    const { id } = req.params;
-
-    const address = await findSalaryService(id);
-    if (!address) {
-      res.send("could not find user's address");
-      return;
-    }
-
-    res.status(201).json({
-      status: true,
-      message: "User address found",
-      address: address,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-    });
   }
 }
 

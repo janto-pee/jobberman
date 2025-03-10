@@ -4,36 +4,12 @@ import { createcompanyInput } from "../schema/company.schema";
 import {
   createCompanyService,
   deleteCompanyService,
+  findAllCompanyService,
   findCompanyService,
+  findManyCompanyService,
+  totalCompanyCountService,
   updateCompanyService,
 } from "../service/company.service";
-
-export async function CreateCompanyHandler(
-  req: Request<{}, {}, createcompanyInput["body"]>,
-  res: Response
-) {
-  try {
-    const body = req.body;
-
-    const company = await createCompanyService({
-      ...body,
-    });
-
-    res.status(201).json({
-      status: true,
-      message: `ddress Successfully Created`,
-      data: company,
-    });
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
-  }
-}
 
 export async function findCompanyHandler(
   req: Request<{ id: string }>,
@@ -58,6 +34,144 @@ export async function findCompanyHandler(
       status: false,
       message: "server error",
     });
+  }
+}
+
+export async function findAllCompanysHandler(req: Request, res: Response) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const company = await findAllCompanyService(page, limit);
+    const total = await totalCompanyCountService();
+    if (!company) {
+      res.send("no company found");
+      return;
+    }
+
+    res.status(201).json({
+      status: true,
+      total,
+      "company limit per page": limit,
+      page: page + 1,
+      company: company,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function findCompanyByLocationHandler(
+  req: Request<{}, { page: number; lmino: number; location: string }, {}>,
+  res: Response
+) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
+    const location = req.query.location;
+    const job = await findManyCompanyService(
+      {
+        location: {
+          contains: location,
+        },
+      },
+      page,
+      limit
+    );
+    if (!job) {
+      res.send("No job for this location");
+      return;
+    }
+
+    res.status(201).json({
+      status: true,
+      "job displayed": limit,
+      page: page + 1,
+      job: job,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function FilterCompanyHandler(
+  req: Request<{}, createcompanyInput["query"], {}>,
+  res: Response
+) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const address = req.query.address;
+    const size = req.query.size;
+    const country = req.query.country;
+    const company = await findManyCompanyService(
+      {
+        country,
+        address,
+        size,
+      },
+      page,
+      limit
+    );
+    if (!company) {
+      res.send("No company found");
+      return;
+    }
+    res.status(201).json({
+      status: true,
+      "company displayed per page": limit,
+      page: page + 1,
+      company: company,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+/**
+ *
+ * MUTTIONS
+ * NOT EXPOSED
+ *
+ */
+export async function CreateCompanyHandler(
+  req: Request<{}, {}, createcompanyInput["body"]>,
+  res: Response
+) {
+  try {
+    const body = req.body;
+
+    const company = await createCompanyService({
+      ...body,
+    });
+
+    res.status(201).json({
+      status: true,
+      message: `ddress Successfully Created`,
+      data: company,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+    return;
   }
 }
 

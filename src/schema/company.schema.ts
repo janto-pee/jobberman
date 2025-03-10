@@ -9,8 +9,15 @@ const companyInput = object({
   username: string({ required_error: `username is required` }),
 });
 
+const companyQuery = object({
+  address: string({ required_error: `address is required` }),
+  size: string({ required_error: `size is required` }),
+  country: string({ required_error: `country is required` }),
+});
+
 export const createCompanySchema = object({
   body: companyInput,
+  query: companyQuery,
 });
 
 export type companyInput = TypeOf<typeof companyInput>;
