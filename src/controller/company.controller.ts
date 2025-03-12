@@ -20,11 +20,11 @@ export async function findCompanyHandler(
 
     const company = await findCompanyService(id);
     if (!company) {
-      res.send("could not find user's company");
+      res.status(404).send("company not found");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "User company found",
       company: company,
@@ -46,11 +46,11 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
     const company = await findAllCompanyService(page, limit);
     const total = await totalCompanyCountService();
     if (!company) {
-      res.send("no company found");
+      res.status(404).send("no company found");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       total,
       "company limit per page": limit,
@@ -66,7 +66,7 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
 }
 
 export async function findCompanyByLocationHandler(
-  req: Request<{}, { page: number; lmino: number; location: string }, {}>,
+  req: Request<{ location: string }, { page: number; lmino: number }, {}>,
   res: Response
 ) {
   try {
@@ -74,32 +74,34 @@ export async function findCompanyByLocationHandler(
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
     let limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
-    const location = req.query.location;
-    const job = await findManyCompanyService(
+    const location = req.params.location;
+    const company = await findManyCompanyService(
       {
-        location: {
+        address: {
           contains: location,
         },
       },
       page,
       limit
     );
-    if (!job) {
-      res.send("No job for this location");
+    if (company.length == 0) {
+      res.status(404).send("No company for this location");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
-      "job displayed": limit,
+      "company displayed": limit,
       page: page + 1,
-      job: job,
+      company: company,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
       message: "server error",
     });
+    return;
   }
 }
 
@@ -117,23 +119,38 @@ export async function FilterCompanyHandler(
     const country = req.query.country;
     const company = await findManyCompanyService(
       {
-        country,
-        address,
-        size,
+        OR: [
+          {
+            country: {
+              contains: country,
+            },
+          },
+          {
+            address: {
+              contains: address,
+            },
+          },
+          {
+            size: {
+              contains: size,
+            },
+          },
+        ],
       },
       page,
       limit
     );
     if (!company) {
-      res.send("No company found");
+      res.status(404).send("No company found");
       return;
     }
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       "company displayed per page": limit,
       page: page + 1,
       company: company,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -161,7 +178,7 @@ export async function CreateCompanyHandler(
 
     res.status(201).json({
       status: true,
-      message: `ddress Successfully Created`,
+      message: `company Successfully Created`,
       data: company,
     });
     return;
@@ -184,7 +201,7 @@ export async function updateCompanyHandler(
     const body = req.body;
     const company = await findCompanyService(id);
     if (!company) {
-      res.sendStatus(400);
+      res.status(404).sendStatus(400);
       return;
     }
 
@@ -192,14 +209,16 @@ export async function updateCompanyHandler(
 
     res.status(201).json({
       status: true,
-      message: "password changed successfully",
+      message: "company updated successfully",
       data: updatedCompany,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
       message: "server error",
     });
+    return;
   }
 }
 
@@ -220,5 +239,6 @@ export async function deleteCompanyHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+    return;
   }
 }
