@@ -11,9 +11,14 @@ import {
 } from "../controller/job.controller";
 
 const router = express.Router();
-router.get("/api/jobs/:id", findJobHandler);
-router.get("/api/jobs", findAllJobsHandler);
-router.get("/api/jobs/location/:location", findJobsByLocationHandler);
+/**
+ * QUERY ROUTES
+ */
+router.get("/api/jobs/:id", findJobHandler); //Job Detail
+router.get("/api/jobs", findAllJobsHandler); //Jobs
+router.get("/api/jobs/location/:location", findJobsByLocationHandler); //Location
+// Job filter
+// search Job
 
 /**
  * MUTATION ROUTES

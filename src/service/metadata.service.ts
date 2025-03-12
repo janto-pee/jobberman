@@ -11,6 +11,19 @@ export async function findMetadataService(query: string) {
   return user;
 }
 
+export async function findAllMetadataService(page: number, limit: number) {
+  const metadata = await prisma.metaData.findMany({
+    skip: page,
+    take: limit,
+  });
+  return metadata;
+}
+
+export async function totalMetadataCountService() {
+  const metadata = await prisma.metaData.count();
+  return metadata;
+}
+
 /**
  *
  * ! MUTATIONS

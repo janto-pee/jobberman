@@ -2,12 +2,14 @@ import express from "express";
 import {
   CreateFGSHandler,
   deleteFGSHandler,
+  findAllFGSHandler,
   findFGSHandler,
   updateFGSHandler,
 } from "../controller/fgs.controller";
 
 const router = express.Router();
 router.get("/api/fgs/:id", findFGSHandler);
+router.get("/api/fgs", findAllFGSHandler);
 
 /**
  * MUTATION ROUTES

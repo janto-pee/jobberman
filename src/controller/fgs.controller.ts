@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import {
   createFGSService,
   deleteFGSService,
+  findAllFGSService,
   findFGSService,
+  totalFGSCountService,
   updateFGSService,
 } from "../service/fgs.service";
 import { createFGSInput } from "../schema/fgs.schema";
@@ -14,22 +16,52 @@ export async function findFGSHandler(
   try {
     const { id } = req.params;
 
-    const address = await findFGSService(id);
-    if (!address) {
-      res.send("could not find user's address");
+    const FGS = await findFGSService(id);
+    if (!FGS) {
+      res.send("FGS not found");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
-      message: "User address found",
-      address: address,
+      message: "FGS found",
+      "Fixed Grain Salary": FGS,
     });
   } catch (error) {
     res.status(500).json({
       status: false,
       message: "server error",
     });
+  }
+}
+
+export async function findAllFGSHandler(req: Request, res: Response) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const FGS = await findAllFGSService(page, limit);
+    const total = await totalFGSCountService();
+    if (FGS.length == 0) {
+      res.status(404).send("FGS not found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      total,
+      "FGS limit per page": limit,
+      page: page + 1,
+      FGS: FGS,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+    return;
   }
 }
 
@@ -46,14 +78,14 @@ export async function CreateFGSHandler(
   try {
     const body = req.body;
 
-    const address = await createFGSService({
+    const FGS = await createFGSService({
       ...body,
     });
 
     res.status(201).json({
       status: true,
       message: `Fine grained salary type successfully created`,
-      data: address,
+      data: FGS,
     });
     return;
   } catch (error) {
@@ -73,15 +105,15 @@ export async function updateFGSHandler(
   try {
     const { id } = req.params;
     const body = req.body;
-    const address = await findFGSService(id);
-    if (!address) {
+    const FGS = await findFGSService(id);
+    if (!FGS) {
       res.sendStatus(400);
       return;
     }
 
     const updatedFGS = await updateFGSService(id, body);
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "password changed successfully",
       data: updatedFGS,
@@ -98,11 +130,11 @@ export async function deleteFGSHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    const address = await deleteFGSService(id);
-    res.status(201).json({
+    const FGS = await deleteFGSService(id);
+    res.status(200).json({
       status: true,
-      message: `Address Successfully Deleted`,
-      data: address,
+      message: `FGS Successfully Deleted`,
+      data: FGS,
     });
     return;
   } catch (error) {

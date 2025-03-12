@@ -4,6 +4,8 @@ import {
   createAddressService,
   deleteAddressService,
   findAddressService,
+  findAllAddressService,
+  totalAddressCountService,
   updateAddressService,
 } from "../service/address.service";
 
@@ -16,20 +18,52 @@ export async function findAddressHandler(
 
     const address = await findAddressService(id);
     if (!address) {
-      res.send("could not find user's address");
+      res.send("Address not found");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
-      message: "User address found",
+      message: "Address found",
       address: address,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
       message: "server error",
     });
+    return;
+  }
+}
+
+export async function findAllAddressHandler(req: Request, res: Response) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const address = await findAllAddressService(page, limit);
+    const total = await totalAddressCountService();
+    if (address.length == 0) {
+      res.status(404).send("no address found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      total,
+      "address limit per page": limit,
+      page: page + 1,
+      address: address,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+    return;
   }
 }
 /**
@@ -80,7 +114,7 @@ export async function updateAddressHandler(
 
     const updatedAddress = await updateAddressService(id, body);
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "password changed successfully",
       data: updatedAddress,

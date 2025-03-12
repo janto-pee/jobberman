@@ -11,6 +11,19 @@ export async function findTBSService(query: string) {
   return user;
 }
 
+export async function findAllTBSService(page: number, limit: number) {
+  const TBS = await prisma.taskBasedSalaryInformation.findMany({
+    skip: page,
+    take: limit,
+  });
+  return TBS;
+}
+
+export async function totalTBSCountService() {
+  const TBS = await prisma.taskBasedSalaryInformation.count();
+  return TBS;
+}
+
 /**
  *
  * ! MUTATIONS

@@ -3,7 +3,9 @@ import { createTBS } from "../schema/tbs.schema";
 import {
   createTBSService,
   deleteTBSService,
+  findAllTBSService,
   findTBSService,
+  totalTBSCountService,
   updateTBSService,
 } from "../service/tbs.service";
 
@@ -14,16 +16,16 @@ export async function findTBSHandler(
   try {
     const { id } = req.params;
 
-    const address = await findTBSService(id);
-    if (!address) {
-      res.send("could not find user's address");
+    const TBS = await findTBSService(id);
+    if (!TBS) {
+      res.send("could not find user's TBS");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
-      message: "User address found",
-      address: address,
+      message: "User TBS found",
+      TBS: TBS,
     });
   } catch (error) {
     res.status(500).json({
@@ -32,6 +34,37 @@ export async function findTBSHandler(
     });
   }
 }
+
+export async function findAllTBSHandler(req: Request, res: Response) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const TBS = await findAllTBSService(page, limit);
+    const total = await totalTBSCountService();
+    if (TBS.length == 0) {
+      res.status(404).send("TBS not found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      total,
+      "TBS limit per page": limit,
+      page: page + 1,
+      TBS: TBS,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+    return;
+  }
+}
+
 /**
  *
  * ! MUTATIONS
@@ -45,14 +78,14 @@ export async function CreateTBSHandler(
   try {
     const body = req.body;
 
-    const address = await createTBSService({
+    const TBS = await createTBSService({
       ...body,
     });
 
     res.status(201).json({
       status: true,
       message: `TBS Successfully Created`,
-      data: address,
+      data: TBS,
     });
     return;
   } catch (error) {
@@ -72,15 +105,15 @@ export async function updateTBSHandler(
   try {
     const { id } = req.params;
     const body = req.body;
-    const address = await findTBSService(id);
-    if (!address) {
+    const TBS = await findTBSService(id);
+    if (!TBS) {
       res.sendStatus(400);
       return;
     }
 
     const updatedAddress = await updateTBSService(id, body);
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "password changed successfully",
       data: updatedAddress,
@@ -97,11 +130,11 @@ export async function deleteTBSHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    const address = await deleteTBSService(id);
-    res.status(201).json({
+    const TBS = await deleteTBSService(id);
+    res.status(200).json({
       status: true,
       message: `Address Successfully Deleted`,
-      data: address,
+      data: TBS,
     });
     return;
   } catch (error) {

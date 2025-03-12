@@ -3,7 +3,9 @@ import { createMetadataInput } from "../schema/metadata.schema";
 import {
   createMetadataService,
   deleteMetadataService,
+  findAllMetadataService,
   findMetadataService,
+  totalMetadataCountService,
   updateMetadataService,
 } from "../service/metadata.service";
 
@@ -14,22 +16,51 @@ export async function findMetadataHandler(
   try {
     const { id } = req.params;
 
-    const address = await findMetadataService(id);
-    if (!address) {
-      res.send("could not find user's address");
+    const metadata = await findMetadataService(id);
+    if (!metadata) {
+      res.send(" metadata not found");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
-      message: "User address found",
-      address: address,
+      message: "Metadata found",
+      metadata: metadata,
     });
   } catch (error) {
     res.status(500).json({
       status: false,
       message: "server error",
     });
+  }
+}
+export async function findAllMetadataHandler(req: Request, res: Response) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const FGS = await findAllMetadataService(page, limit);
+    const total = await totalMetadataCountService();
+    if (FGS.length == 0) {
+      res.status(404).send("FGS not found");
+      return;
+    }
+
+    res.status(200).json({
+      status: true,
+      total,
+      "FGS limit per page": limit,
+      page: page + 1,
+      FGS: FGS,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+    return;
   }
 }
 
@@ -46,14 +77,14 @@ export async function CreateMetadataHandler(
   try {
     const body = req.body;
 
-    const address = await createMetadataService({
+    const metadata = await createMetadataService({
       ...body,
     });
 
     res.status(201).json({
       status: true,
       message: `Job Metadata Successfully Created`,
-      data: address,
+      data: metadata,
     });
     return;
   } catch (error) {
@@ -73,15 +104,15 @@ export async function updateMetadataHandler(
   try {
     const { id } = req.params;
     const body = req.body;
-    const address = await findMetadataService(id);
-    if (!address) {
+    const metadata = await findMetadataService(id);
+    if (!metadata) {
       res.sendStatus(400);
       return;
     }
 
     const updatedAddress = await updateMetadataService(id, body);
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "password changed successfully",
       data: updatedAddress,
@@ -98,11 +129,11 @@ export async function deleteMetadataHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    const address = await deleteMetadataService(id);
-    res.status(201).json({
+    const metadata = await deleteMetadataService(id);
+    res.status(200).json({
       status: true,
       message: `Address Successfully Deleted`,
-      data: address,
+      data: metadata,
     });
     return;
   } catch (error) {

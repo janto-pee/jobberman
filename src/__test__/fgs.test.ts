@@ -1,58 +1,60 @@
 import request = require("supertest");
 import { randomEmail, randomOwner, randomString } from "../utils/random";
 import { createServer } from "../utils/createServer";
-import { tbsInput } from "../utils/types";
+import { fgsInput } from "../utils/types";
 
 const app = createServer();
 
-let tbsResponse: any;
+const email = randomEmail();
 
-describe("/api/tbs", () => {
-  describe("[POST] /api/tbs", () => {
+let fgsResponse: any;
+
+describe("/api/fgs", () => {
+  describe("[POST] /api/fgs", () => {
     it("should respond with a `201` status code", async () => {
       const { status, body } = await request(app)
-        .post("/api/tbs")
+        .post("/api/fgs")
         .send({
-          ...tbsInput,
+          ...fgsInput,
         });
       expect(status).toBe(201);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
       expect(body).toHaveProperty("data");
-      tbsResponse = body.data;
+      fgsResponse = body.data;
     });
   });
 
-  describe("[GET] /api/tbs", () => {
-    it("should respond with a `200` status code for all companies", async () => {
-      const { status, body } = await request(app).get("/api/tbs");
+  describe("[GET] /api/fgs", () => {
+    it("should respond with a `201` status code for all companies", async () => {
+      const { status, body } = await request(app).get("/api/fgs");
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("total");
       expect(body).toHaveProperty("page");
-      // expect(body).toHaveProperty("tbs");
+      //   expect(body).toHaveProperty("fgs");
     });
   });
 
-  describe("[GET] /api/tbs/:id", () => {
+  describe("[GET] /api/fgs/:id", () => {
     it("should respond with a `200` status code and company details", async () => {
       const { status, body } = await request(app).get(
-        `/api/tbs/${tbsResponse.id}`
+        `/api/fgs/${fgsResponse.id}`
       );
 
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
-      //   expect(body).toHaveProperty("tbs");
+      //   expect(body).toHaveProperty("company");
     });
   });
 
-  describe("[PUT] /api/tbs/:id", () => {
-    it("should update with a `200` status code for updated company", async () => {
+  describe("[PUT] /api/fgs/:id", () => {
+    it("should update with a `201` status code for updated company", async () => {
       const { status, body } = await request(app)
-        .put(`/api/tbs/${tbsResponse.id}`)
+        .put(`/api/fgs/${fgsResponse.id}`)
         .send({
-          ...tbsInput,
+          ...fgsInput,
         });
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");
@@ -64,7 +66,7 @@ describe("/api/tbs", () => {
   describe("[DELETE] /api/", () => {
     it("should respond with a `200` status code for deleted company", async () => {
       const { status, body } = await request(app).delete(
-        `/api/tbs/${tbsResponse.id}`
+        `/api/fgs/${fgsResponse.id}`
       );
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");

@@ -50,7 +50,7 @@ export async function findAllJobsHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const job = await findAllJobsService(page, limit);
     const total = await totalJobCountService();
-    if (!job) {
+    if (job.length == 0) {
       res.send("could not find user's job");
       return;
     }

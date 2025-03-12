@@ -52,7 +52,7 @@ export async function findAllSalaryHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const salary = await findAllSalaryService(page, limit);
     const total = await totalSalaryCountService();
-    if (!salary) {
+    if (salary.length == 0) {
       res.send("Salary not found");
       return;
     }

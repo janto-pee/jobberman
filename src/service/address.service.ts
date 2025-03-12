@@ -10,6 +10,19 @@ export async function findAddressService(query: string) {
   return user;
 }
 
+export async function findAllAddressService(page: number, limit: number) {
+  const address = await prisma.address.findMany({
+    skip: page,
+    take: limit,
+  });
+  return address;
+}
+
+export async function totalAddressCountService() {
+  const address = await prisma.address.count();
+  return address;
+}
+
 /**
  *
  * ! MUTATIONS

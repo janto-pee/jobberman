@@ -11,10 +11,15 @@ import {
 } from "../controller/company.controller";
 
 const router = express.Router();
-router.get("/api/company/:id", findCompanyHandler);
-router.get("/api/company", findAllCompanysHandler);
-router.get("/api/company/location/:location", findCompanyByLocationHandler);
-router.get("/api/search/company/filter", FilterCompanyHandler);
+
+/**
+ * QUERY ROUTES
+ */
+router.get("/api/company/:id", findCompanyHandler); // Company Details
+router.get("/api/company", findAllCompanysHandler); // All Company
+router.get("/api/company/location/:location", findCompanyByLocationHandler); //Company in Locations
+router.get("/api/search/company/filter", FilterCompanyHandler); //Filter Company
+//Search Company
 
 /**
  * MUTATION ROUTES

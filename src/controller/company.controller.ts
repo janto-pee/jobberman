@@ -48,7 +48,7 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const company = await findAllCompanyService(page, limit);
     const total = await totalCompanyCountService();
-    if (!company) {
+    if (company.length == 0) {
       res.status(404).send("no company found");
       return;
     }

@@ -1,21 +1,21 @@
 import express from "express";
 import {
+  CreateAddressHandler,
   deleteAddressHandler,
   findAddressHandler,
+  updateAddressHandler,
 } from "../controller/address.controller";
+import { findAllCompanysHandler } from "../controller/company.controller";
 
 const router = express.Router();
 router.get("/api/address/:id", findAddressHandler);
-// router.get("/api/company", findCompanyHandler);
-// router.get("/api/company/location/:location", findCompanyByLocationHandler);
-// router.get("/api/search/company/filter", FilterCompanyHandler);
+router.get("/api/address", findAllCompanysHandler);
 
 /**
  * MUTATION ROUTES
  */
-// router.post("/api/company", CreateCompanyHandler);
-// router.put("/api/company/:id", updateCompanyHandler);
-// router.put("/api/company/:companyId/:addressId", updateCompanyAddressHandler);
+router.post("/api/address", CreateAddressHandler);
+router.put("/api/address/:id", updateAddressHandler);
 router.delete("/api/address/:id", deleteAddressHandler);
 
 export default router;

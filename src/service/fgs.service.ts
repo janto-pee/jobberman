@@ -11,6 +11,19 @@ export async function findFGSService(query: string) {
   return user;
 }
 
+export async function findAllFGSService(page: number, limit: number) {
+  const FGS = await prisma.fineGrainedSalaryInformation.findMany({
+    skip: page,
+    take: limit,
+  });
+  return FGS;
+}
+
+export async function totalFGSCountService() {
+  const FGS = await prisma.fineGrainedSalaryInformation.count();
+  return FGS;
+}
+
 /**
  *
  * ! MUTATIONS

@@ -11,6 +11,19 @@ export async function findHPPService(query: string) {
   return user;
 }
 
+export async function findAllHPPService(page: number, limit: number) {
+  const HPP = await prisma.hasProbationaryPeriod.findMany({
+    skip: page,
+    take: limit,
+  });
+  return HPP;
+}
+
+export async function totalHPPCountService() {
+  const HPP = await prisma.hasProbationaryPeriod.count();
+  return HPP;
+}
+
 /**
  *
  * ! MUTATIONS

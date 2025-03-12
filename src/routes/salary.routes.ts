@@ -16,13 +16,12 @@ const router = express.Router();
 /**
  * QUERY ROUTES
  */
-router.get("/api/salary/:id", findSalaryHandler);
-router.get("/api/salary", findAllSalaryHandler);
-router.get("/api/salary/location/:location", findSalaryByLocationHandler);
-router.get("/api/salary/filter", FilterSalaryHandler);
-router.get("/api/salary/search", searchSalaryHandler);
-router.get("/api/salary/location/:location", findSalaryByLocationHandler);
-router.get("/api/salary/currency/autocomplete", autocompleteSalaryHandler);
+router.get("/api/salary/currency/autocomplete", autocompleteSalaryHandler); //autocomplete
+router.get("/api/salary/location/:location", findSalaryByLocationHandler); //Salary by Location
+router.get("/api/salary/filter", FilterSalaryHandler); // Filter Salary
+router.get("/api/salary/search", searchSalaryHandler); //Search Salary
+router.get("/api/salary/:id", findSalaryHandler); //Salary details
+router.get("/api/salary", findAllSalaryHandler); //all report
 
 /**
  * INTERNAL MUTATION

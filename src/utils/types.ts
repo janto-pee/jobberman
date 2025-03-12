@@ -177,9 +177,9 @@ const addressInput = {
 
   country_code: randomString(5),
 
-  latitude: randomInt(100000000, 1111111111),
+  latitude: 100020002,
 
-  longitude: randomInt(100000000, 1111111111),
+  longitude: 100020002,
 };
 
 let companyInput = {
@@ -220,16 +220,12 @@ let fgsInput = {
   fixedOvertimeSalaryMinor: randomString(5),
 
   fixedOvertimePay: true,
-
-  salaryId: randomString(5),
 };
 
 let hppInput = {
   period: randomString(5),
 
   status: false,
-
-  jobId: randomString(5),
 };
 
 let jobInput = {
@@ -272,8 +268,6 @@ let metadataInput = {
   atsName: randomString(5),
 
   employersName: randomString(5),
-
-  job_id: randomString(5),
 };
 
 let salaryInput = {
@@ -284,8 +278,6 @@ let salaryInput = {
   minimumMinor: randomString(5),
 
   period: randomString(5),
-
-  jobId: randomString(5),
 };
 
 let sessionInput = {
@@ -300,8 +292,6 @@ let tbsInput = {
   taskLengthMinutes: randomString(5),
 
   taskDescription: randomString(5),
-
-  salaryId: randomString(5),
 };
 
 let userInput = {

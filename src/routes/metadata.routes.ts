@@ -2,12 +2,14 @@ import express from "express";
 import {
   CreateMetadataHandler,
   deleteMetadataHandler,
+  findAllMetadataHandler,
   findMetadataHandler,
   updateMetadataHandler,
 } from "../controller/metadata.controller";
 
 const router = express.Router();
 router.get("/api/metadata/:id", findMetadataHandler);
+router.get("/api/metadata", findAllMetadataHandler);
 
 /**
  * MUTATION ROUTES
