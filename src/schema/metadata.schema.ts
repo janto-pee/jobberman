@@ -3,7 +3,6 @@ import { object, string, TypeOf, number } from "zod";
 const metadataInput = object({
   atsName: string({ required_error: `ats is required` }),
   employersName: string({ required_error: `employer is required` }),
-  job_id: string({ required_error: `job id is required` }),
 });
 
 export const createMetadataSchema = object({

@@ -8,12 +8,13 @@ const fgsInput = object({
   }),
   statutoryOvertimeHours: number({
     required_error: `statutory overtime hour is required`,
-  }),
-  fixedOvertimeSalaryMinor: string({ required_error: `country is required` }),
+  }).optional(),
+  fixedOvertimeSalaryMinor: string({
+    required_error: `country is required`,
+  }).optional(),
   fixedOvertimePay: boolean({
     required_error: `country is required`,
-  }),
-  salaryId: string({ required_error: `salary is required` }),
+  }).optional(),
 });
 
 export const createFGSSchema = object({

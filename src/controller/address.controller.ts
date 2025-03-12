@@ -51,7 +51,7 @@ export async function CreateAddressHandler(
 
     res.status(201).json({
       status: true,
-      message: `ddress Successfully Created`,
+      message: `Address Successfully Created`,
       data: address,
     });
     return;
@@ -98,7 +98,7 @@ export async function deleteAddressHandler(req: Request, res: Response) {
     const { id } = req.params;
 
     const address = await deleteAddressService(id);
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: `Address Successfully Deleted`,
       data: address,

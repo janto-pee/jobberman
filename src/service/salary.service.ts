@@ -9,7 +9,6 @@ export async function findSalaryService(query: string) {
     include: {
       fineGrainedSalaryInformation: true,
       taskBasedSalaryInformation: true,
-      job: true,
     },
   });
   return salary;
@@ -22,7 +21,6 @@ export async function findAllSalaryService(page: number, limit: number) {
     include: {
       fineGrainedSalaryInformation: true,
       taskBasedSalaryInformation: true,
-      job: true,
     },
   });
   return salary;
@@ -42,7 +40,6 @@ export async function findManySalaryService(
     include: {
       fineGrainedSalaryInformation: true,
       taskBasedSalaryInformation: true,
-      job: true,
     },
   });
   return salary;
@@ -60,12 +57,31 @@ export async function totalSalaryCountService() {
  */
 
 export async function createSalaryService(input: salaryInput) {
-  const user = await prisma.salary.create({
+  const salary = await prisma.salary.create({
     data: {
-      ...input,
+      currency: input.currency,
+      maximumMinor: input.maximumMinor,
+      minimumMinor: input.minimumMinor,
+      period: input.period,
+      fineGrainedSalaryInformation: {
+        create: {
+          totalSalaryMinor: input.totalSalaryMinor,
+          workingHours: input.workingHours,
+          totalOvertimeHours: input.totalOvertimeHours,
+          statutoryOvertimeHours: input.statutoryOvertimeHours,
+          fixedOvertimeSalaryMinor: input.fixedOvertimeSalaryMinor,
+          fixedOvertimePay: input.fixedOvertimePay,
+        },
+      },
+      taskBasedSalaryInformation: {
+        create: {
+          taskLengthMinutes: input.taskLengthMinutes,
+          taskDescription: input.taskDescription,
+        },
+      },
     },
   });
-  return user;
+  return salary;
 }
 
 export async function updateSalaryService(query: string, update: salaryInput) {
@@ -75,6 +91,52 @@ export async function updateSalaryService(query: string, update: salaryInput) {
     },
     data: {
       ...update,
+    },
+  });
+  return updateUser;
+}
+
+export async function updateSalaryFKService(
+  id: string,
+  fgsId: string,
+  tbsId: string,
+  update: salaryInput
+) {
+  const updateUser = await prisma.salary.update({
+    where: {
+      id: id,
+    },
+    data: {
+      fineGrainedSalaryInformation: {
+        update: {
+          where: {
+            id: fgsId,
+          },
+          data: {
+            totalSalaryMinor: update.totalSalaryMinor,
+            workingHours: update.workingHours,
+            totalOvertimeHours: update.totalOvertimeHours,
+            statutoryOvertimeHours: update.statutoryOvertimeHours,
+            fixedOvertimeSalaryMinor: update.fixedOvertimeSalaryMinor,
+            fixedOvertimePay: update.fixedOvertimePay,
+          },
+        },
+      },
+      taskBasedSalaryInformation: {
+        update: {
+          where: {
+            id: tbsId,
+          },
+          data: {
+            taskLengthMinutes: update.taskLengthMinutes,
+            taskDescription: update.taskDescription,
+          },
+        },
+      },
+    },
+    include: {
+      fineGrainedSalaryInformation: true,
+      taskBasedSalaryInformation: true,
     },
   });
   return updateUser;

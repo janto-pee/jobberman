@@ -7,6 +7,7 @@ import {
   findJobService,
   findManyJobsService,
   totalJobCountService,
+  updateJobFkService,
   updateJobService,
 } from "../service/job.service";
 
@@ -209,7 +210,7 @@ export async function CreateJobHandler(
 
     res.status(201).json({
       status: true,
-      message: `job Successfully Created`,
+      message: `Job Successfully Created`,
       data: job,
     });
     return;
@@ -223,6 +224,53 @@ export async function CreateJobHandler(
   }
 }
 
+export async function updateJobFKHandler(
+  req: Request<
+    {
+      companyId: string;
+      salaryId: string;
+      metadataId: string;
+      hppId: string;
+      id: string;
+    },
+    {},
+    createJobInput["body"]
+  >,
+  res: Response
+) {
+  try {
+    const { companyId, salaryId, metadataId, hppId, id } = req.params;
+    const body = req.body;
+    const job = await findJobService(id);
+    if (!job) {
+      res.status(404).sendStatus(400);
+      return;
+    }
+
+    const updatedJob = await updateJobFkService(
+      companyId,
+      salaryId,
+      metadataId,
+      hppId,
+      id,
+      { ...body }
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "job updated successfully",
+      data: updatedJob,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+    return;
+  }
+}
+
 export async function deleteJobHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -230,7 +278,7 @@ export async function deleteJobHandler(req: Request, res: Response) {
     const job = await deleteJobService(id);
     res.status(201).json({
       status: true,
-      message: `job Successfully Deleted`,
+      message: `Job Successfully Deleted`,
       data: job,
     });
     return;

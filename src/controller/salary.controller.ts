@@ -7,6 +7,7 @@ import {
   findManySalaryService,
   findSalaryService,
   totalSalaryCountService,
+  updateSalaryFKService,
   updateSalaryService,
 } from "../service/salary.service";
 
@@ -232,21 +233,21 @@ export async function autocompleteSalaryHandler(
  *
  */
 
-export async function CreateSalaryHandler(
+export async function CreateFGSalaryHandler(
   req: Request<{}, {}, createsalaryInput["body"]>,
   res: Response
 ) {
   try {
     const body = req.body;
 
-    const address = await createSalaryService({
+    const salary = await createSalaryService({
       ...body,
     });
 
     res.status(201).json({
       status: true,
-      message: `ddress Successfully Created`,
-      data: address,
+      message: `Salary Successfully Created`,
+      data: salary,
     });
     return;
   } catch (error) {
@@ -266,18 +267,18 @@ export async function updateSalaryHandler(
   try {
     const { id } = req.params;
     const body = req.body;
-    const address = await findSalaryService(id);
-    if (!address) {
+    const salary = await findSalaryService(id);
+    if (!salary) {
       res.sendStatus(400);
       return;
     }
 
-    const updatedAddress = await updateSalaryService(id, body);
+    const updatedSalary = await updateSalaryService(id, body);
 
     res.status(201).json({
       status: true,
       message: "password changed successfully",
-      data: updatedAddress,
+      data: updatedSalary,
     });
   } catch (error) {
     res.status(500).json({
@@ -287,15 +288,51 @@ export async function updateSalaryHandler(
   }
 }
 
+export async function updateSalaryFKHandler(
+  req: Request<
+    { id: string; fgsId: string; tbsId: string },
+    {},
+    createsalaryInput["body"]
+  >,
+  res: Response
+) {
+  try {
+    const { id, fgsId, tbsId } = req.params;
+    const body = req.body;
+    const salary = await findSalaryService(id);
+    if (!salary) {
+      res.status(404).sendStatus(400);
+      return;
+    }
+
+    const updatedCompany = await updateSalaryFKService(id, fgsId, tbsId, {
+      ...body,
+    });
+
+    res.status(201).json({
+      status: true,
+      message: "company updated successfully",
+      data: updatedCompany,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+    return;
+  }
+}
+
 export async function deleteSalaryHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    const address = await deleteSalaryService(id);
+    const salary = await deleteSalaryService(id);
     res.status(201).json({
       status: true,
-      message: `Address Successfully Deleted`,
-      data: address,
+      message: `Salary Successfully Deleted`,
+      data: salary,
     });
     return;
   } catch (error) {

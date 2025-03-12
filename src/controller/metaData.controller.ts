@@ -52,7 +52,7 @@ export async function CreateMetadataHandler(
 
     res.status(201).json({
       status: true,
-      message: `ddress Successfully Created`,
+      message: `Job Metadata Successfully Created`,
       data: address,
     });
     return;

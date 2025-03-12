@@ -51,7 +51,7 @@ export async function CreateTBSHandler(
 
     res.status(201).json({
       status: true,
-      message: `ddress Successfully Created`,
+      message: `TBS Successfully Created`,
       data: address,
     });
     return;

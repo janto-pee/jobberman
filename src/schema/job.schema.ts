@@ -1,9 +1,6 @@
-import { object, string, TypeOf, number } from "zod";
+import { object, string, TypeOf, number, boolean } from "zod";
 
 const jobInput = object({
-  company_id: string({
-    required_error: `company id for completed task is required`,
-  }),
   title: string({ required_error: `title for completed task is required` }),
   subtitle: string({
     required_error: `subtitle for completed task is required`,
@@ -48,6 +45,72 @@ const jobInput = object({
   probationaryPeriod: string({
     required_error: `probationary period for completed task is required`,
   }),
+  /**META DATA */
+  atsName: string({ required_error: `ats is required` }),
+  employersName: string({ required_error: `employer is required` }),
+
+  /**
+   * HAS PROBATION PERIOD
+   */
+  period: string({ required_error: `period is required` }),
+  status: boolean({ required_error: `status is required` }),
+
+  /**
+   * SALARY
+   */
+  salaryId: string({ required_error: `alary is required` }),
+  currency: string({ required_error: `currency is required` }),
+  maximumMinor: string({ required_error: `maximum minor is required` }),
+  minimumMinor: string({ required_error: `country is required` }),
+
+  /**
+   * IS THIS JOB TIME BASED OR FIXED GRAINED
+   */
+
+  //TBS
+  taskLengthMinutes: string({
+    required_error: `task length is required`,
+  }),
+  taskDescription: string({
+    required_error: `task description is required`,
+  }),
+
+  // FGS
+  totalSalaryMinor: string({
+    required_error: `total salary is required`,
+  }),
+  workingHours: number({
+    required_error: `working hours is required`,
+  }),
+  totalOvertimeHours: number({
+    required_error: `total overtime hour is required`,
+  }).optional(),
+  statutoryOvertimeHours: number({
+    required_error: `statutory overtime hour is required`,
+  }).optional(),
+  fixedOvertimeSalaryMinor: string({
+    required_error: `fixed over time salary is required`,
+  }).optional(),
+  fixedOvertimePay: boolean({
+    required_error: `fixed overtime pay is required`,
+  }),
+
+  /**
+   * COMPANY
+   */
+  company_id: string({
+    required_error: `company id for completed task is required`,
+  }),
+  name: string({ required_error: `name is required` }),
+  email: string({ required_error: `email is required` }),
+  website: string({ required_error: `website is required` }),
+  size: string({ required_error: `size is required` }),
+
+  /**
+   * COMPANY ADDRESS
+   */
+  street: string({ required_error: `street is required` }),
+  country: string({ required_error: `country is required` }),
 });
 
 const jobQuery = object({

@@ -52,7 +52,7 @@ export async function CreateFGSHandler(
 
     res.status(201).json({
       status: true,
-      message: `ddress Successfully Created`,
+      message: `Fine grained salary type successfully created`,
       data: address,
     });
     return;
