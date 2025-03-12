@@ -4,12 +4,15 @@ import { createcompanyInput } from "../schema/company.schema";
 import {
   createCompanyService,
   deleteCompanyService,
+  fiilterManyCompanyService,
   findAllCompanyService,
   findCompanyService,
   findManyCompanyService,
   totalCompanyCountService,
+  updateCompanyAddressService,
   updateCompanyService,
 } from "../service/company.service";
+import { createAddressInput } from "../schema/address.schema";
 
 export async function findCompanyHandler(
   req: Request<{ id: string }>,
@@ -75,15 +78,7 @@ export async function findCompanyByLocationHandler(
     let limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
     const location = req.params.location;
-    const company = await findManyCompanyService(
-      {
-        address: {
-          contains: location,
-        },
-      },
-      page,
-      limit
-    );
+    const company = await findManyCompanyService(location, page, limit);
     if (company.length == 0) {
       res.status(404).send("No company for this location");
       return;
@@ -105,42 +100,23 @@ export async function findCompanyByLocationHandler(
   }
 }
 
-export async function FilterCompanyHandler(
-  req: Request<{}, createcompanyInput["query"], {}>,
-  res: Response
-) {
+export async function FilterCompanyHandler(req: Request, res: Response) {
   try {
     let page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
     let limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
-    const address = req.query.address;
+    const city = req.query.city;
     const size = req.query.size;
     const country = req.query.country;
-    const company = await findManyCompanyService(
-      {
-        OR: [
-          {
-            country: {
-              contains: country,
-            },
-          },
-          {
-            address: {
-              contains: address,
-            },
-          },
-          {
-            size: {
-              contains: size,
-            },
-          },
-        ],
-      },
+    const name = req.query.name;
+
+    const company = await fiilterManyCompanyService(
+      { city: city, size, country, name },
       page,
       limit
     );
-    if (!company) {
+    if (company.length == 0) {
       res.status(404).send("No company found");
       return;
     }
@@ -204,8 +180,45 @@ export async function updateCompanyHandler(
       res.status(404).sendStatus(400);
       return;
     }
-
     const updatedCompany = await updateCompanyService(id, body);
+
+    res.status(201).json({
+      status: true,
+      message: "company updated successfully",
+      data: updatedCompany,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+    return;
+  }
+}
+
+export async function updateCompanyAddressHandler(
+  req: Request<
+    { companyId: string; addressId: string },
+    {},
+    createAddressInput["body"]
+  >,
+  res: Response
+) {
+  try {
+    const { companyId, addressId } = req.params;
+    const body = req.body;
+    const company = await findCompanyService(companyId);
+    if (!company) {
+      res.status(404).sendStatus(400);
+      return;
+    }
+
+    const updatedCompany = await updateCompanyAddressService(
+      companyId,
+      addressId,
+      { ...body }
+    );
 
     res.status(201).json({
       status: true,
@@ -227,7 +240,7 @@ export async function deleteCompanyHandler(req: Request, res: Response) {
     const { id } = req.params;
 
     const company = await deleteCompanyService(id);
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: `company Successfully Deleted`,
       data: company,

@@ -23,25 +23,27 @@ model User {
   is_email_verified Boolean   @default(false)
   verificationCode  String?
   passwordResetCode String?
-  address           Address?
   session           Session[]
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   company           Company?  @relation(fields: [companyId], references: [id])
   companyId         String?
+  address           Address   @relation(fields: [addressId], references: [id])
+  addressId         String    @unique
 }
 
 model Company {
   id        String   @id @default(uuid())
+  name      String   @db.VarChar(255)
   email     String   @unique
-  address   String   @db.VarChar(255)
   website   String   @db.VarChar(255)
   size      String   @db.VarChar(255)
-  country   String   @db.VarChar(255)
   job       Job[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   User      User[]
+  address   Address  @relation(fields: [addressId], references: [id])
+  addressId String   @unique
 }
 
 model Session {
@@ -83,19 +85,19 @@ model Job {
 }
 
 model Address {
-  id                  String @id @default(uuid())
-  user                User   @relation(fields: [username], references: [username])
-  username            String @unique
-  street              String @db.VarChar(255)
-  street2             String @db.VarChar(255)
-  city                String @db.VarChar(255)
-  state_province_code String @db.VarChar(255)
-  state_province_name String @db.VarChar(255)
-  postal_code         String @db.VarChar(255)
-  country_code        String @db.VarChar(255)
-  latitude            Int
-  longitude           Int
-  country             String @db.VarChar(255)
+  id                  String   @id @default(uuid())
+  street              String   @db.VarChar(255)
+  street2             String?  @db.VarChar(255)
+  city                String?  @db.VarChar(255)
+  state_province_code String?  @db.VarChar(255)
+  state_province_name String?  @db.VarChar(255)
+  postal_code         String?  @db.VarChar(255)
+  country_code        String?  @db.VarChar(255)
+  latitude            Int?
+  longitude           Int?
+  country             String   @db.VarChar(255)
+  company             Company?
+  user                User?
 }
 
 model Salary {
