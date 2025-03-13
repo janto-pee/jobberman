@@ -204,6 +204,14 @@ export async function updateCompanyHandler(
   try {
     const { id } = req.params;
     const body = req.body;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId !== id) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
     const company = await findCompanyService(id);
     if (!company) {
       res.status(404).sendStatus(400);
@@ -237,6 +245,13 @@ export async function updateCompanyAddressHandler(
   try {
     const { companyId, addressId } = req.params;
     const body = req.body;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId !== companyId) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
     const company = await findCompanyService(companyId);
     if (!company) {
       res.sendStatus(400);
@@ -267,6 +282,13 @@ export async function updateCompanyAddressHandler(
 export async function deleteCompanyHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId !== id) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
 
     const company = await deleteCompanyService(id);
     res.status(200).json({

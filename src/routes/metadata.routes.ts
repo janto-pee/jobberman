@@ -5,7 +5,7 @@ import {
   findAllMetadataHandler,
   findMetadataHandler,
   updateMetadataHandler,
-} from "../controller/metadata.controller";
+} from "../controller/metaData.controller";
 
 const router = express.Router();
 router.get("/api/metadata/:id", findMetadataHandler);

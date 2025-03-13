@@ -104,9 +104,16 @@ export async function updateMetadataHandler(
   try {
     const { id } = req.params;
     const body = req.body;
+
     const metadata = await findMetadataService(id);
     if (!metadata) {
       res.sendStatus(400);
+      return;
+    }
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId == null) {
+      res.status(500).json({ error: "unauthorised" });
       return;
     }
 
@@ -128,6 +135,12 @@ export async function updateMetadataHandler(
 export async function deleteMetadataHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId == null) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
 
     const metadata = await deleteMetadataService(id);
     res.status(200).json({

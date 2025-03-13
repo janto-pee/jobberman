@@ -76,6 +76,8 @@ export async function CreateAddressHandler(
   req: Request<{}, {}, createAddressInput["body"]>,
   res: Response
 ) {
+  //user
+
   try {
     const body = req.body;
 
@@ -103,15 +105,23 @@ export async function updateAddressHandler(
   req: Request<{ id: string }, {}, createAddressInput["body"]>,
   res: Response
 ) {
-  try {
-    const { id } = req.params;
-    const body = req.body;
-    const address = await findAddressService(id);
-    if (!address) {
-      res.sendStatus(400);
-      return;
-    }
+  const { id } = req.params;
+  const body = req.body;
 
+  //get user
+  const user = res.locals.user;
+  if (!user || user.addressId !== id) {
+    res.status(500).json({ error: "unauthorised" });
+    return;
+  }
+
+  const address = await findAddressService(id);
+  if (!address) {
+    res.sendStatus(400);
+    return;
+  }
+
+  try {
     const updatedAddress = await updateAddressService(id, body);
 
     res.status(200).json({
@@ -130,6 +140,13 @@ export async function updateAddressHandler(
 export async function deleteAddressHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.addressId !== id) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
 
     const address = await deleteAddressService(id);
     res.status(200).json({

@@ -9,8 +9,11 @@ import {
   findJobHandler,
   findJobsByLocationHandler,
   SearchJobHandler,
+  updateJobFKHandler,
   updateJobHandler,
-} from "../controller/job.controller";
+} from "../controller/Job.controller";
+import requireUser from "../middleware/requireUser";
+import { createJobSchema } from "../schema/job.schema";
 
 const router = express.Router();
 /**
@@ -26,9 +29,18 @@ router.get("/api/search/company/keyword", SearchJobHandler); //Search Job
  * MUTATION ROUTES
  */
 
-router.post("/api/jobs", CreateJobHandler);
-router.put("/api/jobs/:id", updateJobHandler);
-router.put("/api/jobs/:id/:companyId/:salaryId/:metadataId/:hppId");
-router.delete("/api/jobs/:id", deleteJobHandler);
+router.post(
+  "/api/jobs",
+  validateResource(createJobSchema),
+  requireUser,
+  CreateJobHandler
+);
+router.put("/api/jobs/:id", requireUser, updateJobHandler);
+router.put(
+  "/api/jobs/:id/:companyId/:salaryId/:metadataId/:hppId",
+  requireUser,
+  updateJobFKHandler
+);
+router.delete("/api/jobs/:id", requireUser, deleteJobHandler);
 
 export default router;

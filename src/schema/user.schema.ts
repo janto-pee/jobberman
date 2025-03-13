@@ -1,4 +1,4 @@
-import { object, string, TypeOf } from "zod";
+import { number, object, string, TypeOf } from "zod";
 
 const user = {
   email: string({ required_error: `email is required` }).email(
@@ -11,9 +11,24 @@ const user = {
     8,
     `password must be at least 8 characters long`
   ),
-  // companyId: string({
-  //   required_error: `the field companyId is required`,
-  // }).optional(),
+  //address input
+  street: string({ required_error: `street is required` }),
+  country: string({ required_error: `country is required` }),
+  //optional
+  street2: string({ required_error: `street2 is required` }).optional(),
+  city: string({ required_error: `city is required` }).optional(),
+  state_province_code: string({
+    required_error: `state province code is required`,
+  }).optional(),
+  state_province_name: string({
+    required_error: `state province name is required`,
+  }).optional(),
+  postal_code: string({ required_error: `potal code is required` }).optional(),
+  country_code: string({
+    required_error: `country code is required`,
+  }).optional(),
+  latitude: number({ required_error: `latitude is required` }).optional(),
+  longitude: number({ required_error: `longitude is required` }).optional(),
 };
 
 const userInput = object({

@@ -199,10 +199,16 @@ export async function CreateFGSalaryHandler(
   try {
     const body = req.body;
 
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId == null) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
     const salary = await createSalaryService({
       ...body,
     });
-
     res.status(201).json({
       status: true,
       message: `Salary Successfully Created`,
@@ -226,6 +232,14 @@ export async function updateSalaryHandler(
   try {
     const { id } = req.params;
     const body = req.body;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId == null) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
     const salary = await findSalaryService(id);
     if (!salary) {
       res.sendStatus(400);
@@ -286,6 +300,12 @@ export async function updateSalaryFKHandler(
 export async function deleteSalaryHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId == null) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
 
     const salary = await deleteSalaryService(id);
     res.status(201).json({

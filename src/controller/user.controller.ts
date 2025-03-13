@@ -15,8 +15,8 @@ import {
   verifyUserInput,
 } from "../schema/user.schema";
 import { v4 } from "uuid";
-import sendEmail from "../utils/sendEmail";
 import { omit } from "lodash";
+import sendEmail from "../utils/sendemail";
 export async function getCurrentUserHandler(_: Request, res: Response) {
   try {
     res.status(201).send(res.locals.user);

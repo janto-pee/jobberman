@@ -10,6 +10,9 @@ import {
   updateSalaryFKHandler,
   updateSalaryHandler,
 } from "../controller/salary.controller";
+import requireUser from "../middleware/requireUser";
+import validateResource from "../middleware/validate";
+import { createJobSchema } from "../schema/job.schema";
 
 const router = express.Router();
 /**
@@ -26,9 +29,18 @@ router.get("/api/salary/search/keyword", searchSalaryHandler); //Search Salary
  * INTERNAL MUTATION
  */
 
-router.post("/api/salary", CreateFGSalaryHandler);
-router.put("/api/salary/:id", updateSalaryHandler);
-router.put("/api/salary/:salaryId/:fgsId/:tbsId", updateSalaryFKHandler);
-router.delete("/api/salary/:id", deleteSalaryHandler);
+router.post(
+  "/api/salary",
+  validateResource(createJobSchema),
+  requireUser,
+  CreateFGSalaryHandler
+);
+router.put("/api/salary/:id", requireUser, updateSalaryHandler);
+router.put(
+  "/api/salary/:salaryId/:fgsId/:tbsId",
+  requireUser,
+  updateSalaryFKHandler
+);
+router.delete("/api/salary/:id", requireUser, deleteSalaryHandler);
 
 export default router;

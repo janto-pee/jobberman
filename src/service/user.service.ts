@@ -46,11 +46,36 @@ export async function findEmailService(query: string) {
  */
 export async function createUserService(input: userService) {
   const newpassword = await hashPassword(input.hashed_password);
-  const newPayload = omit(input, "confirm_password");
+  const newPayload = omit(
+    input,
+    "confirm_password",
+    "street",
+    "country",
+    "city",
+    "state_province_code",
+    "state_province_name",
+    "postal_code",
+    "country_code",
+    "latitude",
+    "longitude"
+  );
   const user = await prisma.user.create({
     data: {
       ...newPayload,
       hashed_password: newpassword,
+      address: {
+        create: {
+          street: input.street,
+          country: input.country,
+          city: input.city,
+          state_province_code: input.state_province_code,
+          state_province_name: input.state_province_name,
+          postal_code: input.postal_code,
+          country_code: input.country_code,
+          latitude: input.longitude,
+          longitude: input.latitude,
+        },
+      },
     },
   });
   return user;

@@ -210,9 +210,17 @@ export async function updateJobHandler(
   try {
     const { id } = req.params;
     const body = req.body;
+
     const job = await findJobService(id);
     if (!job) {
       res.sendStatus(400);
+      return;
+    }
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId !== job.company_id) {
+      res.status(500).json({ error: "unauthorised" });
       return;
     }
 
@@ -237,6 +245,15 @@ export async function CreateJobHandler(
 ) {
   try {
     const body = req.body;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId == null) {
+      res
+        .status(500)
+        .json({ error: "this user is not affiliated with any company" });
+      return;
+    }
 
     const company = await findCompanyService(body.company_id);
     if (!company) {
@@ -287,6 +304,13 @@ export async function updateJobFKHandler(
       return;
     }
 
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId !== job.company_id) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
     const updatedJob = await updateJobFkService(
       companyId,
       salaryId,
@@ -314,6 +338,13 @@ export async function updateJobFKHandler(
 export async function deleteJobHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId !== id) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
 
     const job = await deleteJobService(id);
     res.status(201).json({
