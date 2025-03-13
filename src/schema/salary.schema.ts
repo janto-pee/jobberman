@@ -4,7 +4,6 @@ const salaryInput = object({
   currency: string({ required_error: `currency is required` }),
   maximumMinor: string({ required_error: `maximum minor is required` }),
   minimumMinor: string({ required_error: `country is required` }),
-  period: string({ required_error: `period is required` }),
 
   /**
    * IS THIS JOB TIME BASED OR FIXED GRAINED

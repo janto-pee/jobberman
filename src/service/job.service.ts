@@ -39,6 +39,99 @@ export async function totalJobCountService() {
   return job;
 }
 
+export async function fiilterManyJobService(
+  searchParam: any,
+  skip: number,
+  limit: number
+) {
+  const companys = await prisma.job.findMany({
+    where: {
+      OR: [
+        {
+          title: {
+            contains: searchParam.title,
+          },
+        },
+        { qualification: { contains: searchParam.qualification } },
+        { job_type: { contains: searchParam.job_type } },
+        { visa_sponsorship: { contains: searchParam.visa_sponsorship } },
+        { remote_posible: { contains: searchParam.remote_posible } },
+        { location: { contains: searchParam.location } },
+        { skills: { contains: searchParam.qualification } },
+        {
+          salary: {
+            OR: [
+              {
+                currency: {
+                  contains: searchParam.currency,
+                },
+              },
+              { minimumMinor: { contains: searchParam.salary } },
+            ],
+          },
+        },
+      ],
+    },
+    include: {
+      salary: true,
+      metadata: true,
+      hasProbationPeriod: true,
+      company: true,
+    },
+    skip: skip,
+    take: limit,
+  });
+  return companys;
+}
+
+export async function SearchJobService(
+  title: any,
+  skip: number,
+  limit: number
+) {
+  const jobs = await prisma.job.findMany({
+    where: {
+      title: {
+        contains: title,
+      },
+    },
+    skip: skip,
+    take: limit,
+  });
+  return jobs;
+}
+export async function findJobLocationService(
+  location: any,
+  skip: number,
+  limit: number
+) {
+  const jobs = await prisma.job.findMany({
+    where: {
+      company: {
+        OR: [
+          {
+            address: {
+              OR: [
+                {
+                  city: {
+                    contains: location,
+                  },
+                },
+                { country: { contains: location } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    include: {
+      salary: true,
+    },
+    skip: skip,
+    take: limit,
+  });
+  return jobs;
+}
 /**
  *
  *
@@ -79,22 +172,8 @@ export async function createJobService(input: jobInput) {
         },
       },
       company: {
-        connectOrCreate: {
-          where: {
-            id: input.company_id,
-          },
-          create: {
-            name: input.name,
-            email: input.email,
-            website: input.website,
-            size: input.size,
-            address: {
-              create: {
-                street: input.street,
-                country: input.country,
-              },
-            },
-          },
+        connect: {
+          id: input.company_id,
         },
       },
       salary: {
@@ -102,7 +181,6 @@ export async function createJobService(input: jobInput) {
           currency: input.currency,
           maximumMinor: input.maximumMinor,
           minimumMinor: input.minimumMinor,
-          period: input.period,
           fineGrainedSalaryInformation: {
             create: {
               totalSalaryMinor: input.totalSalaryMinor,
@@ -121,6 +199,12 @@ export async function createJobService(input: jobInput) {
           },
         },
       },
+    },
+    include: {
+      company: true,
+      metadata: true,
+      salary: true,
+      hasProbationPeriod: true,
     },
   });
   return user;
@@ -152,15 +236,8 @@ export async function updateJobFkService(
     },
     data: {
       company: {
-        update: {
-          where: {
-            id: companyId,
-          },
-          data: {
-            name: update.name,
-            email: update.email,
-            website: update.website,
-          },
+        connect: {
+          id: update.company_id,
         },
       },
       salary: {
@@ -172,7 +249,6 @@ export async function updateJobFkService(
             currency: update.currency,
             maximumMinor: update.maximumMinor,
             minimumMinor: update.minimumMinor,
-            period: update.period,
           },
         },
       },

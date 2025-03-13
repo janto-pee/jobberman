@@ -62,7 +62,7 @@ model Job {
   descriptionFormatting       String                @db.VarChar(255)
   probationaryPeriod          String                @db.VarChar(255)
   company                     Company               @relation(fields: [company_id], references: [id])
-  company_id                  String                @unique
+  company_id                  String
   salary                      Salary                @relation(fields: [salaryId], references: [id])
   salaryId                    String                @unique
   metadata                    MetaData              @relation(fields: [metadataId], references: [id])
@@ -92,7 +92,6 @@ model Salary {
   currency                       String                       @db.VarChar(255)
   maximumMinor                   String                       @db.VarChar(255)
   minimumMinor                   String                       @db.VarChar(255)
-  period                         String                       @db.VarChar(255)
   fineGrainedSalaryInformation   FineGrainedSalaryInformation @relation(fields: [fineGrainedSalaryInformationId], references: [id])
   fineGrainedSalaryInformationId String                       @unique
   taskBasedSalaryInformation     TaskBasedSalaryInformation   @relation(fields: [taskBasedSalaryInformationId], references: [id])

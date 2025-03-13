@@ -8,6 +8,7 @@ import {
   findAllCompanyService,
   findCompanyService,
   findManyCompanyService,
+  SearchCompanyService,
   totalCompanyCountService,
   updateCompanyAddressService,
   updateCompanyService,
@@ -48,7 +49,7 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const company = await findAllCompanyService(page, limit);
     const total = await totalCompanyCountService();
-    if (company.length == 0) {
+    if (!company) {
       res.status(404).send("no company found");
       return;
     }
@@ -86,7 +87,7 @@ export async function findCompanyByLocationHandler(
 
     res.status(200).json({
       status: true,
-      "company displayed": limit,
+      "company result": company.length,
       page: page + 1,
       company: company,
     });
@@ -123,6 +124,34 @@ export async function FilterCompanyHandler(req: Request, res: Response) {
     res.status(200).json({
       status: true,
       "company displayed per page": limit,
+      page: page + 1,
+      company: company,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+    });
+  }
+}
+
+export async function SearchCompanyHandler(req: Request, res: Response) {
+  try {
+    let page =
+      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+    let limit =
+      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
+    const name = req.query.name;
+
+    const company = await SearchCompanyService(name, page, limit);
+    if (company.length == 0) {
+      res.status(404).send("No company found");
+      return;
+    }
+    res.status(200).json({
+      status: true,
+      "total result": company.length,
       page: page + 1,
       company: company,
     });
@@ -182,7 +211,7 @@ export async function updateCompanyHandler(
     }
     const updatedCompany = await updateCompanyService(id, body);
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "company updated successfully",
       data: updatedCompany,
@@ -210,7 +239,7 @@ export async function updateCompanyAddressHandler(
     const body = req.body;
     const company = await findCompanyService(companyId);
     if (!company) {
-      res.status(404).sendStatus(400);
+      res.sendStatus(400);
       return;
     }
 

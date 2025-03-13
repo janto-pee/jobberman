@@ -50,6 +50,86 @@ export async function totalSalaryCountService() {
   return job;
 }
 
+export async function fiilterManyCompanyService(
+  searchParam: {
+    currency: string;
+    maximumMinor: string;
+    minimumMinor: string;
+    salaryMinor: string;
+    workingHours: number;
+  },
+  skip: number,
+  limit: number
+) {
+  const companys = await prisma.salary.findMany({
+    where: {
+      OR: [
+        {
+          currency: {
+            contains: searchParam.currency,
+          },
+        },
+        { maximumMinor: { contains: searchParam.maximumMinor } },
+        { minimumMinor: { contains: searchParam.minimumMinor } },
+        {
+          fineGrainedSalaryInformation: {
+            OR: [
+              {
+                totalOvertimeHours: {
+                  equals: searchParam.workingHours,
+                },
+              },
+              { totalSalaryMinor: { contains: searchParam.salaryMinor } },
+            ],
+          },
+        },
+      ],
+    },
+    include: {
+      fineGrainedSalaryInformation: true,
+      taskBasedSalaryInformation: true,
+    },
+    skip: skip,
+    take: limit,
+  });
+  return companys;
+}
+export async function searchSalaryService(
+  name: any,
+  skip: number,
+  limit: number
+) {
+  const companys = await prisma.salary.findMany({
+    where: {
+      currency: {
+        contains: name,
+      },
+    },
+    skip: skip,
+    take: limit,
+  });
+  return companys;
+}
+
+// export async function searchSalaryService(
+//   searchParam: any,
+//   page: number,
+//   limit: number
+// ) {
+//   const salary = await prisma.salary.findMany({
+//     body: {
+//       search: keyword,
+//     },
+//     skip: page,
+//     take: limit,
+//     include: {
+//       fineGrainedSalaryInformation: true,
+//       taskBasedSalaryInformation: true,
+//     },
+//   });
+//   return salary;
+// }
+
 /**
  *
  * MUTATIONS
@@ -62,7 +142,6 @@ export async function createSalaryService(input: salaryInput) {
       currency: input.currency,
       maximumMinor: input.maximumMinor,
       minimumMinor: input.minimumMinor,
-      period: input.period,
       fineGrainedSalaryInformation: {
         create: {
           totalSalaryMinor: input.totalSalaryMinor,

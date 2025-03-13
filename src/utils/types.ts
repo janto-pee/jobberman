@@ -208,20 +208,6 @@ let companyInput = {
   country_code: randomString(5),
 };
 
-let fgsInput = {
-  totalSalaryMinor: randomString(5),
-
-  workingHours: randomInt(18, 30),
-
-  totalOvertimeHours: randomInt(18, 30),
-
-  statutoryOvertimeHours: randomInt(18, 30),
-
-  fixedOvertimeSalaryMinor: randomString(5),
-
-  fixedOvertimePay: true,
-};
-
 let hppInput = {
   period: randomString(5),
 
@@ -229,8 +215,6 @@ let hppInput = {
 };
 
 let jobInput = {
-  company_id: randomString(5),
-
   title: randomString(5),
 
   subtitle: randomString(5),
@@ -262,6 +246,30 @@ let jobInput = {
   descriptionFormatting: randomString(5),
 
   probationaryPeriod: randomString(5),
+
+  //METADATA
+  atsName: randomString(5),
+
+  employersName: randomString(5),
+
+  //HPP
+  period: randomString(5),
+
+  status: false,
+
+  //COMPANY
+  name: randomString(5),
+
+  email: randomEmail(),
+
+  website: randomString(5),
+
+  size: randomString(5),
+
+  //address input
+  street: randomString(5),
+
+  country: randomString(5),
 };
 
 let metadataInput = {
@@ -278,6 +286,38 @@ let salaryInput = {
   minimumMinor: randomString(5),
 
   period: randomString(5),
+
+  //TBS
+  taskLengthMinutes: randomString(5),
+
+  taskDescription: randomString(5),
+
+  // FGS
+  totalSalaryMinor: randomString(5),
+
+  workingHours: randomInt(18, 30),
+
+  fixedOvertimePay: true,
+};
+
+let tbsInput = {
+  taskLengthMinutes: randomString(5),
+
+  taskDescription: randomString(5),
+};
+
+let fgsInput = {
+  totalSalaryMinor: randomString(5),
+
+  workingHours: randomInt(18, 30),
+
+  fixedOvertimePay: true,
+
+  totalOvertimeHours: randomInt(18, 30),
+
+  statutoryOvertimeHours: randomInt(18, 30),
+
+  fixedOvertimeSalaryMinor: randomString(5),
 };
 
 let sessionInput = {
@@ -286,12 +326,6 @@ let sessionInput = {
   hashed_password: randomString(5),
 
   user_agent: randomString(5),
-};
-
-let tbsInput = {
-  taskLengthMinutes: randomString(5),
-
-  taskDescription: randomString(5),
 };
 
 let userInput = {
@@ -320,3 +354,46 @@ export {
   companyInput,
   addressInput,
 };
+
+//JOB
+
+// {
+//   "title": "title",
+//   "subtitle": "subtitle",
+//   "description": "description",
+//   "qualification": "qualification",
+//   "complimentary_qualification": "complimentary_qualification",
+//   "job_type": "job_type",
+//   "visa_sponsorship": "visa_sponsorship",
+//   "remote_posible": "remote_posible",
+//   "preferred_timezones": "preferred_timezones",
+//   "location": "location",
+//   "date_posted": "date_posted",
+//   "relocation": "relocation",
+//   "skills": "skills",
+//   "employer_hiring_contact": "employer_hiring_contact",
+//   "descriptionFormatting": "descriptionFormatting",
+//   "probationaryPeriod": "probationaryPeriod",
+
+//   "atsName": "atsName",
+//   "employersName": "employersName",
+
+//   "period": "period",
+//   "status": false,
+
+//   "company_id": "118d1a3f-f44f-4c2f-9e0b-f725cc65edd4",
+
+//   "currency": "currency",
+//   "maximumMinor": "maximumMinor",
+//   "minimumMinor": "minimumMinor",
+
+//   "totalSalaryMinor": "totalSalaryMinor",
+//   "workingHours": 32,
+//   "totalOvertimeHours": 32,
+//   "statutoryOvertimeHours": 32,
+//   "fixedOvertimeSalaryMinor": "fixedOvertimeSalaryMinor",
+//   "fixedOvertimePay": true,
+
+//   "taskLengthMinutes": "taskLengthMinutes",
+//   "taskDescription": "taskDescription"
+//   }

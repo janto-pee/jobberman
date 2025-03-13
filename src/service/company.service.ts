@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import { prisma } from "../scripts";
 import { userService } from "../schema/user.schema";
 import { companyInput, companyUpdate } from "../schema/company.schema";
@@ -8,6 +7,9 @@ export async function findCompanyService(query: string) {
   const user = await prisma.company.findUnique({
     where: {
       id: query,
+    },
+    include: {
+      address: true,
     },
   });
   return user;
@@ -29,11 +31,23 @@ export async function findManyCompanyService(
   const companys = await prisma.company.findMany({
     where: {
       address: {
-        is: {
-          city: {
-            contains: location,
+        OR: [
+          {
+            city: {
+              contains: location,
+            },
           },
-        },
+          {
+            street: {
+              contains: location,
+            },
+          },
+          {
+            country: {
+              contains: location,
+            },
+          },
+        ],
       },
     },
     include: {
@@ -87,6 +101,23 @@ export async function totalCompanyCountService() {
   return job;
 }
 
+export async function SearchCompanyService(
+  name: any,
+  skip: number,
+  limit: number
+) {
+  const companys = await prisma.company.findMany({
+    where: {
+      name: {
+        contains: name,
+      },
+    },
+    skip: skip,
+    take: limit,
+  });
+  return companys;
+}
+
 /**
  *
  * MUTATION SERVICES
@@ -132,6 +163,9 @@ export async function updateCompanyService(
     },
     data: {
       ...update,
+    },
+    include: {
+      address: true,
     },
   });
   return updateUser;

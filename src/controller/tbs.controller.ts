@@ -43,7 +43,7 @@ export async function findAllTBSHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const TBS = await findAllTBSService(page, limit);
     const total = await totalTBSCountService();
-    if (TBS.length == 0) {
+    if (!TBS) {
       res.status(404).send("TBS not found");
       return;
     }

@@ -43,7 +43,7 @@ export async function findAllFGSHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const FGS = await findAllFGSService(page, limit);
     const total = await totalFGSCountService();
-    if (FGS.length == 0) {
+    if (!FGS) {
       res.status(404).send("FGS not found");
       return;
     }

@@ -5,7 +5,6 @@ import {
   deleteSalaryHandler,
   FilterSalaryHandler,
   findAllSalaryHandler,
-  findSalaryByLocationHandler,
   findSalaryHandler,
   searchSalaryHandler,
   updateSalaryFKHandler,
@@ -16,12 +15,12 @@ const router = express.Router();
 /**
  * QUERY ROUTES
  */
-router.get("/api/salary/currency/autocomplete", autocompleteSalaryHandler); //autocomplete
-router.get("/api/salary/location/:location", findSalaryByLocationHandler); //Salary by Location
-router.get("/api/salary/filter", FilterSalaryHandler); // Filter Salary
-router.get("/api/salary/search", searchSalaryHandler); //Search Salary
+router.get("/api/salary", findAllSalaryHandler); //all salary
 router.get("/api/salary/:id", findSalaryHandler); //Salary details
-router.get("/api/salary", findAllSalaryHandler); //all report
+router.get("/api/salary/currency/autocomplete", autocompleteSalaryHandler); //autocomplete
+router.get("/api/salary/filter/keyword", FilterSalaryHandler); // Filter Salary
+router.get("/api/salary/search/keyword", searchSalaryHandler); //Search Salary
+//all report
 
 /**
  * INTERNAL MUTATION

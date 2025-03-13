@@ -45,7 +45,7 @@ export async function findAllAddressHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const address = await findAllAddressService(page, limit);
     const total = await totalAddressCountService();
-    if (address.length == 0) {
+    if (!address) {
       res.status(404).send("no address found");
       return;
     }

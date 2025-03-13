@@ -6,6 +6,7 @@ import {
   findAllSalaryService,
   findManySalaryService,
   findSalaryService,
+  searchSalaryService,
   totalSalaryCountService,
   updateSalaryFKService,
   updateSalaryService,
@@ -52,7 +53,7 @@ export async function findAllSalaryHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const salary = await findAllSalaryService(page, limit);
     const total = await totalSalaryCountService();
-    if (salary.length == 0) {
+    if (!salary) {
       res.send("Salary not found");
       return;
     }
@@ -60,44 +61,6 @@ export async function findAllSalaryHandler(req: Request, res: Response) {
       status: true,
       total,
       "Salary limit per page": limit,
-      page: page + 1,
-      salary: salary,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-    });
-  }
-}
-
-export async function findSalaryByLocationHandler(
-  req: Request<{}, { page: number; lmino: number; location: string }, {}>,
-  res: Response
-) {
-  try {
-    let page =
-      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
-      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
-    const location = req.query.location;
-    const salary = await findManySalaryService(
-      {
-        location: {
-          contains: location,
-        },
-      },
-      page,
-      limit
-    );
-    if (!salary) {
-      res.send("Salary not found");
-      return;
-    }
-
-    res.status(200).json({
-      status: true,
-      "salary displayed": limit,
       page: page + 1,
       salary: salary,
     });
@@ -121,12 +84,16 @@ export async function FilterSalaryHandler(
     const currency = req.query.currency;
     const maximumMinor = req.query.maximumMinor;
     const minimumMinor = req.query.minimumMinor;
+    const salaryMinor = req.query.salaryMinor;
+    const workingHours = req.query.workingHours;
 
     const salary = await findManySalaryService(
       {
         currency,
         maximumMinor,
         minimumMinor,
+        salaryMinor,
+        workingHours,
       },
       page,
       limit
@@ -159,15 +126,7 @@ export async function searchSalaryHandler(
     let limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
     const keyword = req.query.search;
-    const salary = await findManySalaryService(
-      {
-        body: {
-          search: keyword,
-        },
-      },
-      page,
-      limit
-    );
+    const salary = await searchSalaryService(keyword, page, limit);
     if (!salary) {
       res.send("Salary not found");
       return;

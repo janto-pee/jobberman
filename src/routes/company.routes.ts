@@ -6,6 +6,7 @@ import {
   findAllCompanysHandler,
   findCompanyByLocationHandler,
   findCompanyHandler,
+  SearchCompanyHandler,
   updateCompanyAddressHandler,
   updateCompanyHandler,
 } from "../controller/company.controller";
@@ -15,11 +16,11 @@ const router = express.Router();
 /**
  * QUERY ROUTES
  */
-router.get("/api/company/:id", findCompanyHandler); // Company Details
 router.get("/api/company", findAllCompanysHandler); // All Company
-router.get("/api/company/location/:location", findCompanyByLocationHandler); //Company in Locations
+router.get("/api/company/:id", findCompanyHandler); // Company Details
+router.get("/api/company/location/:location", findCompanyByLocationHandler); //Company in city
 router.get("/api/search/company/filter", FilterCompanyHandler); //Filter Company
-//Search Company
+router.get("/api/search/company/keyword", SearchCompanyHandler); //Search Company
 
 /**
  * MUTATION ROUTES

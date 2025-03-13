@@ -42,7 +42,7 @@ export async function findAllMetadataHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const FGS = await findAllMetadataService(page, limit);
     const total = await totalMetadataCountService();
-    if (FGS.length == 0) {
+    if (!FGS) {
       res.status(404).send("FGS not found");
       return;
     }

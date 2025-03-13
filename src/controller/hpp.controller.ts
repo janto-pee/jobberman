@@ -42,7 +42,7 @@ export async function findAllHPPHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const HPP = await findAllHPPService(page, limit);
     const total = await totalHPPCountService();
-    if (HPP.length == 0) {
+    if (!HPP) {
       res.status(404).send("HPP not found");
       return;
     }

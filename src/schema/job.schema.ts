@@ -1,6 +1,13 @@
 import { object, string, TypeOf, number, boolean } from "zod";
 
 const jobInput = object({
+  /**
+   * COMPANY
+   */
+  company_id: string({
+    required_error: `company id for completed task is required`,
+  }),
+
   title: string({ required_error: `title for completed task is required` }),
   subtitle: string({
     required_error: `subtitle for completed task is required`,
@@ -58,7 +65,6 @@ const jobInput = object({
   /**
    * SALARY
    */
-  salaryId: string({ required_error: `alary is required` }),
   currency: string({ required_error: `currency is required` }),
   maximumMinor: string({ required_error: `maximum minor is required` }),
   minimumMinor: string({ required_error: `country is required` }),
@@ -94,23 +100,6 @@ const jobInput = object({
   fixedOvertimePay: boolean({
     required_error: `fixed overtime pay is required`,
   }),
-
-  /**
-   * COMPANY
-   */
-  company_id: string({
-    required_error: `company id for completed task is required`,
-  }),
-  name: string({ required_error: `name is required` }),
-  email: string({ required_error: `email is required` }),
-  website: string({ required_error: `website is required` }),
-  size: string({ required_error: `size is required` }),
-
-  /**
-   * COMPANY ADDRESS
-   */
-  street: string({ required_error: `street is required` }),
-  country: string({ required_error: `country is required` }),
 });
 
 const jobQuery = object({
