@@ -1,6 +1,5 @@
-import { omit } from "lodash";
 import { prisma } from "../scripts";
-import { jobInput, jobQuery } from "../schema/job.schema";
+import { jobInput } from "../schema/job.schema";
 
 export async function findJobService(query: string) {
   const user = await prisma.job.findUnique({
@@ -22,7 +21,7 @@ export async function findAllJobsService(page: number, limit: number) {
 export async function findManyJobsService(
   searchParam: any,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const jobs = await prisma.job.findMany({
     where: {
@@ -42,7 +41,7 @@ export async function totalJobCountService() {
 export async function fiilterManyJobService(
   searchParam: any,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const companys = await prisma.job.findMany({
     where: {
@@ -87,7 +86,7 @@ export async function fiilterManyJobService(
 export async function SearchJobService(
   title: any,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const jobs = await prisma.job.findMany({
     where: {
@@ -103,7 +102,7 @@ export async function SearchJobService(
 export async function findJobLocationService(
   location: any,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const jobs = await prisma.job.findMany({
     where: {
@@ -222,13 +221,13 @@ export async function updateJobService(query: string, update: jobInput) {
   return updateUser;
 }
 
+// company_id: string,
 export async function updateJobFkService(
-  companyId: string,
   salaryId: string,
   metadataId: string,
   hppId: string,
   id: string,
-  update: jobInput
+  update: jobInput,
 ) {
   const updateUser = await prisma.job.update({
     where: {

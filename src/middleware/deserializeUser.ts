@@ -6,11 +6,11 @@ import { reIssueAccessToken } from "../service/session.service";
 const deserializeUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const accessToken = get(req, "headers.authorization", "").replace(
     /^Bearer\s/,
-    ""
+    "",
   );
 
   if (!accessToken) {

@@ -4,7 +4,7 @@ import config from "config";
 export function signJwt(
   object: object,
   privateKey: "accessTokenPrivate" | "refreshTokenPrivate",
-  options?: jwt.SignOptions | undefined
+  options?: jwt.SignOptions | undefined,
 ) {
   try {
     const signInKey = config.get<string>(privateKey);
@@ -18,7 +18,7 @@ export function signJwt(
 }
 export function verifyJwt(
   token: string,
-  publicKey: "accessTokenPublic" | "refreshTokenPublic"
+  publicKey: "accessTokenPublic" | "refreshTokenPublic",
 ) {
   try {
     const signInKey = config.get<string>(publicKey);

@@ -21,7 +21,7 @@ import {
 
 export async function findSalaryHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -41,15 +41,17 @@ export async function findSalaryHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function findAllSalaryHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const salary = await findAllSalaryService(page, limit);
     const total = await totalSalaryCountService();
@@ -68,18 +70,20 @@ export async function findAllSalaryHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function FilterSalaryHandler(
   req: Request<{}, createsalaryInput["query"], {}>,
-  res: Response
+  res: Response,
 ) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const currency = req.query.currency;
     const maximumMinor = req.query.maximumMinor;
@@ -96,7 +100,7 @@ export async function FilterSalaryHandler(
         workingHours,
       },
       page,
-      limit
+      limit,
     );
     if (!salary) {
       res.send("No salary found");
@@ -112,18 +116,20 @@ export async function FilterSalaryHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function searchSalaryHandler(
   req: Request<{}, { page: number; lmino: number; search: string }, {}>,
-  res: Response
+  res: Response,
 ) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
     const keyword = req.query.search;
     const salary = await searchSalaryService(keyword, page, limit);
@@ -142,18 +148,20 @@ export async function searchSalaryHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function autocompleteSalaryHandler(
   req: Request<{}, { page: number; lmino: number; currency: string }, {}>,
-  res: Response
+  res: Response,
 ) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
     const keyword = req.query.currency;
     const salary = await findManySalaryService(
@@ -163,7 +171,7 @@ export async function autocompleteSalaryHandler(
         },
       },
       page,
-      limit
+      limit,
     );
     if (!salary) {
       res.send("Salary not found");
@@ -180,7 +188,9 @@ export async function autocompleteSalaryHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
@@ -194,7 +204,7 @@ export async function autocompleteSalaryHandler(
 
 export async function CreateFGSalaryHandler(
   req: Request<{}, {}, createsalaryInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -227,7 +237,7 @@ export async function CreateFGSalaryHandler(
 
 export async function updateSalaryHandler(
   req: Request<{ id: string }, {}, createsalaryInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -257,7 +267,9 @@ export async function updateSalaryHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
@@ -267,7 +279,7 @@ export async function updateSalaryFKHandler(
     {},
     createsalaryInput["body"]
   >,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id, fgsId, tbsId } = req.params;
@@ -292,6 +304,7 @@ export async function updateSalaryFKHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }

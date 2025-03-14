@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import { prisma } from "../scripts";
 import { metadataInput } from "../schema/metadata.schema";
 
@@ -41,7 +40,7 @@ export async function createMetadataService(input: metadataInput) {
 
 export async function updateMetadataService(
   query: string,
-  update: metadataInput
+  update: metadataInput,
 ) {
   const updateUser = await prisma.metaData.update({
     where: {

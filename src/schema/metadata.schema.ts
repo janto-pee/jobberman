@@ -1,4 +1,4 @@
-import { object, string, TypeOf, number } from "zod";
+import { object, string, TypeOf } from "zod";
 
 const metadataInput = object({
   atsName: string({ required_error: `ats is required` }),

@@ -182,7 +182,7 @@ const addressInput = {
   longitude: 100020002,
 };
 
-let companyInput = {
+const companyInput = {
   name: randomString(5),
 
   email: randomEmail(),
@@ -208,13 +208,13 @@ let companyInput = {
   country_code: randomString(5),
 };
 
-let hppInput = {
+const hppInput = {
   period: randomString(5),
 
   status: false,
 };
 
-let jobInput = {
+const jobInput = {
   title: randomString(5),
 
   subtitle: randomString(5),
@@ -272,13 +272,13 @@ let jobInput = {
   country: randomString(5),
 };
 
-let metadataInput = {
+const metadataInput = {
   atsName: randomString(5),
 
   employersName: randomString(5),
 };
 
-let salaryInput = {
+const salaryInput = {
   currency: randomString(5),
 
   maximumMinor: randomString(5),
@@ -300,13 +300,13 @@ let salaryInput = {
   fixedOvertimePay: true,
 };
 
-let tbsInput = {
+const tbsInput = {
   taskLengthMinutes: randomString(5),
 
   taskDescription: randomString(5),
 };
 
-let fgsInput = {
+const fgsInput = {
   totalSalaryMinor: randomString(5),
 
   workingHours: randomInt(18, 30),
@@ -331,7 +331,7 @@ const password = randomString(9).trim();
 //   street: "street",
 //   country: "country",
 // };
-let userInput = {
+const userInput = {
   email: randomEmail().trim(),
 
   username: randomString(5).trim(),
@@ -349,7 +349,7 @@ let userInput = {
   country: randomString(4).trim(),
 };
 
-let sessionInput = {
+const sessionInput = {
   email: userInput.email,
 
   hashed_password: password,

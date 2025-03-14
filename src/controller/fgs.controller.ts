@@ -11,7 +11,7 @@ import { createFGSInput } from "../schema/fgs.schema";
 
 export async function findFGSHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -31,15 +31,17 @@ export async function findFGSHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function findAllFGSHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const FGS = await findAllFGSService(page, limit);
     const total = await totalFGSCountService();
@@ -60,6 +62,7 @@ export async function findAllFGSHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -73,7 +76,7 @@ export async function findAllFGSHandler(req: Request, res: Response) {
 
 export async function CreateFGSHandler(
   req: Request<{}, {}, createFGSInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -100,7 +103,7 @@ export async function CreateFGSHandler(
 
 export async function updateFGSHandler(
   req: Request<{ id: string }, {}, createFGSInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -122,7 +125,9 @@ export async function updateFGSHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 

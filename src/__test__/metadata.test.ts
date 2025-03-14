@@ -1,5 +1,4 @@
-import request = require("supertest");
-import { randomEmail, randomOwner, randomString } from "../utils/random";
+import request from "supertest";
 import { createServer } from "../utils/createServer";
 import { metadataInput, sessionInput, userInput } from "../utils/types";
 
@@ -63,7 +62,7 @@ describe("/api/company", () => {
   describe("[GET] /api/metadata/:id", () => {
     it("should respond with a `200` status code and company details", async () => {
       const { status, body } = await request(app).get(
-        `/api/metadata/${metadataResponse.id}`
+        `/api/metadata/${metadataResponse.id}`,
       );
 
       expect(status).toBe(200);

@@ -21,7 +21,7 @@ import { findCompanyService } from "../service/company.service";
  */
 export async function findJobHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -40,15 +40,17 @@ export async function findJobHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function findAllJobsHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const job = await findAllJobsService(page, limit);
     const total = await totalJobCountService();
@@ -68,18 +70,20 @@ export async function findAllJobsHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function findJobsByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
-  res: Response
+  res: Response,
 ) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
     const location = req.params.location;
     const job = await findManyJobsService(
@@ -89,7 +93,7 @@ export async function findJobsByLocationHandler(
         },
       },
       page,
-      limit
+      limit,
     );
     if (!job) {
       res.send("No job for this location");
@@ -106,18 +110,20 @@ export async function findJobsByLocationHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function FilterJobHandler(
   req: Request<{}, createJobInput["query"], {}>,
-  res: Response
+  res: Response,
 ) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const company = req.query.company_id;
     const title = req.query.title;
@@ -147,7 +153,7 @@ export async function FilterJobHandler(
         currency,
       },
       page,
-      limit
+      limit,
     );
     if (!job) {
       res.send("Job not found");
@@ -163,15 +169,17 @@ export async function FilterJobHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function SearchJobHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const title = req.query.title;
 
@@ -191,7 +199,9 @@ export async function SearchJobHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
@@ -205,7 +215,7 @@ export async function SearchJobHandler(req: Request, res: Response) {
 
 export async function updateJobHandler(
   req: Request<{ id: string }, {}, createJobInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -235,13 +245,15 @@ export async function updateJobHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function CreateJobHandler(
   req: Request<{}, {}, createJobInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -293,10 +305,10 @@ export async function updateJobFKHandler(
     {},
     createJobInput["body"]
   >,
-  res: Response
+  res: Response,
 ) {
   try {
-    const { companyId, salaryId, metadataId, hppId, id } = req.params;
+    const { salaryId, metadataId, hppId, id } = req.params;
     const body = req.body;
     const job = await findJobService(id);
     if (!job) {
@@ -312,12 +324,11 @@ export async function updateJobFKHandler(
     }
 
     const updatedJob = await updateJobFkService(
-      companyId,
       salaryId,
       metadataId,
       hppId,
       id,
-      { ...body }
+      { ...body },
     );
 
     res.status(200).json({
@@ -330,6 +341,7 @@ export async function updateJobFKHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }

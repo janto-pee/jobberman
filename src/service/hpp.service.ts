@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import { prisma } from "../scripts";
 import { hppInput } from "../schema/hpp.schema";
 

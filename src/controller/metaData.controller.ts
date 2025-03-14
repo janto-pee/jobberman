@@ -11,7 +11,7 @@ import {
 
 export async function findMetadataHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -31,14 +31,16 @@ export async function findMetadataHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 export async function findAllMetadataHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const FGS = await findAllMetadataService(page, limit);
     const total = await totalMetadataCountService();
@@ -59,6 +61,7 @@ export async function findAllMetadataHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -72,7 +75,7 @@ export async function findAllMetadataHandler(req: Request, res: Response) {
 
 export async function CreateMetadataHandler(
   req: Request<{}, {}, createMetadataInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -99,7 +102,7 @@ export async function CreateMetadataHandler(
 
 export async function updateMetadataHandler(
   req: Request<{ id: string }, {}, createMetadataInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -128,7 +131,9 @@ export async function updateMetadataHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 

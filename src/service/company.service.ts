@@ -1,5 +1,4 @@
 import { prisma } from "../scripts";
-import { userService } from "../schema/user.schema";
 import { companyInput, companyUpdate } from "../schema/company.schema";
 import { addressInput } from "../schema/address.schema";
 
@@ -26,7 +25,7 @@ export async function findAllCompanyService(page: number, limit: number) {
 export async function findManyCompanyService(
   location: string,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const companys = await prisma.company.findMany({
     where: {
@@ -62,7 +61,7 @@ export async function findManyCompanyService(
 export async function fiilterManyCompanyService(
   searchParam: any,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const companys = await prisma.company.findMany({
     where: {
@@ -104,7 +103,7 @@ export async function totalCompanyCountService() {
 export async function SearchCompanyService(
   name: any,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const companys = await prisma.company.findMany({
     where: {
@@ -155,7 +154,7 @@ export async function createCompanyService(input: companyInput) {
 
 export async function updateCompanyService(
   query: string,
-  update: companyUpdate
+  update: companyUpdate,
 ) {
   const updateUser = await prisma.company.update({
     where: {
@@ -174,7 +173,7 @@ export async function updateCompanyService(
 export async function updateCompanyAddressService(
   companyId: string,
   addressId: string,
-  update: addressInput
+  update: addressInput,
 ) {
   const updateUser = await prisma.company.update({
     where: {

@@ -1,4 +1,4 @@
-import { object, string, TypeOf, number } from "zod";
+import { object, string, TypeOf } from "zod";
 
 const tbs = object({
   taskLengthMinutes: string({ required_error: `task length is required` }),

@@ -17,7 +17,7 @@ import { createAddressInput } from "../schema/address.schema";
 
 export async function findCompanyHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -37,15 +37,17 @@ export async function findCompanyHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function findAllCompanysHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const company = await findAllCompanyService(page, limit);
     const total = await totalCompanyCountService();
@@ -65,18 +67,20 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function findCompanyByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
-  res: Response
+  res: Response,
 ) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
     const location = req.params.location;
     const company = await findManyCompanyService(location, page, limit);
@@ -96,6 +100,7 @@ export async function findCompanyByLocationHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -103,9 +108,9 @@ export async function findCompanyByLocationHandler(
 
 export async function FilterCompanyHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const city = req.query.city;
     const size = req.query.size;
@@ -115,7 +120,7 @@ export async function FilterCompanyHandler(req: Request, res: Response) {
     const company = await fiilterManyCompanyService(
       { city: city, size, country, name },
       page,
-      limit
+      limit,
     );
     if (company.length == 0) {
       res.status(404).send("No company found");
@@ -132,15 +137,17 @@ export async function FilterCompanyHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function SearchCompanyHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const name = req.query.name;
 
@@ -160,7 +167,9 @@ export async function SearchCompanyHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
@@ -172,7 +181,7 @@ export async function SearchCompanyHandler(req: Request, res: Response) {
  */
 export async function CreateCompanyHandler(
   req: Request<{}, {}, createcompanyInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -199,7 +208,7 @@ export async function CreateCompanyHandler(
 
 export async function updateCompanyHandler(
   req: Request<{ id: string }, {}, createcompanyInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -229,6 +238,7 @@ export async function updateCompanyHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -240,7 +250,7 @@ export async function updateCompanyAddressHandler(
     {},
     createAddressInput["body"]
   >,
-  res: Response
+  res: Response,
 ) {
   try {
     const { companyId, addressId } = req.params;
@@ -261,7 +271,7 @@ export async function updateCompanyAddressHandler(
     const updatedCompany = await updateCompanyAddressService(
       companyId,
       addressId,
-      { ...body }
+      { ...body },
     );
 
     res.status(201).json({
@@ -274,6 +284,7 @@ export async function updateCompanyAddressHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }

@@ -1,5 +1,4 @@
 import express from "express";
-import { prisma } from "../scripts";
 import router from "../routes";
 import deserializeUser from "../middleware/deserializeUser";
 

@@ -1,4 +1,4 @@
-import { object, string, TypeOf, number, boolean } from "zod";
+import { object, string, TypeOf, number } from "zod";
 
 const companyInput = object({
   name: string({ required_error: `name is required` }),

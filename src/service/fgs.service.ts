@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import { prisma } from "../scripts";
 import { fgsInput } from "../schema/fgs.schema";
 

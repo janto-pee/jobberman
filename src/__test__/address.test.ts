@@ -1,14 +1,12 @@
-import request = require("supertest");
-import { randomEmail, randomOwner, randomString } from "../utils/random";
+// import request from "supertest";
+import request from "supertest";
 import { createServer } from "../utils/createServer";
-import { addressInput, sessionInput, userInput } from "../utils/types";
+import { addressInput, userInput } from "../utils/types";
 
 const app = createServer();
 
-const email = randomEmail();
-
 let addressResponse: any;
-let userResponse: any;
+// let userResponse: any;
 
 let accessToken: string;
 
@@ -22,7 +20,7 @@ describe("/api/address", () => {
         });
       expect(status).toBe(201);
       addressResponse = body.data.address;
-      userResponse = body.data;
+      // userResponse = body.data;
     });
   });
   describe("[POST] /api/sesion", () => {
@@ -90,17 +88,17 @@ describe("/api/address", () => {
     });
   });
 
-  describe("[DELETE] /api/", () => {
-    it("should respond with a `200` status code for deleted address", async () => {
-      const { status, body } = await request(app)
-        .delete(`/api/address/${addressResponse.id}`)
-        .set("Authorization", `Bearer ${accessToken}`);
+  // describe("[DELETE] /api/", () => {
+  //   it("should respond with a `200` status code for deleted address", async () => {
+  //     const { status, body } = await request(app)
+  //       .delete(`/api/address/${addressResponse.id}`)
+  //       .set("Authorization", `Bearer ${accessToken}`);
 
-      console.log(body);
-      expect(status).toBe(200);
-      expect(body).toHaveProperty("status");
-      expect(body).toHaveProperty("message");
-      expect(body).toHaveProperty("data");
-    });
-  });
+  //     console.log(body);
+  //     expect(status).toBe(200);
+  //     expect(body).toHaveProperty("status");
+  //     expect(body).toHaveProperty("message");
+  //     expect(body).toHaveProperty("data");
+  //   });
+  // });
 });

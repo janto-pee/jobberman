@@ -39,7 +39,7 @@ export async function createAddressService(input: addressInput) {
 
 export async function updateAddressService(
   query: string,
-  update: addressInput
+  update: addressInput,
 ) {
   const updateUser = await prisma.address.update({
     where: {

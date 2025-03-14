@@ -14,7 +14,7 @@ const router = express.Router();
 router.post(
   "/api/auth",
   validateResource(createSessionSchema),
-  CreateSessionHandler
+  CreateSessionHandler,
 );
 router.get("/api/auth", requireUser, findSessionHandler);
 router.put("/api/auth", requireUser, deleteSessionHandler);

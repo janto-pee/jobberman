@@ -21,22 +21,22 @@ const router = express.Router();
 router.post(
   "/api/users",
   validateResource(createUserSchema),
-  CreateUserHandler
+  CreateUserHandler,
 );
 router.get(
   "/api/users/verify/:id/:verificationcode",
   validateResource(verifyUserSchema),
-  verifyUserHandler
+  verifyUserHandler,
 );
 router.post(
   "/api/users/forgot-password",
   validateResource(forgotPasswordSchema),
-  forgotPasswordHandler
+  forgotPasswordHandler,
 );
 router.put(
   "/api/users/passwordreset/:id/:passwordresetcode",
   validateResource(resetPasswordSchema),
-  passwordResetHandler
+  passwordResetHandler,
 );
 router.get("/api/user/me", getCurrentUserHandler);
 

@@ -29,7 +29,7 @@ export async function findAllSalaryService(page: number, limit: number) {
 export async function findManySalaryService(
   searchParam: any,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const salary = await prisma.salary.findMany({
     where: {
@@ -59,7 +59,7 @@ export async function fiilterManyCompanyService(
     workingHours: number;
   },
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const companys = await prisma.salary.findMany({
     where: {
@@ -97,7 +97,7 @@ export async function fiilterManyCompanyService(
 export async function searchSalaryService(
   name: any,
   skip: number,
-  limit: number
+  limit: number,
 ) {
   const companys = await prisma.salary.findMany({
     where: {
@@ -179,7 +179,7 @@ export async function updateSalaryFKService(
   id: string,
   fgsId: string,
   tbsId: string,
-  update: salaryInput
+  update: salaryInput,
 ) {
   const updateUser = await prisma.salary.update({
     where: {

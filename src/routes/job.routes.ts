@@ -33,13 +33,13 @@ router.post(
   "/api/jobs",
   validateResource(createJobSchema),
   requireUser,
-  CreateJobHandler
+  CreateJobHandler,
 );
 router.put("/api/jobs/:id", requireUser, updateJobHandler);
 router.put(
   "/api/jobs/:id/:companyId/:salaryId/:metadataId/:hppId",
   requireUser,
-  updateJobFKHandler
+  updateJobFKHandler,
 );
 router.delete("/api/jobs/:id", requireUser, deleteJobHandler);
 

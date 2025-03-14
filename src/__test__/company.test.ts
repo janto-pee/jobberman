@@ -1,7 +1,7 @@
-import request = require("supertest");
+import request from "supertest";
 import { randomEmail, randomOwner, randomString } from "../utils/random";
 import { createServer } from "../utils/createServer";
-import { sessionInput, userInput } from "../utils/types";
+import { userInput } from "../utils/types";
 
 const app = createServer();
 
@@ -49,7 +49,6 @@ describe("/api/company", () => {
         .send({
           ...userInput,
         });
-      // console.log("company", userInput, body);
       expect(status).toBe(201);
       accessToken = body.accessToken;
     });
@@ -74,7 +73,6 @@ describe("/api/company", () => {
           ...companyInput,
         })
         .set("Authorization", `Bearer ${accessToken}`);
-      console.log(body);
       expect(status).toBe(201);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
@@ -100,7 +98,6 @@ describe("/api/company", () => {
       const { status, body } = await request(app).get(
         `/api/company/${companyResponse.id}`
       );
-      console.log(body);
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
@@ -142,7 +139,6 @@ describe("/api/company", () => {
           website: "website",
           size: "30",
         });
-      console.log(body);
       expect(status).toBe(201);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");

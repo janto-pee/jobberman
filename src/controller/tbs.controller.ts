@@ -11,7 +11,7 @@ import {
 
 export async function findTBSHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -31,15 +31,17 @@ export async function findTBSHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
 export async function findAllTBSHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const TBS = await findAllTBSService(page, limit);
     const total = await totalTBSCountService();
@@ -60,6 +62,7 @@ export async function findAllTBSHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -73,7 +76,7 @@ export async function findAllTBSHandler(req: Request, res: Response) {
 
 export async function CreateTBSHandler(
   req: Request<{}, {}, createTBS["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -100,7 +103,7 @@ export async function CreateTBSHandler(
 
 export async function updateTBSHandler(
   req: Request<{ id: string }, {}, createTBS["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -122,7 +125,9 @@ export async function updateTBSHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 

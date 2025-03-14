@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import { prisma } from "../scripts";
 import { tbs } from "../schema/tbs.schema";
 

@@ -11,7 +11,7 @@ import {
 
 export async function findHPPHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -31,14 +31,16 @@ export async function findHPPHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 export async function findAllHPPHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const HPP = await findAllHPPService(page, limit);
     const total = await totalHPPCountService();
@@ -59,6 +61,7 @@ export async function findAllHPPHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -72,7 +75,7 @@ export async function findAllHPPHandler(req: Request, res: Response) {
 
 export async function CreateHPPHandler(
   req: Request<{}, {}, createHPPInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -99,7 +102,7 @@ export async function CreateHPPHandler(
 
 export async function updateHPPHandler(
   req: Request<{ id: string }, {}, createHPPInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -121,7 +124,9 @@ export async function updateHPPHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 

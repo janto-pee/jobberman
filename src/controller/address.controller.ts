@@ -11,7 +11,7 @@ import {
 
 export async function findAddressHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -32,6 +32,7 @@ export async function findAddressHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -39,9 +40,9 @@ export async function findAddressHandler(
 
 export async function findAllAddressHandler(req: Request, res: Response) {
   try {
-    let page =
+    const page =
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    let limit =
+    const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const address = await findAllAddressService(page, limit);
     const total = await totalAddressCountService();
@@ -62,6 +63,7 @@ export async function findAllAddressHandler(req: Request, res: Response) {
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
     return;
   }
@@ -74,7 +76,7 @@ export async function findAllAddressHandler(req: Request, res: Response) {
 
 export async function CreateAddressHandler(
   req: Request<{}, {}, createAddressInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   //user
 
@@ -103,7 +105,7 @@ export async function CreateAddressHandler(
 
 export async function updateAddressHandler(
   req: Request<{ id: string }, {}, createAddressInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   const { id } = req.params;
   const body = req.body;
@@ -133,7 +135,9 @@ export async function updateAddressHandler(
     res.status(500).json({
       status: false,
       message: "server error",
+      error: error,
     });
+    return;
   }
 }
 
