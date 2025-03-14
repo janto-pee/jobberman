@@ -1,6 +1,7 @@
 import request = require("supertest");
 import { randomEmail, randomOwner, randomString } from "../utils/random";
 import { createServer } from "../utils/createServer";
+import { sessionInput, userInput } from "../utils/types";
 
 const app = createServer();
 
@@ -38,14 +39,42 @@ let addressResponse: {
   longitude: string;
   country: string;
 };
+let accessToken: string;
+
 describe("/api/company", () => {
+  describe("[POST] /api/users", () => {
+    it("should respond with a `201` status code for creating users", async () => {
+      const { status, body } = await request(app)
+        .post("/api/users")
+        .send({
+          ...userInput,
+        });
+      // console.log("company", userInput, body);
+      expect(status).toBe(201);
+      accessToken = body.accessToken;
+    });
+  });
+
+  describe("[POST] /api/sesion", () => {
+    it("should respond with a `201` status code for creating session", async () => {
+      const { status, body } = await request(app).post("/api/auth").send({
+        email: userInput.email,
+        hashed_password: userInput.hashed_password,
+      });
+      expect(status).toBe(200);
+      accessToken = body.accessToken;
+    });
+  });
+
   describe("[POST] /api/company", () => {
     it("should respond with a `201` status code", async () => {
       const { status, body } = await request(app)
         .post("/api/company")
         .send({
           ...companyInput,
-        });
+        })
+        .set("Authorization", `Bearer ${accessToken}`);
+      console.log(body);
       expect(status).toBe(201);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
@@ -71,7 +100,7 @@ describe("/api/company", () => {
       const { status, body } = await request(app).get(
         `/api/company/${companyResponse.id}`
       );
-
+      console.log(body);
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
@@ -107,11 +136,13 @@ describe("/api/company", () => {
     it("should update with a `201` status code for updated company", async () => {
       const { status, body } = await request(app)
         .put(`/api/company/${companyResponse.id}/${addressResponse.id}`)
+        .set("Authorization", `Bearer ${accessToken}`)
         .send({
           name: "companyname",
           website: "website",
           size: "30",
         });
+      console.log(body);
       expect(status).toBe(201);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
@@ -120,9 +151,9 @@ describe("/api/company", () => {
   });
   describe("[DELETE] /api/", () => {
     it("should respond with a `200` status code for deleted company", async () => {
-      const { status, body } = await request(app).delete(
-        `/api/company/${companyResponse.id}`
-      );
+      const { status, body } = await request(app)
+        .delete(`/api/company/${companyResponse.id}`)
+        .set("Authorization", `Bearer ${accessToken}`);
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");
@@ -132,9 +163,9 @@ describe("/api/company", () => {
 
   describe("[DELETE] /api/address", () => {
     it("should respond with a `200` status code for deleted address", async () => {
-      const { status, body } = await request(app).delete(
-        `/api/address/${addressResponse.id}`
-      );
+      const { status, body } = await request(app)
+        .delete(`/api/address/${addressResponse.id}`)
+        .set("Authorization", `Bearer ${accessToken}`);
       expect(status).toBe(200);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("message");

@@ -111,11 +111,11 @@ export async function updateMetadataHandler(
       return;
     }
     //get user
-    const user = res.locals.user;
-    if (!user || user.companyId == null) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
-    }
+    // const user = res.locals.user;
+    // if (!user || user.companyId == null) {
+    //   res.status(500).json({ error: "unauthorised" });
+    //   return;
+    // }
 
     const updatedAddress = await updateMetadataService(id, body);
 
@@ -136,11 +136,11 @@ export async function deleteMetadataHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
     //get user
-    const user = res.locals.user;
-    if (!user || user.companyId == null) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
-    }
+    // const user = res.locals.user;
+    // if (!user || user.companyId == null) {
+    //   res.status(500).json({ error: "unauthorised" });
+    //   return;
+    // }
 
     const metadata = await deleteMetadataService(id);
     res.status(200).json({

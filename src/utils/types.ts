@@ -319,27 +319,42 @@ let fgsInput = {
 
   fixedOvertimeSalaryMinor: randomString(5),
 };
+const password = randomString(9).trim();
 
-let sessionInput = {
-  email: randomEmail(),
+// let userInput = {
+//   email: "e1mail14@email.com",
+//   username: "u1sernam1e",
+//   first_name: "first_name",
+//   last_name: "last_name",
+//   hashed_password: "abcd1234",
+//   confirm_password: "abcd1234",
+//   street: "street",
+//   country: "country",
+// };
+let userInput = {
+  email: randomEmail().trim(),
 
-  hashed_password: randomString(5),
+  username: randomString(5).trim(),
 
-  user_agent: randomString(5),
+  first_name: randomString(5).trim(),
+
+  last_name: randomString(5).trim(),
+
+  hashed_password: password,
+
+  confirm_password: password,
+
+  street: randomString(4).trim(),
+
+  country: randomString(4).trim(),
 };
 
-let userInput = {
-  email: randomEmail(),
+let sessionInput = {
+  email: userInput.email,
 
-  username: randomString(5),
+  hashed_password: password,
 
-  first_name: randomString(5),
-
-  last_name: randomString(5),
-
-  hashed_password: randomString(5),
-
-  confirm_password: randomString(5),
+  user_agent: randomString(5),
 };
 
 export {

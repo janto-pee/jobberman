@@ -77,6 +77,9 @@ export async function createUserService(input: userService) {
         },
       },
     },
+    include: {
+      address: true,
+    },
   });
   return user;
 }

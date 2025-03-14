@@ -110,7 +110,7 @@ export async function updateAddressHandler(
 
   //get user
   const user = res.locals.user;
-  if (!user || user.addressId !== id) {
+  if (!user) {
     res.status(500).json({ error: "unauthorised" });
     return;
   }
@@ -143,7 +143,7 @@ export async function deleteAddressHandler(req: Request, res: Response) {
 
     //get user
     const user = res.locals.user;
-    if (!user || user.addressId !== id) {
+    if (!user) {
       res.status(500).json({ error: "unauthorised" });
       return;
     }

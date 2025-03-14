@@ -40,6 +40,8 @@ const companyQuery = object({
 
 export const createCompanySchema = object({
   body: companyInput,
+});
+export const createCompanyQuery = object({
   query: companyQuery,
 });
 

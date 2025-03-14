@@ -12,7 +12,7 @@ import {
 } from "../controller/company.controller";
 import requireUser from "../middleware/requireUser";
 import validateResource from "../middleware/validate";
-import { createCompanySchema } from "../schema/company.schema";
+import { companyInput, createCompanySchema } from "../schema/company.schema";
 
 const router = express.Router();
 
@@ -31,7 +31,6 @@ router.get("/api/search/company/keyword", SearchCompanyHandler); //Search Compan
 router.post(
   "/api/company",
   validateResource(createCompanySchema),
-  requireUser,
   CreateCompanyHandler
 );
 router.put("/api/company/:id", requireUser, updateCompanyHandler);
