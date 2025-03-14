@@ -11,10 +11,15 @@ RUN mkdir app
 WORKDIR /app
 COPY package*.json .
 RUN npm install
+ENV PORT=1337
+# ENV DATABASE_URL=''
 
 COPY . .
+# RUN npm run migrate
+# RUN prisma generate
+
 RUN npm run build
-EXPOSE 1337
+EXPOSE $PORT
 CMD [ "node", "build/src/index.js" ]
 
 RUN apk --no-cache add curl
