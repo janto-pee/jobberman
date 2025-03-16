@@ -10,13 +10,12 @@ LABEL org.opencontainers.image.source="https://github.com/janto-pee/jobberman"
 RUN mkdir app
 WORKDIR /app
 COPY package*.json .
-RUN npm install
-ENV PORT=1337
-# ENV DATABASE_URL=''
-
 COPY . .
-# RUN npm run migrate
-# RUN prisma generate
+RUN npm cache clean --force 
+RUN rm -rf node_modules 
+RUN npm install
+
+ENV PORT=1337
 
 RUN npm run build
 EXPOSE $PORT
