@@ -12,7 +12,7 @@ import { omit } from "lodash";
 
 export async function CreateSessionHandler(
   req: Request<{}, {}, createSessionInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { email, hashed_password } = req.body;
@@ -33,23 +33,23 @@ export async function CreateSessionHandler(
       user,
       "hashed_password",
       "verificationCode",
-      "passwordResetCode",
+      "passwordResetCode"
     );
 
     //   generate access and refresh token
     const accessToken = signJwt(
       { ...savedUser, session: session.id },
       "accessTokenPrivate",
-      { expiresIn: config.get("accessTokenTtl") },
+      { expiresIn: config.get("accessTokenTtl") }
     );
 
     const refreshToken = signJwt(
       { ...savedUser, session: session.id },
       "refreshTokenPrivate",
-      { expiresIn: config.get("refreshTokenTtl") },
+      { expiresIn: config.get("refreshTokenTtl") }
     );
 
-    res.status(200).send({
+    res.status(201).send({
       session,
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -68,7 +68,7 @@ export async function findSessionHandler(_: Request, res: Response) {
   try {
     const id = res.locals.user.session;
     const session = await findSession(id);
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "session found",
       data: session,
@@ -87,11 +87,11 @@ export async function findSessionHandler(_: Request, res: Response) {
 export async function deleteSessionHandler(_: Request, res: Response) {
   try {
     const id = res.locals.user.session;
-    const user = await updateSession(id);
-    res.status(201).json({
+    const session = await updateSession(id);
+    res.status(200).json({
       status: true,
       message: "session expired",
-      data: user,
+      data: session,
     });
   } catch (error) {
     res.status(500).json({

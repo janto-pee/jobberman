@@ -21,7 +21,7 @@ import { findCompanyService } from "../service/company.service";
  */
 export async function findJobHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -31,7 +31,7 @@ export async function findJobHandler(
       res.send("could not find user's job");
       return;
     }
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "job found",
       job: job,
@@ -59,7 +59,7 @@ export async function findAllJobsHandler(req: Request, res: Response) {
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       total,
       "job limit per page": limit,
@@ -78,7 +78,7 @@ export async function findAllJobsHandler(req: Request, res: Response) {
 
 export async function findJobsByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
-  res: Response,
+  res: Response
 ) {
   try {
     const page =
@@ -93,14 +93,14 @@ export async function findJobsByLocationHandler(
         },
       },
       page,
-      limit,
+      limit
     );
     if (!job) {
       res.send("No job for this location");
       return;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       "job displayed": limit,
       page: page + 1,
@@ -118,7 +118,7 @@ export async function findJobsByLocationHandler(
 
 export async function FilterJobHandler(
   req: Request<{}, createJobInput["query"], {}>,
-  res: Response,
+  res: Response
 ) {
   try {
     const page =
@@ -153,13 +153,13 @@ export async function FilterJobHandler(
         currency,
       },
       page,
-      limit,
+      limit
     );
     if (!job) {
       res.send("Job not found");
       return;
     }
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       "job displayed": limit,
       page: page + 1,
@@ -215,7 +215,7 @@ export async function SearchJobHandler(req: Request, res: Response) {
 
 export async function updateJobHandler(
   req: Request<{ id: string }, {}, createJobInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -236,7 +236,7 @@ export async function updateJobHandler(
 
     const updatedjob = await updateJobService(id, body);
 
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: "password changed successfully",
       data: updatedjob,
@@ -253,7 +253,7 @@ export async function updateJobHandler(
 
 export async function CreateJobHandler(
   req: Request<{}, {}, createJobInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
@@ -305,7 +305,7 @@ export async function updateJobFKHandler(
     {},
     createJobInput["body"]
   >,
-  res: Response,
+  res: Response
 ) {
   try {
     const { salaryId, metadataId, hppId, id } = req.params;
@@ -328,7 +328,7 @@ export async function updateJobFKHandler(
       metadataId,
       hppId,
       id,
-      { ...body },
+      { ...body }
     );
 
     res.status(200).json({
@@ -359,7 +359,7 @@ export async function deleteJobHandler(req: Request, res: Response) {
     }
 
     const job = await deleteJobService(id);
-    res.status(201).json({
+    res.status(200).json({
       status: true,
       message: `Job Successfully Deleted`,
       data: job,
