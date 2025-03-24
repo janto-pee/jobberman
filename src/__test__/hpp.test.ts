@@ -1,7 +1,7 @@
 import request from "supertest";
 import { createServer } from "../utils/createServer";
 import { connectionScript, prisma } from "../scripts";
-import { hppInput, metadataInput, userInput } from "../utils/types";
+import { hppInput, userInput } from "../utils/types";
 
 const app = createServer();
 
@@ -88,7 +88,7 @@ describe("session", () => {
       describe("[GET] /api/hpp/:id", () => {
         it("should respond with a `200` status code and company details", async () => {
           const { status, body } = await request(app).get(
-            `/api/hpp/${hppResponse.id}`
+            `/api/hpp/${hppResponse.id}`,
           );
 
           expect(status).toBe(200);
@@ -115,7 +115,7 @@ describe("session", () => {
       describe("[DELETE] /api/", () => {
         it("should respond with a `200` status code for deleted company", async () => {
           const { status, body } = await request(app).delete(
-            `/api/hpp/${hppResponse.id}`
+            `/api/hpp/${hppResponse.id}`,
           );
           expect(status).toBe(200);
           expect(body).toHaveProperty("status");

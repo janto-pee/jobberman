@@ -123,7 +123,7 @@ describe("session", () => {
     describe("[GET] /api/company/filter", () => {
       it("should respond with a `200` status code and company filter", async () => {
         const { status, body } = await request(app).get(
-          `/api/search/company/filter?city=${companyResponse.city}`
+          `/api/search/company/filter?country=${companyResponse.address.country}`
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");

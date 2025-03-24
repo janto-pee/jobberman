@@ -74,7 +74,7 @@ describe("session", () => {
     describe("[GET] /api/tbs/:id", () => {
       it("should respond with a `200` status code and company details", async () => {
         const { status, body } = await request(app).get(
-          `/api/tbs/${tbsResponse.id}`
+          `/api/tbs/${tbsResponse.id}`,
         );
 
         expect(status).toBe(200);
@@ -101,7 +101,7 @@ describe("session", () => {
     describe("[DELETE] /api/", () => {
       it("should respond with a `200` status code for deleted company", async () => {
         const { status, body } = await request(app).delete(
-          `/api/tbs/${tbsResponse.id}`
+          `/api/tbs/${tbsResponse.id}`,
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");

@@ -1,12 +1,7 @@
 import request from "supertest";
 import { createServer } from "../utils/createServer";
 import { connectionScript, prisma } from "../scripts";
-import {
-  addressInput,
-  companyInput,
-  metadataInput,
-  userInput,
-} from "../utils/types";
+import { addressInput, userInput } from "../utils/types";
 
 const app = createServer();
 
@@ -93,7 +88,7 @@ describe("session", () => {
             ...addressInput,
           })
           .set("Authorization", `Bearer ${accessResponse}`);
-        console.log(addressInput, status, body);
+
         expect(status).toBe(201);
         expect(body).toHaveProperty("status");
         expect(body).toHaveProperty("message");

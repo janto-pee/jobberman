@@ -12,7 +12,7 @@ import { omit } from "lodash";
 
 export async function CreateSessionHandler(
   req: Request<{}, {}, createSessionInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { email, hashed_password } = req.body;
@@ -33,20 +33,20 @@ export async function CreateSessionHandler(
       user,
       "hashed_password",
       "verificationCode",
-      "passwordResetCode"
+      "passwordResetCode",
     );
 
     //   generate access and refresh token
     const accessToken = signJwt(
       { ...savedUser, session: session.id },
       "accessTokenPrivate",
-      { expiresIn: config.get("accessTokenTtl") }
+      { expiresIn: config.get("accessTokenTtl") },
     );
 
     const refreshToken = signJwt(
       { ...savedUser, session: session.id },
       "refreshTokenPrivate",
-      { expiresIn: config.get("refreshTokenTtl") }
+      { expiresIn: config.get("refreshTokenTtl") },
     );
 
     res.status(201).send({

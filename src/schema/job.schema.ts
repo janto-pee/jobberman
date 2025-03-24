@@ -1,12 +1,14 @@
 import { object, string, TypeOf, number, boolean } from "zod";
 
-const jobInput = object({
-  /**
-   * COMPANY
-   */
+const companyId = {
   company_id: string({
     required_error: `company id for completed task is required`,
   }),
+};
+const jobItem = {
+  /**
+   * COMPANY
+   */
 
   title: string({ required_error: `title for completed task is required` }),
   subtitle: string({
@@ -100,6 +102,15 @@ const jobInput = object({
   fixedOvertimePay: boolean({
     required_error: `fixed overtime pay is required`,
   }),
+};
+
+const jobInput = object({
+  ...jobItem,
+});
+
+const jobServiceInput = object({
+  ...companyId,
+  ...jobItem,
 });
 
 const jobQuery = object({
@@ -139,6 +150,7 @@ export const createJobSchema = object({
 });
 
 export type jobInput = TypeOf<typeof jobInput>;
+export type jobServiceInput = TypeOf<typeof jobServiceInput>;
 export type jobQuery = TypeOf<typeof jobQuery>;
 
 export type createJobInput = TypeOf<typeof createJobSchema>;

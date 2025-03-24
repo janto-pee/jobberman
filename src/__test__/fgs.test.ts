@@ -1,7 +1,7 @@
 import request from "supertest";
 import { createServer } from "../utils/createServer";
 import { connectionScript, prisma } from "../scripts";
-import { fgsInput, metadataInput, userInput } from "../utils/types";
+import { fgsInput, userInput } from "../utils/types";
 
 const app = createServer();
 
@@ -97,7 +97,7 @@ describe("session", () => {
     describe("[GET] /api/fgs/:id", () => {
       it("should respond with a `200` status code and company details", async () => {
         const { status, body } = await request(app).get(
-          `/api/fgs/${fgsResponse.id}`
+          `/api/fgs/${fgsResponse.id}`,
         );
 
         expect(status).toBe(200);
@@ -124,7 +124,7 @@ describe("session", () => {
     describe("[DELETE] /api/", () => {
       it("should respond with a `200` status code for deleted company", async () => {
         const { status, body } = await request(app).delete(
-          `/api/fgs/${fgsResponse.id}`
+          `/api/fgs/${fgsResponse.id}`,
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");

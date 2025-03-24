@@ -2,14 +2,14 @@ import { number, object, string, TypeOf } from "zod";
 
 const user = {
   email: string({ required_error: `email is required` }).email(
-    "must be a valid email",
+    "must be a valid email"
   ),
   username: string({ required_error: `the field username is required` }),
   first_name: string({ required_error: `the field first_name is required` }),
   last_name: string({ required_error: `the field last_name is required` }),
   hashed_password: string({ required_error: `password is required` }).min(
     8,
-    `password must be at least 8 characters long`,
+    `password must be at least 8 characters long`
   ),
   //address input
   street: string({ required_error: `street is required` }),
@@ -50,7 +50,7 @@ export const createUserSchema = object({
     {
       message: `password and confirm_password mismatch`,
       path: ["confirm_password"],
-    },
+    }
   ),
 });
 
@@ -65,7 +65,7 @@ export const verifyUserSchema = object({
 
 const forgotBody = object({
   email: string({ required_error: `email is required` }).email(
-    "must be a valid email",
+    "must be a valid email"
   ),
 });
 export const forgotPasswordSchema = object({
@@ -80,7 +80,7 @@ const resetParams = object({
 const resetBody = object({
   password: string({ required_error: `password is required` }).min(
     8,
-    `password must be 8 characters long`,
+    `password must be 8 characters long`
   ),
   confirm_password: string({
     required_error: `confirm_password is required`,

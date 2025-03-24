@@ -1,12 +1,7 @@
 import request from "supertest";
 import { createServer } from "../utils/createServer";
 import { connectionScript, prisma } from "../scripts";
-import {
-  companyInput,
-  jobInput,
-  metadataInput,
-  userInput,
-} from "../utils/types";
+import { companyInput, jobInput, userInput, salaryInput } from "../utils/types";
 
 const app = createServer();
 
@@ -22,19 +17,7 @@ let sessionResponse: {
 };
 let accessResponse: string;
 let jobResponse: any;
-let addressResponse: {
-  id: string;
-  street: string;
-  street2: string;
-  city: string;
-  state_province_code: string;
-  state_province_name: string;
-  postal_code: string;
-  country_code: string;
-  latitude: string;
-  longitude: string;
-  country: string;
-};
+let companyResponse: any;
 
 describe("session", () => {
   beforeAll(async () => {
@@ -75,6 +58,7 @@ describe("session", () => {
         user_agent: "xuz",
         client_ip: "bc",
       });
+      console.log(accessResponse);
       expect(status).toBe(201);
       expect(body.session.is_blocked).toBe(false);
       expect(body.session.valid).toBe(true);
@@ -84,15 +68,33 @@ describe("session", () => {
     });
   });
 
+  describe("[POST] /api/company", () => {
+    it("should respond with a `201` status code", async () => {
+      const { status, body } = await request(app)
+        .post("/api/company")
+        .send({
+          ...companyInput,
+        })
+        .set("Authorization", `Bearer ${accessResponse}`);
+      expect(status).toBe(201);
+      expect(body).toHaveProperty("status");
+      expect(body).toHaveProperty("message");
+      expect(body).toHaveProperty("data");
+      companyResponse = body.data;
+    });
+  });
+
   describe("/api/jobs", () => {
     describe("[POST] /api/jobs", () => {
       it("should respond with a `201` status code", async () => {
         const { status, body } = await request(app)
-          .post("/api/jobs")
+          .post(`/api/jobs`)
           .send({
             ...jobInput,
+            ...salaryInput,
           })
           .set("Authorization", `Bearer ${accessResponse}`);
+        console.log(accessResponse, status, body, jobInput, companyResponse);
         expect(status).toBe(201);
         expect(body).toHaveProperty("status");
         expect(body).toHaveProperty("message");
@@ -112,7 +114,7 @@ describe("session", () => {
     });
 
     describe("[GET] /api/jobs/:id", () => {
-      it("should respond with a `200` status code and company details", async () => {
+      it("should respond with a `200` status code and job details", async () => {
         const { status, body } = await request(app).get(
           `/api/jobs/${jobResponse.id}`
         );
@@ -124,9 +126,9 @@ describe("session", () => {
     });
 
     describe("[GET] /api/jobs/filter", () => {
-      it("should respond with a `200` status code and company filter", async () => {
+      it("should respond with a `200` status code and job filter", async () => {
         const { status, body } = await request(app).get(
-          `/api/search/company/filter?city=${jobResponse.city}`
+          `/api/search/jobs/filter?city=${jobResponse.city}`
         );
         expect(status).toBe(201);
         expect(body).toHaveProperty("status");
@@ -138,23 +140,23 @@ describe("session", () => {
     describe("[GET] /api/jobs/location/:location", () => {
       it("should respond with a `404` status code and a list of matching companies", async () => {
         const { status, body } = await request(app).get(
-          `/api/jobs/location/${companyInput.street}`
+          `/api/jobs/location/${jobInput.street}`
         );
-        console.log(status, body);
+        // console.log(status, body);
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
         expect(body).toHaveProperty("page");
-        expect(body).toHaveProperty("company");
+        expect(body).toHaveProperty("job");
       });
     });
 
-    describe("[PUT] /api/search/company/keyword", () => {
+    describe("[PUT] /api/search/job/keyword", () => {
       it("should update with a `200` for job search", async () => {
         const { status, body } = await request(app)
-          .put(`/api/search/company/keyword?title=${jobResponse.title}`)
+          .put(`/api/search/job/keyword?title=${jobResponse.title}`)
           .set("Authorization", `Bearer ${accessResponse}`)
           .send({
-            name: "companyname",
+            name: "jobname",
             website: "website",
             size: "30",
           });
@@ -165,7 +167,7 @@ describe("session", () => {
       });
     });
     describe("[UPDATE] /api/", () => {
-      it("should respond with a `200` status code for deleted company", async () => {
+      it("should respond with a `200` status code for deleted job", async () => {
         const { status, body } = await request(app)
           .put(`/api/jobs/${jobResponse.id}`)
           .send({

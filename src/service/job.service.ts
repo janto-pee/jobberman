@@ -1,5 +1,5 @@
 import { prisma } from "../scripts";
-import { jobInput } from "../schema/job.schema";
+import { jobInput, jobServiceInput } from "../schema/job.schema";
 
 export async function findJobService(query: string) {
   const user = await prisma.job.findUnique({
@@ -21,7 +21,7 @@ export async function findAllJobsService(page: number, limit: number) {
 export async function findManyJobsService(
   searchParam: any,
   skip: number,
-  limit: number,
+  limit: number
 ) {
   const jobs = await prisma.job.findMany({
     where: {
@@ -41,7 +41,7 @@ export async function totalJobCountService() {
 export async function fiilterManyJobService(
   searchParam: any,
   skip: number,
-  limit: number,
+  limit: number
 ) {
   const companys = await prisma.job.findMany({
     where: {
@@ -86,7 +86,7 @@ export async function fiilterManyJobService(
 export async function SearchJobService(
   title: any,
   skip: number,
-  limit: number,
+  limit: number
 ) {
   const jobs = await prisma.job.findMany({
     where: {
@@ -102,7 +102,7 @@ export async function SearchJobService(
 export async function findJobLocationService(
   location: any,
   skip: number,
-  limit: number,
+  limit: number
 ) {
   const jobs = await prisma.job.findMany({
     where: {
@@ -139,7 +139,7 @@ export async function findJobLocationService(
  *
  */
 
-export async function createJobService(input: jobInput) {
+export async function createJobService(input: jobServiceInput) {
   const user = await prisma.job.create({
     data: {
       title: input.title,
@@ -227,7 +227,7 @@ export async function updateJobFkService(
   metadataId: string,
   hppId: string,
   id: string,
-  update: jobInput,
+  update: jobServiceInput
 ) {
   const updateUser = await prisma.job.update({
     where: {

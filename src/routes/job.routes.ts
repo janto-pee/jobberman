@@ -21,9 +21,9 @@ const router = express.Router();
  */
 router.get("/api/jobs", findAllJobsHandler); // All Jobs
 router.get("/api/jobs/:id", findJobHandler); //Job Detail
-router.get("/api/search/company/filter", FilterJobHandler); //Filter Company
+router.get("/api/search/jobs/filter", FilterJobHandler); //Filter jobs
 router.get("/api/jobs/location/:location", findJobsByLocationHandler); //Location
-router.get("/api/search/company/keyword", SearchJobHandler); //Search Job
+router.get("/api/search/jobs/keyword", SearchJobHandler); //Search Job
 
 /**
  * MUTATION ROUTES
@@ -33,13 +33,13 @@ router.post(
   "/api/jobs",
   validateResource(createJobSchema),
   requireUser,
-  CreateJobHandler,
+  CreateJobHandler
 );
 router.put("/api/jobs/:id", requireUser, updateJobHandler);
 router.put(
-  "/api/jobs/:id/:companyId/:salaryId/:metadataId/:hppId",
+  "/api/jobs/:id/:salaryId/:metadataId/:hppId",
   requireUser,
-  updateJobFKHandler,
+  updateJobFKHandler
 );
 router.delete("/api/jobs/:id", requireUser, deleteJobHandler);
 

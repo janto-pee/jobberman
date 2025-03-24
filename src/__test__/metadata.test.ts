@@ -75,7 +75,7 @@ describe("session", () => {
     describe("[GET] /api/metadata/:id", () => {
       it("should respond with a `200` status code and company details", async () => {
         const { status, body } = await request(app).get(
-          `/api/metadata/${metadataResponse.id}`
+          `/api/metadata/${metadataResponse.id}`,
         );
 
         expect(status).toBe(200);

@@ -1,13 +1,12 @@
 // import request from "supertest";
 import request from "supertest";
 import { createServer } from "../utils/createServer";
-import { addressInput, userInput } from "../utils/types";
+import { userInput } from "../utils/types";
 import { connectionScript, prisma } from "../scripts";
 
 const app = createServer();
 
 let userResponse: any;
-let accessToken: string;
 
 describe("user", () => {
   beforeEach(async () => {

@@ -213,6 +213,48 @@ export async function SearchJobHandler(req: Request, res: Response) {
  *
  */
 
+export async function CreateJobHandler(
+  req: Request<{}, {}, createJobInput["body"]>,
+  res: Response
+) {
+  try {
+    const body = req.body;
+
+    //get user
+    const user = res.locals.user;
+    if (!user || user.companyId == null) {
+      res
+        .status(500)
+        .json({ error: "this user is not affiliated with any company" });
+      return;
+    }
+
+    const company = await findCompanyService(user.companyId);
+    if (!company) {
+      res.status(404).json({ error: "company not found" });
+      return;
+    }
+    const job = await createJobService({
+      ...body,
+      company_id: company.id,
+    });
+
+    res.status(201).json({
+      status: true,
+      message: `Job Successfully Created`,
+      data: job,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+    return;
+  }
+}
+
 export async function updateJobHandler(
   req: Request<{ id: string }, {}, createJobInput["body"]>,
   res: Response
@@ -251,52 +293,9 @@ export async function updateJobHandler(
   }
 }
 
-export async function CreateJobHandler(
-  req: Request<{}, {}, createJobInput["body"]>,
-  res: Response
-) {
-  try {
-    const body = req.body;
-
-    //get user
-    const user = res.locals.user;
-    if (!user || user.companyId == null) {
-      res
-        .status(500)
-        .json({ error: "this user is not affiliated with any company" });
-      return;
-    }
-
-    const company = await findCompanyService(body.company_id);
-    if (!company) {
-      res.status(404).json({ error: "company not found" });
-      return;
-    }
-    const job = await createJobService({
-      ...body,
-      // company_id: company.id,
-    });
-
-    res.status(201).json({
-      status: true,
-      message: `Job Successfully Created`,
-      data: job,
-    });
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
-  }
-}
-
 export async function updateJobFKHandler(
   req: Request<
     {
-      companyId: string;
       salaryId: string;
       metadataId: string;
       hppId: string;
@@ -328,7 +327,7 @@ export async function updateJobFKHandler(
       metadataId,
       hppId,
       id,
-      { ...body }
+      { ...body, company_id: user.companyId }
     );
 
     res.status(200).json({
