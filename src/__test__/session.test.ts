@@ -11,9 +11,9 @@ let accessResponse: string;
 describe("session", () => {
   beforeAll(async () => {
     connectionScript(true);
-    setTimeout(() => {
-      it("passes", () => expect(1).toBe(1));
-    }, 200);
+    // setTimeout(() => {
+    //   it("passes", () => expect(1).toBe(1));
+    // }, 200);
   });
 
   afterAll(async () => {
