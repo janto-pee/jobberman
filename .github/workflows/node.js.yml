@@ -66,8 +66,8 @@ jobs:
 
     - run: npm ci
     - run: npm run lint
-    - run: npm run test
     - run: npm run build --if-present
+    - run: npm run test -- --silent=false
     # - run: |
     #     touch .env
     #     echo ${{ secrets.DATABASE_URL }}

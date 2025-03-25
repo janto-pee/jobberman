@@ -39,6 +39,7 @@ describe("session", () => {
           user_agent: "xuz",
           client_ip: "bc",
         });
+        console.log(status, body, userInput);
         expect(status).toBe(201);
         accessResponse = body.accessToken;
       });
