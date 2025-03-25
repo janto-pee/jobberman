@@ -36,6 +36,7 @@ jobs:
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      LOGLEVEL: ${{ secrets.LOGLEVEL }}
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -70,7 +71,6 @@ jobs:
     # - run: |
     #     touch .env
     #     echo ${{ secrets.DATABASE_URL }}
-    #     echo DATABASE_URL: ${{ secrets.DATABASE_URL }} >> .env
     #     echo DATABASE_URL: ${{ secrets.DATABASE_URL }} >> .env
     
     - name: Codecov
