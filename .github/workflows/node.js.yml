@@ -71,6 +71,7 @@ jobs:
     #     touch .env
     #     echo ${{ secrets.DATABASE_URL }}
     #     echo DATABASE_URL: ${{ secrets.DATABASE_URL }} >> .env
+    #     echo DATABASE_URL: ${{ secrets.DATABASE_URL }} >> .env
     
     - name: Codecov
       uses: codecov/codecov-action@v5.4.0
