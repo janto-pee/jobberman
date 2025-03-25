@@ -146,11 +146,14 @@ const jobQuery = object({
 
 export const createJobSchema = object({
   body: jobInput,
+});
+export const FilterJobSchema = object({
   query: jobQuery,
 });
 
 export type jobInput = TypeOf<typeof jobInput>;
 export type jobServiceInput = TypeOf<typeof jobServiceInput>;
 export type jobQuery = TypeOf<typeof jobQuery>;
+export type FilterjobQuery = TypeOf<typeof FilterJobSchema>;
 
 export type createJobInput = TypeOf<typeof createJobSchema>;

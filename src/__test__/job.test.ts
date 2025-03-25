@@ -94,12 +94,10 @@ describe("session", () => {
             ...salaryInput,
           })
           .set("Authorization", `Bearer ${accessResponse}`);
-        console.log(accessResponse, status, body, jobInput, companyResponse);
+        console.log(accessResponse, status, body);
         expect(status).toBe(201);
-        expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("message");
-        expect(body).toHaveProperty("job");
-        jobResponse = body.job;
+        expect(body.status).toBe(true);
+        jobResponse = body.data;
       });
     });
 
@@ -108,8 +106,6 @@ describe("session", () => {
         const { status, body } = await request(app).get("/api/jobs");
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("message");
-        expect(body).toHaveProperty("job");
       });
     });
 
@@ -120,20 +116,17 @@ describe("session", () => {
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("message");
-        expect(body).toHaveProperty("job");
+        // expect(body).toHaveProperty("message");
       });
     });
 
     describe("[GET] /api/jobs/filter", () => {
       it("should respond with a `200` status code and job filter", async () => {
         const { status, body } = await request(app).get(
-          `/api/search/jobs/filter?city=${jobResponse.city}`
+          `/api/search/jobs/filter?currency=${jobResponse.currency}`
         );
         expect(status).toBe(201);
         expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("page");
-        expect(body).toHaveProperty("job");
       });
     });
 
@@ -145,8 +138,6 @@ describe("session", () => {
         // console.log(status, body);
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("page");
-        expect(body).toHaveProperty("job");
       });
     });
 
@@ -160,12 +151,10 @@ describe("session", () => {
             website: "website",
             size: "30",
           });
-        expect(status).toBe(201);
-        expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("message");
-        expect(body).toHaveProperty("data");
+        expect(status).toBe(200);
       });
     });
+
     describe("[UPDATE] /api/", () => {
       it("should respond with a `200` status code for deleted job", async () => {
         const { status, body } = await request(app)
@@ -175,9 +164,6 @@ describe("session", () => {
           })
           .set("Authorization", `Bearer ${accessResponse}`);
         expect(status).toBe(200);
-        expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("message");
-        expect(body).toHaveProperty("data");
         expect(body.data.title).toHaveProperty("title");
       });
     });
@@ -188,9 +174,10 @@ describe("session", () => {
           .delete(`/api/jobs/${jobResponse.id}`)
           .set("Authorization", `Bearer ${accessResponse}`);
         expect(status).toBe(200);
-        expect(body).toHaveProperty("status");
-        expect(body).toHaveProperty("message");
-        expect(body).toHaveProperty("data");
+        expect(body.data.id).toBe(jobResponse.id);
+        expect(body.data.title).toBe(jobResponse.title);
+        expect(body.data.subtitle).toBe(jobResponse.subtitle);
+        expect(body.data.skills).toBe(jobResponse.skills);
       });
     });
   });

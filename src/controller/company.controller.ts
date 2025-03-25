@@ -14,10 +14,11 @@ import {
   updateCompanyService,
 } from "../service/company.service";
 import { createAddressInput } from "../schema/address.schema";
+import { addUserToCompanyService } from "../service/user.service";
 
 export async function findCompanyHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -75,7 +76,7 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
 
 export async function findCompanyByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
-  res: Response,
+  res: Response
 ) {
   try {
     const page =
@@ -120,7 +121,7 @@ export async function FilterCompanyHandler(req: Request, res: Response) {
     const company = await fiilterManyCompanyService(
       { city: city, size, country, name },
       page,
-      limit,
+      limit
     );
     if (company.length == 0) {
       res.status(404).send("No company found");
@@ -181,19 +182,28 @@ export async function SearchCompanyHandler(req: Request, res: Response) {
  */
 export async function CreateCompanyHandler(
   req: Request<{}, {}, createcompanyInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
+    const user = res.locals.user;
+    if (!user) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
 
     const company = await createCompanyService({
       ...body,
     });
 
+    const updatedUser = await addUserToCompanyService(user.id, company.id);
+    console.log("company....................", user);
+
     res.status(201).json({
       status: true,
       message: `company Successfully Created`,
       data: company,
+      user: updatedUser,
     });
     return;
   } catch (error) {
@@ -208,7 +218,7 @@ export async function CreateCompanyHandler(
 
 export async function updateCompanyHandler(
   req: Request<{ id: string }, {}, createcompanyInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -250,7 +260,7 @@ export async function updateCompanyAddressHandler(
     {},
     createAddressInput["body"]
   >,
-  res: Response,
+  res: Response
 ) {
   try {
     const { companyId, addressId } = req.params;
@@ -271,7 +281,7 @@ export async function updateCompanyAddressHandler(
     const updatedCompany = await updateCompanyAddressService(
       companyId,
       addressId,
-      { ...body },
+      { ...body }
     );
 
     res.status(201).json({

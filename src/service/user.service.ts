@@ -83,7 +83,17 @@ export async function createUserService(input: userService) {
   });
   return user;
 }
-
+export async function addUserToCompanyService(id: string, companyId: string) {
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      companyId: companyId,
+    },
+  });
+  return updatedUser;
+}
 export async function verifyUserService(query: string) {
   const updateUser = await prisma.user.update({
     where: {

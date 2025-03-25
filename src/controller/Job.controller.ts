@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createJobInput } from "../schema/job.schema";
+import { createJobInput, FilterjobQuery } from "../schema/job.schema";
 import {
   createJobService,
   deleteJobService,
@@ -12,6 +12,7 @@ import {
   updateJobService,
 } from "../service/job.service";
 import { findCompanyService } from "../service/company.service";
+import { findUserService } from "../service/user.service";
 
 /**
  *
@@ -117,7 +118,7 @@ export async function findJobsByLocationHandler(
 }
 
 export async function FilterJobHandler(
-  req: Request<{}, createJobInput["query"], {}>,
+  req: Request<{}, FilterjobQuery["query"], {}>,
   res: Response
 ) {
   try {
@@ -219,9 +220,10 @@ export async function CreateJobHandler(
 ) {
   try {
     const body = req.body;
+    // //get user
+    const resUser = res.locals.user;
+    const user = await findUserService(resUser.id);
 
-    //get user
-    const user = res.locals.user;
     if (!user || user.companyId == null) {
       res
         .status(500)
@@ -268,10 +270,24 @@ export async function updateJobHandler(
       res.sendStatus(400);
       return;
     }
-
+    //
+    //
+    //
+    //
+    //
     //get user
-    const user = res.locals.user;
-    if (!user || user.companyId !== job.company_id) {
+    const resUser = res.locals.user;
+    const user = await findUserService(resUser.id);
+    if (!user?.companyId) {
+      res
+        .status(500)
+        .json({ error: "please create a company before you create a job" });
+      return;
+    }
+
+    const company = await findCompanyService(user.companyId);
+
+    if (!user || user.companyId !== company?.id) {
       res.status(500).json({ error: "unauthorised" });
       return;
     }
@@ -316,7 +332,9 @@ export async function updateJobFKHandler(
     }
 
     //get user
-    const user = res.locals.user;
+    const resUser = res.locals.user;
+    const user = await findUserService(resUser.id);
+
     if (!user || user.companyId !== job.company_id) {
       res.status(500).json({ error: "unauthorised" });
       return;
@@ -349,10 +367,19 @@ export async function updateJobFKHandler(
 export async function deleteJobHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
-
     //get user
-    const user = res.locals.user;
-    if (!user || user.companyId !== id) {
+    const resUser = res.locals.user;
+    const user = await findUserService(resUser.id);
+    if (!user?.companyId) {
+      res
+        .status(500)
+        .json({ error: "please create a company before you create a job" });
+      return;
+    }
+
+    const company = await findCompanyService(user.companyId);
+
+    if (!user || user.companyId !== company?.id) {
       res.status(500).json({ error: "unauthorised" });
       return;
     }

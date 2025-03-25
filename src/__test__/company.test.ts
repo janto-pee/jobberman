@@ -137,7 +137,6 @@ describe("session", () => {
         const { status, body } = await request(app).get(
           `/api/company/location/${companyInput.street}`
         );
-        console.log(status, body);
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
         expect(body).toHaveProperty("page");

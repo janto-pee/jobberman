@@ -131,6 +131,18 @@ export async function findJobLocationService(
   });
   return jobs;
 }
+
+export async function findJobCompanyService(id: string, companyId: string) {
+  const user = await prisma.job.findUnique({
+    where: {
+      id: id,
+      company_id: companyId,
+    },
+  });
+
+  return user;
+}
+
 /**
  *
  *
