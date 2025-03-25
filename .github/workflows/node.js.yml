@@ -73,19 +73,18 @@ jobs:
     #     echo ${{ secrets.DATABASE_URL }}
     #     echo DATABASE_URL: ${{ secrets.DATABASE_URL }} >> .env
     
-    - name: Codecov
-      uses: codecov/codecov-action@v5.4.0
+    # - name: Codecov
 
-    # - name: Send GitHub Action data to a Slack workflow
-    #   uses: slackapi/slack-github-action@v2.0.0
-    #   with:
-    #     payload-delimiter: "_"
-    #     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-    #     webhook-type: webhook-trigger
-    - uses: actions/upload-artifact@v4
+    - name: Send GitHub Action data to a Slack workflow
+      uses: slackapi/slack-github-action@v2.0.0
       with:
-        name: my-artifact
-        path: build
+        payload-delimiter: "_"
+        webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+        webhook-type: webhook-trigger
+    # - uses: actions/upload-artifact@v4
+    #   with:
+    #     name: my-artifact
+    #     path: build
   
   # package:
   #   runs-on: ubuntu-latest
