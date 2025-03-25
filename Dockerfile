@@ -9,11 +9,13 @@ LABEL org.opencontainers.image.source="https://github.com/janto-pee/jobberman"
 
 RUN mkdir app
 WORKDIR /app
+RUN apk add --no-cache openssl
 COPY package*.json .
 COPY . .
 RUN npm cache clean --force 
 RUN rm -rf node_modules 
 RUN npm install
+RUN npx prisma generate
 
 ENV PORT=1337
 

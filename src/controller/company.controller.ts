@@ -197,7 +197,6 @@ export async function CreateCompanyHandler(
     });
 
     const updatedUser = await addUserToCompanyService(user.id, company.id);
-    console.log("company....................", user);
 
     res.status(201).json({
       status: true,

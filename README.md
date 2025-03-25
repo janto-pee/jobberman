@@ -102,3 +102,5 @@ Swagger docs will be available at localhost:3000/documentation
 
 
 <!-- https://www.freecodecamp.org/news/end-point-testing/ -->
+
+<!-- https://github.com/inttter/md-badges -->
