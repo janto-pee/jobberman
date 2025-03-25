@@ -6,8 +6,6 @@ import { connectionScript, prisma } from "../scripts";
 
 const app = createServer();
 
-let userResponse: any;
-
 describe("user", () => {
   beforeEach(async () => {
     connectionScript(true);
@@ -21,13 +19,12 @@ describe("user", () => {
   describe("/api/user", () => {
     describe("[POST] /api/users", () => {
       it("should respond with a `201` status code for creating users", async () => {
-        const { status, body } = await request(app)
+        const { status } = await request(app)
           .post("/api/users")
           .send({
             ...userInput,
           });
         expect(status).toBe(201);
-        userResponse = body.data.user;
       });
     });
 

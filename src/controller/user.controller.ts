@@ -38,7 +38,7 @@ export async function getCurrentUserHandler(_: Request, res: Response) {
 
 export async function CreateUserHandler(
   req: Request<{}, {}, createUserInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -58,7 +58,7 @@ export async function CreateUserHandler(
       user,
       "hashed_password",
       "verificationCode",
-      "passwordResetCode"
+      "passwordResetCode",
     );
 
     res.status(201).json({
@@ -79,7 +79,7 @@ export async function CreateUserHandler(
 
 export async function verifyUserHandler(
   req: Request<verifyUserInput["params"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id, verificationcode } = req.params;
@@ -116,7 +116,7 @@ export async function verifyUserHandler(
 
 export async function forgotPasswordHandler(
   req: Request<{}, {}, forgotPasswordInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { email } = req.body;
@@ -157,7 +157,7 @@ export async function forgotPasswordHandler(
 
 export async function passwordResetHandler(
   req: Request<resetPasswordInput["params"], {}, resetPasswordInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id, passwordresetcode } = req.params;
@@ -177,7 +177,7 @@ export async function passwordResetHandler(
       updatedUser,
       "hashed_password",
       "verificationCode",
-      "passwordResetCode"
+      "passwordResetCode",
     );
     res.status(201).json({
       status: true,

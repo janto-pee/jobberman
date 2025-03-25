@@ -5,16 +5,16 @@ import { companyInput, userInput } from "../utils/types";
 
 const app = createServer();
 
-let sessionResponse: {
-  email: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  hashed_password: string;
-  confirm_password: string;
-  street: string;
-  country: string;
-};
+// let sessionResponse: {
+//   email: string;
+//   username: string;
+//   first_name: string;
+//   last_name: string;
+//   hashed_password: string;
+//   confirm_password: string;
+//   street: string;
+//   country: string;
+// };
 let accessResponse: string;
 let companyResponse: any;
 let addressResponse: {
@@ -58,7 +58,7 @@ describe("session", () => {
       expect(body.data.address.id).toBeTruthy();
       expect(body.data.address.street).toBe(userInput.street);
       expect(body.data.address.country).toBe(userInput.country);
-      sessionResponse = userInput;
+      // sessionResponse = userInput;
     });
   });
 
@@ -74,7 +74,7 @@ describe("session", () => {
       expect(body.session.is_blocked).toBe(false);
       expect(body.session.valid).toBe(true);
       expect(body.session.createdAt).toBeTruthy();
-      expect(body.accessToken).toBeDefined;
+      expect(body.accessToken).toBeDefined();
       accessResponse = body.accessToken;
     });
   });
@@ -111,7 +111,7 @@ describe("session", () => {
     describe("[GET] /api/company/:id", () => {
       it("should respond with a `200` status code and company details", async () => {
         const { status, body } = await request(app).get(
-          `/api/company/${companyResponse.id}`
+          `/api/company/${companyResponse.id}`,
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
@@ -123,7 +123,7 @@ describe("session", () => {
     describe("[GET] /api/company/filter", () => {
       it("should respond with a `200` status code and company filter", async () => {
         const { status, body } = await request(app).get(
-          `/api/search/company/filter?country=${companyResponse.address.country}`
+          `/api/search/company/filter?country=${companyResponse.address.country}`,
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
@@ -135,7 +135,7 @@ describe("session", () => {
     describe("[GET] /api/company/location/:location", () => {
       it("should respond with a `404` status code and a list of matching companies", async () => {
         const { status, body } = await request(app).get(
-          `/api/company/location/${companyInput.street}`
+          `/api/company/location/${companyInput.street}`,
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");

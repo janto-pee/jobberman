@@ -5,18 +5,18 @@ import { fgsInput, userInput } from "../utils/types";
 
 const app = createServer();
 
-let sessionResponse: {
-  email: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  hashed_password: string;
-  confirm_password: string;
-  street: string;
-  country: string;
-};
-let accessResponse: string;
-let metadataResponse: any;
+// let sessionResponse: {
+//   email: string;
+//   username: string;
+//   first_name: string;
+//   last_name: string;
+//   hashed_password: string;
+//   confirm_password: string;
+//   street: string;
+//   country: string;
+// };
+// let accessResponse: string;
+// let metadataResponse: any;
 let fgsResponse: any;
 
 describe("session", () => {
@@ -46,7 +46,7 @@ describe("session", () => {
       expect(body.data.address.id).toBeTruthy();
       expect(body.data.address.street).toBe(userInput.street);
       expect(body.data.address.country).toBe(userInput.country);
-      sessionResponse = userInput;
+      // sessionResponse = userInput;
     });
   });
 
@@ -62,8 +62,8 @@ describe("session", () => {
       expect(body.session.is_blocked).toBe(false);
       expect(body.session.valid).toBe(true);
       expect(body.session.createdAt).toBeTruthy();
-      expect(body.accessToken).toBeDefined;
-      accessResponse = body.accessToken;
+      expect(body.accessToken).toBeDefined();
+      // accessResponse = body.accessToken;
     });
   });
 

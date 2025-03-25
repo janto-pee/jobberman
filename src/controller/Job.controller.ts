@@ -22,7 +22,7 @@ import { findUserService } from "../service/user.service";
  */
 export async function findJobHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -79,7 +79,7 @@ export async function findAllJobsHandler(req: Request, res: Response) {
 
 export async function findJobsByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
-  res: Response
+  res: Response,
 ) {
   try {
     const page =
@@ -94,7 +94,7 @@ export async function findJobsByLocationHandler(
         },
       },
       page,
-      limit
+      limit,
     );
     if (!job) {
       res.send("No job for this location");
@@ -119,7 +119,7 @@ export async function findJobsByLocationHandler(
 
 export async function FilterJobHandler(
   req: Request<{}, FilterjobQuery["query"], {}>,
-  res: Response
+  res: Response,
 ) {
   try {
     const page =
@@ -154,7 +154,7 @@ export async function FilterJobHandler(
         currency,
       },
       page,
-      limit
+      limit,
     );
     if (!job) {
       res.send("Job not found");
@@ -216,7 +216,7 @@ export async function SearchJobHandler(req: Request, res: Response) {
 
 export async function CreateJobHandler(
   req: Request<{}, {}, createJobInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -259,7 +259,7 @@ export async function CreateJobHandler(
 
 export async function updateJobHandler(
   req: Request<{ id: string }, {}, createJobInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -320,7 +320,7 @@ export async function updateJobFKHandler(
     {},
     createJobInput["body"]
   >,
-  res: Response
+  res: Response,
 ) {
   try {
     const { salaryId, metadataId, hppId, id } = req.params;
@@ -345,7 +345,7 @@ export async function updateJobFKHandler(
       metadataId,
       hppId,
       id,
-      { ...body, company_id: user.companyId }
+      { ...body, company_id: user.companyId },
     );
 
     res.status(200).json({

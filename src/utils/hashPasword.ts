@@ -10,7 +10,7 @@ export async function hashPassword(password: string) {
 
 export async function comparePassword(
   confirm_password: string,
-  password: string
+  password: string,
 ) {
   const check = await bcrypt
     .compare(confirm_password, password)

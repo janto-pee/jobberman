@@ -5,8 +5,6 @@ import { tbsInput, userInput } from "../utils/types";
 
 const app = createServer();
 
-let sessionResponse: any;
-let accessResponse: string;
 let tbsResponse: any;
 
 describe("session", () => {
@@ -21,26 +19,24 @@ describe("session", () => {
 
   describe("[POST] /api/users", () => {
     it("should respond with a `201` status code for creating users", async () => {
-      const { status, body } = await request(app)
+      const { status } = await request(app)
         .post("/api/users")
         .send({
           ...userInput,
         });
       expect(status).toBe(201);
-      sessionResponse = userInput;
     });
   });
 
   describe("[POST] /api/auth", () => {
     it("should respond with a `201` status code for creating sesion", async () => {
-      const { status, body } = await request(app).post("/api/auth").send({
+      const { status } = await request(app).post("/api/auth").send({
         email: userInput.email,
         hashed_password: userInput.hashed_password,
         user_agent: "xuz",
         client_ip: "bc",
       });
       expect(status).toBe(201);
-      accessResponse = body.accessToken;
     });
   });
 

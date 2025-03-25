@@ -20,7 +20,7 @@ describe("session", () => {
 
   describe("[POST] /api/users", () => {
     it("should respond with a `201` status code for creating users", async () => {
-      const { status, body } = await request(app)
+      const { status } = await request(app)
         .post("/api/users")
         .send({
           ...userInput,

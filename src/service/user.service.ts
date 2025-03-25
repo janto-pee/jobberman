@@ -57,7 +57,7 @@ export async function createUserService(input: userService) {
     "postal_code",
     "country_code",
     "latitude",
-    "longitude"
+    "longitude",
   );
   const user = await prisma.user.create({
     data: {
