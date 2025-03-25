@@ -62,8 +62,9 @@ jobs:
       run: npm list
 
     - run: npm ci
+    - run: echo ${{ secrets.DATABASE_URL }}
     - run: npm run lint
-      env: # Or as an environment variable
+      env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
     - run: npm run build --if-present
     - run: npm run test
