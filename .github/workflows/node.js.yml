@@ -34,6 +34,8 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -62,12 +64,12 @@ jobs:
       run: npm list
 
     - run: npm ci
+    - run: npm run lint
+    - run: npm run build --if-present
     - run: |
         touch .env
         echo ${{ secrets.DATABASE_URL }}
-        echo ${{ secrets.DATABASE_URL }} >> .env
-    - run: npm run lint
-    - run: npm run build --if-present
+        echo DATABASE_URL: ${{ secrets.DATABASE_URL }} >> .env
     - run: npm run test
     
     - name: Codecov
