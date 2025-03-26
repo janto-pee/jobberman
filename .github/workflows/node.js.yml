@@ -37,6 +37,7 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       LOGLEVEL: ${{ secrets.LOGLEVEL }}
+      Version: ${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -78,7 +79,7 @@ jobs:
         webhook-type: webhook-trigger
     - uses: actions/upload-artifact@v4
       with:
-        name: my-artifact
+        name: my-artifact-${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}
         path: build
   
   # package:
