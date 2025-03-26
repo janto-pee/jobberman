@@ -8,10 +8,11 @@ import {
   totalAddressCountService,
   updateAddressService,
 } from "../service/address.service";
+import { addUserToAddressService } from "../service/user.service";
 
 export async function findAddressHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -76,24 +77,37 @@ export async function findAllAddressHandler(req: Request, res: Response) {
 
 export async function CreateAddressHandler(
   req: Request<{}, {}, createAddressInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   //user
 
   try {
     const body = req.body;
 
+    const user = res.locals.user;
+    if (!user || user.addressI != null) {
+      res.status(404).json({ error: "user not found" });
+      return;
+    }
+
     const address = await createAddressService({
       ...body,
     });
-
+    await addUserToAddressService(user.id, address.id);
     res.status(201).json({
       status: true,
       message: `Address Successfully Created`,
       data: address,
     });
     return;
-  } catch (error) {
+  } catch (error: any) {
+    // if (error.name == "PrismaClientValidationError") {
+    //   res.status(500).json({
+    //     status: false,
+    //     message: "unauhenticated user, please proceed to sign in first",
+    //   });
+    //   return;
+    // }
     res.status(500).json({
       status: false,
       message: "server error",
@@ -105,7 +119,7 @@ export async function CreateAddressHandler(
 
 export async function updateAddressHandler(
   req: Request<{ id: string }, {}, createAddressInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   const { id } = req.params;
   const body = req.body;

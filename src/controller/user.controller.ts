@@ -38,7 +38,7 @@ export async function getCurrentUserHandler(_: Request, res: Response) {
 
 export async function CreateUserHandler(
   req: Request<{}, {}, createUserInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
@@ -51,23 +51,30 @@ export async function CreateUserHandler(
       from: `"Jobby Recruitment Platform 👻" <lakabosch@gmail.com>`,
       to: user.email,
       subject: "Kindly verify your email ✔",
-      text: `click on the link http://localhost:1337/api/users/verify/${user.id}/${user.verificationCode}`,
-      html: `<b>Hello, click on the link http://localhost:1337/api/users/verify/${user.id}/${user.verificationCode}</b>`,
+      text: `click on the link https://jobberman.onrender.com/api/users/verify/${user.id}/${user.verificationCode}`,
+      html: `<b>Hello, click on the link https://jobberman.onrender.com/api/users/verify/${user.id}/${user.verificationCode}</b>`,
     });
     const savedUser = omit(
       user,
       "hashed_password",
       "verificationCode",
-      "passwordResetCode",
+      "passwordResetCode"
     );
 
     res.status(201).json({
       status: true,
-      message: `User Successfully Created http://localhost:1337/api/users/verify/${user.id}/${user.verificationCode}`,
+      message: `kindly check your email for verification code`,
       data: savedUser,
     });
     return;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code == "28000") {
+      res.status(500).json({
+        status: false,
+        message: "unique contraint violation on either username or email",
+      });
+      return;
+    }
     res.status(500).json({
       status: false,
       message: "server error",
@@ -79,7 +86,7 @@ export async function CreateUserHandler(
 
 export async function verifyUserHandler(
   req: Request<verifyUserInput["params"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id, verificationcode } = req.params;
@@ -116,7 +123,7 @@ export async function verifyUserHandler(
 
 export async function forgotPasswordHandler(
   req: Request<{}, {}, forgotPasswordInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { email } = req.body;
@@ -136,13 +143,13 @@ export async function forgotPasswordHandler(
       to: user.email,
       subject: "Kindly verify your email ✔",
       // text: `verification code: ${user.verificationCode}. username: ${user.username}`,
-      text: `click on the link http://localhost:1337/api/users/passwordreset/${updatedUser.id}/${pRC}`,
+      text: `click on the link https://jobberman.onrender.com/api/users/passwordreset/${updatedUser.id}/${pRC}`,
       html: "<b>Hello world?</b>",
     });
 
     res.status(201).json({
       status: true,
-      message: `please check your email to reset password http://localhost:1337/api/users/passwordreset/${updatedUser.id}/${pRC}`,
+      message: `please check your email to reset password https://jobberman.onrender.com/api/users/passwordreset/${updatedUser.id}/${pRC}`,
     });
     return;
   } catch (error) {
@@ -157,7 +164,7 @@ export async function forgotPasswordHandler(
 
 export async function passwordResetHandler(
   req: Request<resetPasswordInput["params"], {}, resetPasswordInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id, passwordresetcode } = req.params;
@@ -177,7 +184,7 @@ export async function passwordResetHandler(
       updatedUser,
       "hashed_password",
       "verificationCode",
-      "passwordResetCode",
+      "passwordResetCode"
     );
     res.status(201).json({
       status: true,

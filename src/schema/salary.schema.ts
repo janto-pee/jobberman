@@ -47,6 +47,8 @@ const salaryQuery = object({
 
 export const createSalarySchema = object({
   body: salaryInput,
+});
+export const QuerySalarySchema = object({
   query: salaryQuery,
 });
 

@@ -12,7 +12,7 @@ import {
 } from "../controller/salary.controller";
 import requireUser from "../middleware/requireUser";
 import validateResource from "../middleware/validate";
-import { createJobSchema } from "../schema/job.schema";
+import { createSalarySchema } from "../schema/salary.schema";
 
 const router = express.Router();
 /**
@@ -31,15 +31,15 @@ router.get("/api/salary/search/keyword", searchSalaryHandler); //Search Salary
 
 router.post(
   "/api/salary",
-  validateResource(createJobSchema),
+  validateResource(createSalarySchema),
   requireUser,
-  CreateFGSalaryHandler,
+  CreateFGSalaryHandler
 );
 router.put("/api/salary/:id", requireUser, updateSalaryHandler);
 router.put(
   "/api/salary/:salaryId/:fgsId/:tbsId",
   requireUser,
-  updateSalaryFKHandler,
+  updateSalaryFKHandler
 );
 router.delete("/api/salary/:id", requireUser, deleteSalaryHandler);
 

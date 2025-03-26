@@ -57,7 +57,7 @@ export async function createUserService(input: userService) {
     "postal_code",
     "country_code",
     "latitude",
-    "longitude",
+    "longitude"
   );
   const user = await prisma.user.create({
     data: {
@@ -130,6 +130,17 @@ export async function passwordResetService(query: string, update: string) {
     },
   });
   return updateUser;
+}
+export async function addUserToAddressService(id: string, addressId: string) {
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      addressId: addressId,
+    },
+  });
+  return updatedUser;
 }
 
 // export async function updateUserService(query: string, update: any) {

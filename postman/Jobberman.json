@@ -12,20 +12,20 @@
 			"name": "User",
 			"item": [
 				{
-					"name": "Get Single User",
+					"name": "Get Current User",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/users/{{user_id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/users/me",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"users",
-								"{{user_id}}"
+								"{{id}}"
 							]
 						},
 						"description": "# Get Single User"
@@ -47,10 +47,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/users",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/users",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -88,17 +88,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/users/verify/{{user_id}}/{{verification_code}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/users/verify/{{id}}/{{verificationcode}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"users",
 								"verify",
-								"{{user_id}}",
-								"{{verification_code}}"
+								"{{id}}",
+								"{{verificationcode}}"
 							]
 						}
 					},
@@ -119,40 +119,19 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/users/resetpassword/{{user_id}}/{{password-reset_code}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/users/resetpassword/{{id}}/{{passwordresetcode}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"users",
 								"resetpassword",
-								"{{user_id}}",
-								"{{password-reset_code}}"
+								"{{id}}",
+								"{{passwordresetcode}}"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete User",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/users/{{user_id}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"users",
-								"{{user_id}}"
-							]
-						},
-						"description": "Delete Request"
 					},
 					"response": []
 				},
@@ -171,15 +150,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/users/forgotpassword",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/users/forgot-password",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"users",
-								"forgotpassword"
+								"forgot-password"
 							]
 						}
 					},
@@ -206,10 +185,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/auth",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/auth",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -225,10 +204,10 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/auth",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/auth",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -281,10 +260,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/auth",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/auth",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -295,7 +274,7 @@
 					"response": []
 				}
 			],
-			"description": "## Authentication\n\nAPI request requires authentication to set permissions and privileges to enable access to authorized users. Authentication helps to identify the user license that is responsible for making the request. Authentication is provided by access tokens and refresh tokens\n\n#### Role based access tokens?\n\nEach license has two tokens:\n\n- `Employer access token` - allows you to manage your job postings, scheduled interviews, salary expectations, set probation periods and more. The access token should never be shared as it gives full access to your account.\n    \n- `Applicant access token` - allows applicant to apply to posted jobs, query endpoint requests to jobs\n    \n\n## Authentication example\n\nInclude this HTTP header for each API request:\n\n`Authorization: Bearer ${ACCESS_TOKEN}`[.](http://app.chatbot.com/settings/developers)\n\n## Error handling\n\nIn general, we use a consistent standard for error messages, that is, errors are returned using standard HTTP error code syntax. For example, most REST APIs include fields like `error`, `message`, `code` (an internal error code specific to your application), and sometimes `details` for additional information\n\n### HTTP status codes summary\n\n- 2xx – **The request indicate success. T**_he status response code from the server for successful HTTP requests_\n    \n- `4xx` – **Client Error**. The server cannot or will not process the request due to something that is perceived to be a client error e.g deceptive request routing\n    \n- `5xx` – **Server Error**. The request method is not supported by the server and cannot be handled"
+			"description": "## Authentication\n\nAPI request requires authentication to set permissions and privileges to enable access to authorized users. Authentication helps to identify the user license that is responsible for making the request. Authentication is provided by access tokens and refresh tokens\n\n#### Role based access tokens?\n\nEach license has two tokens:\n\n- `Employer access token` - allows you to manage your job postings, scheduled interviews, salary expectations, set probation periods and more. The access token should never be shared as it gives full access to your account.\n    \n- `TB Salary access token` - allows applicant to apply to posted jobs, query endpoint requests to jobs\n    \n\n## Authentication example\n\nInclude this HTTP header for each API request:\n\n`Authorization: Bearer ${ACCESS_TOKEN}`[.](http://app.chatbot.com/settings/developers)\n\n## Error handling\n\nIn general, we use a consistent standard for error messages, that is, errors are returned using standard HTTP error code syntax. For example, most REST APIs include fields like `error`, `message`, `code` (an internal error code specific to your application), and sometimes `details` for additional information\n\n### HTTP status codes summary\n\n- 2xx – **The request indicate success. T**_he status response code from the server for successful HTTP requests_\n    \n- `4xx` – **Client Error**. The server cannot or will not process the request due to something that is perceived to be a client error e.g deceptive request routing\n    \n- `5xx` – **Server Error**. The request method is not supported by the server and cannot be handled"
 		},
 		{
 			"name": "Address",
@@ -315,10 +294,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/address/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/address/{{username}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -335,10 +314,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/address",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/address",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -354,15 +333,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/address/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/address/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"address",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -383,15 +362,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/address/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/address/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"address",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -403,15 +382,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/address/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/address/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"address",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -421,18 +400,18 @@
 			"description": "Each user (employer and applicant) can add an adddress. Make sure the user has a valid `access_token.`"
 		},
 		{
-			"name": "Applicants",
+			"name": "TB Salary",
 			"item": [
 				{
-					"name": "Get All Applicants",
+					"name": "Get All TBS",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/applicants",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/tbs",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -443,168 +422,19 @@
 					"response": []
 				},
 				{
-					"name": "Get Single Applicant",
+					"name": "Get TBS Detail",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/applicants/{{applicants_id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/tbs/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"applicants",
-								"{{applicants_id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"description": "Returns, adds, and update job applicants"
-		},
-		{
-			"name": "Employers",
-			"item": [
-				{
-					"name": "Get All Employers",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/employers",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"employers"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Single Employers",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/employer/{{employer_id}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"employer",
-								"{{employer_id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"description": "Returns, adds, and edits employers"
-		},
-		{
-			"name": "Application",
-			"item": [
-				{
-					"name": "Create Application",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"application_text\": \"string\",\r\n  \"resume\": false,\r\n  \"cover_letter\": false,\r\n  \"referral_information\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:1337/api/application/{{job_id}}/{{applicant_id}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"application",
-								"{{job_id}}",
-								"{{applicant_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Application",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/application",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"application"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Single Application",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/application/{{username}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"application",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Application",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"application_text\": \"string 1\",\r\n  \"resume\": false,\r\n  \"cover_letter\": false,\r\n  \"referral_information\": \"string 1\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:1337/api/application/{{id}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"application",
 								"{{id}}"
 							]
 						}
@@ -612,39 +442,13 @@
 					"response": []
 				},
 				{
-					"name": "Delete Application",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/application/{{id}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"application",
-								"{{id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"description": "A job application is a formal request for employment created by an applicant that typically includes a resume and a cover letter. This section will cover the basics of creating, getting and editting applications"
-		},
-		{
-			"name": "ApplicationRating",
-			"item": [
-				{
-					"name": "Create Rating",
+					"name": "Create TBS",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"street\": \"street 1\",\r\n  \"street2\": \"\",\r\n  \"city\": \"city 1\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"username\": \"laka1\",\r\n  \"country\": \"string\"\r\n}",
+							"raw": "{\r\n    \"street\": \"string;\",\r\n    \"street2\": \"string;\",\r\n    \"city\": \"string;\",\r\n    \"state_province_code\": \"string;\",\r\n    \"state_province_name\": \"string;\",\r\n    \"postal_code\": \"string;\",\r\n    \"country_code\": \"string;\",\r\n    \"location\": \"string;\",\r\n    \"country\": \"string;\",\r\n    \"latitude\": 0.0000,\r\n    \"longitude\": 0.000\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -652,60 +456,22 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/applicationrating",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/tbs/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"applicationrating"
+								"tbs",
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get All Rating",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/applicationrating",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"applicationrating"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Single Rating",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:1337/api/applicationrating/{{username}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"applicationrating",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Rating",
+					"name": "Update TBS",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -719,14 +485,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/applicationrating/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/tbs/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"applicationrating",
+								"tbs",
 								"{{id}}"
 							]
 						}
@@ -734,19 +500,19 @@
 					"response": []
 				},
 				{
-					"name": "Delete Rating",
+					"name": "Delete TBS",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/applicationrating/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/tbs/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"applicationrating",
+								"tbs",
 								"{{id}}"
 							]
 						}
@@ -754,19 +520,19 @@
 					"response": []
 				}
 			],
-			"description": "An interviewed applicants can provide a rating on a posted job or company. Application rating is a helps to showcase the relative value of jobs and interviews carried out by an organization\n\nThis section will cover the basics of creating, getting a rating"
+			"description": "Returns, adds, and update TBS"
 		},
 		{
-			"name": "Interview",
+			"name": "Company",
 			"item": [
 				{
-					"name": "Create Interview",
+					"name": "Create Company",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"startTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"endTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"timezone\": \"string\",\r\n\"title\": \"string\",\r\n\"requestMetadata\": \"string\",\r\n\"languageCode\": \"string\",\r\n\"countryCode\": \"string\"\r\n}",
+							"raw": "{\r\n    \"application_text\": \"string\",\r\n  \"resume\": false,\r\n  \"cover_letter\": false,\r\n  \"referral_information\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -774,84 +540,52 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/interview/{{employer_id}}/{{applicant_id}}/{{application_id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/company",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"interview",
-								"{{employer_id}}",
-								"{{applicant_id}}",
-								"{{application_id}}"
+								"company"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get All Interviews",
+					"name": "Get All Company",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/interview",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/company",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"interview"
+								"company"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Single Interview",
+					"name": "Get Single Company",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/interview/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/company/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"interview",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Interview",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"startTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"endTime\": \"2024-11-15T16:22:38.085Z\",\r\n\"timezone\": \"string\",\r\n\"title\": \"string\",\r\n\"requestMetadata\": \"string\",\r\n\"languageCode\": \"string\",\r\n\"countryCode\": \"string\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:1337/api/interview/{{id}}",
-							"protocol": "http",
-							"host": [
-								"localhost:1337"
-							],
-							"path": [
-								"api",
-								"interview",
+								"company",
 								"{{id}}"
 							]
 						}
@@ -859,19 +593,110 @@
 					"response": []
 				},
 				{
-					"name": "Delete Interview",
+					"name": "Find Company By Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/location/{{location}}",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"company",
+								"location",
+								"{{location}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/filter",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"company",
+								"filter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search For Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/search/company/keyword",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"search",
+								"company",
+								"keyword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Company",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"application_text\": \"string 1\",\r\n  \"resume\": false,\r\n  \"cover_letter\": false,\r\n  \"referral_information\": \"string 1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/{{id}}",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"company",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Company",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/interview/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/company/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"interview",
+								"company",
 								"{{id}}"
 							]
 						}
@@ -879,7 +704,7 @@
 					"response": []
 				}
 			],
-			"description": "An interviewed applicants can provide a rating on a posted job or company. job interview helps to determine if the applicant is a good fit for the position\n\nThis section will cover the basics of creating, getting an interview"
+			"description": "A job application is a formal request for employment created by an applicant that typically includes a resume and a cover letter. This section will cover the basics of creating, getting and editting applications"
 		},
 		{
 			"name": "Job",
@@ -899,30 +724,29 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/job/0369048d-ca82-46e7-8f09-319f56878da4",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/jobs",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"job",
-								"0369048d-ca82-46e7-8f09-319f56878da4"
+								"jobs"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get All Jobs",
+					"name": "Find All Jobs",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/job",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/jobs",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -933,20 +757,83 @@
 					"response": []
 				},
 				{
-					"name": "Get Single Jobs",
+					"name": "Get Job Detail",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/job/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/job/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"job",
 								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/search/jobs/filter",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"search",
+								"jobs",
+								"filter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Job By Loction",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/jobs/location/{{filter}}",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"jobs",
+								"location",
+								"{{location}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search For Job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/search/jobs/keyword",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"search",
+								"jobs",
+								"keyword"
 							]
 						}
 					},
@@ -967,10 +854,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/job/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/job/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -987,10 +874,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/job/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/job/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1005,10 +892,10 @@
 			"description": "A job post is created by an employer of a company. Job postings are public announcement of an open position in a company\n\nThis section will cover the basics of creating, getting a rating"
 		},
 		{
-			"name": "Location",
+			"name": "FGS",
 			"item": [
 				{
-					"name": "Create Location",
+					"name": "Create FG Salary",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -1022,10 +909,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/location",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/fgs",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1036,15 +923,15 @@
 					"response": []
 				},
 				{
-					"name": "Get All Location",
+					"name": "Get All FGSalary",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/location",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/fgs",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1055,27 +942,27 @@
 					"response": []
 				},
 				{
-					"name": "Get Single Location",
+					"name": "Get Single FG Salary",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/location/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/fgs/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"location",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Update Location",
+					"name": "Update FG Salary",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1089,10 +976,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/location/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/fgs/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1104,15 +991,15 @@
 					"response": []
 				},
 				{
-					"name": "Delete Location",
+					"name": "Delete FG Salary",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/location/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/fgs/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1144,15 +1031,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/metadata/{{job_id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/metadata",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"metadata",
-								"{{job_id}}"
+								"metadata"
 							]
 						}
 					},
@@ -1164,10 +1050,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/metadata",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/metadata",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1183,10 +1069,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/metadata/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/metadata/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1212,10 +1098,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/metadata/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/metadata/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1232,15 +1118,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/metadata/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/metadata/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"metadata",
-								"{{username}}"
+								"{{id}}"
 							]
 						}
 					},
@@ -1250,7 +1136,7 @@
 			"description": "A job post can have additional informational. This additional information are referred to s metadata\n\nThis section will cover the basics of creating, getting a metadata"
 		},
 		{
-			"name": "Probation",
+			"name": "Probation Period",
 			"item": [
 				{
 					"name": "Create Probation Period",
@@ -1267,14 +1153,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/probation",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/hpp",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"probation"
+								"hpp"
 							]
 						}
 					},
@@ -1286,15 +1172,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/probation/",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/hpp",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"probation",
-								""
+								"hpp"
 							]
 						}
 					},
@@ -1306,15 +1191,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/probation/{{username}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/hpp/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"probation",
-								"{{username}}"
+								"hpp",
+								"{{id}}"
 							]
 						}
 					},
@@ -1335,14 +1220,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/probation/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/hpp/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"probation",
+								"hpp",
 								"{{id}}"
 							]
 						}
@@ -1355,14 +1240,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/probation/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/hpp/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"probation",
+								"hpp",
 								"{{id}}"
 							]
 						}
@@ -1390,15 +1275,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/salary/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/salary",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"salary",
-								"{{id}}"
+								"salary"
 							]
 						}
 					},
@@ -1410,35 +1294,97 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/salary/",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/salary",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
-								"salary",
-								""
+								"salary"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Single Salary",
+					"name": "Get Salary Detail",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/salary/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/salary/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
 								"salary",
 								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Salary Type Autocomplete",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/currency/autocomplete",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"currency",
+								"autocomplete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Salary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/filter/keyword",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"filter",
+								"keyword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Salary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/search/keyword",
+							"protocol": "https",
+							"host": [
+								"https://jobberman.onrender.com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"search",
+								"keyword"
 							]
 						}
 					},
@@ -1459,10 +1405,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1337/api/salary/{{id}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/salary/{{id}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
@@ -1479,10 +1425,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:1337/api/salary/{{id}}",
-							"protocol": "http",
+							"raw": "https://jobberman.onrender.com/api/salary/{{id}}",
+							"protocol": "https",
 							"host": [
-								"localhost:1337"
+								"https://jobberman.onrender.com"
 							],
 							"path": [
 								"api",
