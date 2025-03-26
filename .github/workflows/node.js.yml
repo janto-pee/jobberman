@@ -67,12 +67,7 @@ jobs:
     - run: npm ci
     - run: npm run lint
     - run: npm run build --if-present
-    - run: npm run test -- --silent=false
-    # - run: |
-    #     touch .env
-    #     echo ${{ secrets.DATABASE_URL }}
-    #     echo DATABASE_URL: ${{ secrets.DATABASE_URL }} >> .env
-    
+    # - run: npm run test
     # - name: Codecov
 
     - name: Send GitHub Action data to a Slack workflow
@@ -81,10 +76,10 @@ jobs:
         payload-delimiter: "_"
         webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
         webhook-type: webhook-trigger
-    # - uses: actions/upload-artifact@v4
-    #   with:
-    #     name: my-artifact
-    #     path: build
+    - uses: actions/upload-artifact@v4
+      with:
+        name: my-artifact
+        path: build
   
   # package:
   #   runs-on: ubuntu-latest

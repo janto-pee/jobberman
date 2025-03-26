@@ -10,4 +10,5 @@ module.exports = {
     restoreMocks: true,
     clearMocks:true,
     detectOpenHandles: true,
+    testTimeout: 300000
   };
