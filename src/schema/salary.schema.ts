@@ -55,3 +55,4 @@ export const QuerySalarySchema = object({
 export type salaryInput = TypeOf<typeof salaryInput>;
 
 export type createsalaryInput = TypeOf<typeof createSalarySchema>;
+export type QuerySalary = TypeOf<typeof QuerySalarySchema>;
