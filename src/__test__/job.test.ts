@@ -20,7 +20,7 @@ console.log(
   hppInput,
   metadataInput,
   tbsInput,
-  fgsInput
+  fgsInput,
 );
 
 const app = createServer();
@@ -117,7 +117,7 @@ describe("session", () => {
     describe("[GET] /api/jobs/:id", () => {
       it("should respond with a `200` status code and job details", async () => {
         const { status, body } = await request(app).get(
-          `/api/jobs/${jobResponse.id}`
+          `/api/jobs/${jobResponse.id}`,
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");
@@ -138,7 +138,7 @@ describe("session", () => {
     describe("[GET] /api/jobs/location/:location", () => {
       it("should respond with a `404` status code and a list of matching companies", async () => {
         const { status, body } = await request(app).get(
-          `/api/jobs/location/${jobInput.street}`
+          `/api/jobs/location/${jobInput.street}`,
         );
         expect(status).toBe(200);
         expect(body).toHaveProperty("status");

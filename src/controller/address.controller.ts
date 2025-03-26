@@ -12,7 +12,7 @@ import { addUserToAddressService } from "../service/user.service";
 
 export async function findAddressHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -77,7 +77,7 @@ export async function findAllAddressHandler(req: Request, res: Response) {
 
 export async function CreateAddressHandler(
   req: Request<{}, {}, createAddressInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   //user
 
@@ -119,7 +119,7 @@ export async function CreateAddressHandler(
 
 export async function updateAddressHandler(
   req: Request<{ id: string }, {}, createAddressInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   const { id } = req.params;
   const body = req.body;
