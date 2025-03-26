@@ -87,103 +87,104 @@ jobs:
         min_bytes: '0'
     - uses: actions/upload-artifact@v4
       with:
-        name: my-artifact-${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}
+        name: my-artifact-${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}.${{ strategy.job-index }}
+
         path: build
   
-  # package:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/download-artifact@v4
-  #       with:
-  #         name: my-artifact
-  #         path: build
-  #     - run: zip -r build.zip build/
-  #     - uses: ncipollo/release-action@v1
-  #       with:
-  #         artifacts: "build.zip"
-  #     - name: Display structure of downloaded files
-  #       run: ls -R build
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: my-artifact-${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}
+          path: build
+      - run: zip -r build.zip build/
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build.zip"
+      - name: Display structure of downloaded files
+        run: ls -R build
 
-  #     -
-  #       name: Login to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ vars.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     -
-  #       name: Set up QEMU
-  #       uses: docker/setup-qemu-action@v3
-  #     -
-  #       name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-  #     -
-  #       name: Login to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ vars.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
                   
-  #     - name: "Configure AWS Credentials"
-  #       # You may pin to the exact commit or the version.
-  #       # uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
-  #       uses: aws-actions/configure-aws-credentials@v4.1.0
-  #       with:
-  #         aws-region: ${{ vars.AWS_ACCESS_KEY_ID }}
-  #         role-to-assume: ${{ vars.AWS_ACCESS_KEY_ID }}
-  #         aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ vars.AWS_ACCESS_KEY_ID }}
-  #         aws-session-token: ${{ vars.AWS_ACCESS_KEY_ID }}
+      - name: "Configure AWS Credentials"
+        # You may pin to the exact commit or the version.
+        # uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-region: ${{ vars.AWS_ACCESS_KEY_ID }}
+          role-to-assume: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-session-token: ${{ vars.AWS_ACCESS_KEY_ID }}
           
-  #     - name: Step name
-  #       uses: aws-actions/aws-secretsmanager-get-secrets@v2
-  #       with:
-  #         secret-ids: |
-  #           secretId1
-  #           ENV_VAR_NAME, secretId2
-  #         name-transformation: (Optional) uppercase|lowercase|none
-  #         parse-json-secrets: (Optional) true|false
-  #         auto-select-family-attempt-timeout: (Optional) positive integer
-  #     -
-  #       name: Login to ECR
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: <aws-account-number>.dkr.ecr.<region>.amazonaws.com
-  #         username: ${{ vars.AWS_ACCESS_KEY_ID }}
-  #         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #     -
-  #       name: Build and push
-  #       uses: docker/build-push-action@v6
-  #       with:
-  #         push: true
-  #         tags: user/app:latest
+      - name: Step name
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            secretId1
+            ENV_VAR_NAME, secretId2
+          name-transformation: (Optional) uppercase|lowercase|none
+          parse-json-secrets: (Optional) true|false
+          auto-select-family-attempt-timeout: (Optional) positive integer
+      -
+        name: Login to ECR
+        uses: docker/login-action@v3
+        with:
+          registry: <aws-account-number>.dkr.ecr.<region>.amazonaws.com
+          username: ${{ vars.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: user/app:latest
           
-  #     - name: upload image to ECR
-  #       uses: appleboy/docker-ecr-action@master
-  #       with:
-  #         access_key: ${{ secrets.aws_access_key_id }}
-  #         secret_key: ${{ secrets.aws_secret_access_key }}
-  #         registry: ${{ secrets.registry }}
-  #         cache_from: ${{ secrets.cache }}
-  #         repo: api-sample
-  #         region: ap-northeast-1
-  #         auto_tag: true
-  #         daemon_off: false
-  #         dockerfile: example/Dockerfile
-  #         context: example
+      - name: upload image to ECR
+        uses: appleboy/docker-ecr-action@master
+        with:
+          access_key: ${{ secrets.aws_access_key_id }}
+          secret_key: ${{ secrets.aws_secret_access_key }}
+          registry: ${{ secrets.registry }}
+          cache_from: ${{ secrets.cache }}
+          repo: api-sample
+          region: ap-northeast-1
+          auto_tag: true
+          daemon_off: false
+          dockerfile: example/Dockerfile
+          context: example
 
-  #     - uses: actions/checkout@v2
-  #     - uses: docker://ghcr.io/kciter/aws-ecr-action:latest
-  #       with:
-  #         access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-  #         repo: docker/repo
-  #         region: ap-northeast-2
-  #         tags: latest,${{ github.sha }}
-  #         create_repo: true
-  #         image_scanning_configuration: true
-  #         set_repo_policy: true
-  #         repo_policy_file: repo-policy.json
+      - uses: actions/checkout@v2
+      - uses: docker://ghcr.io/kciter/aws-ecr-action:latest
+        with:
+          access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+          repo: docker/repo
+          region: ap-northeast-2
+          tags: latest,${{ github.sha }}
+          create_repo: true
+          image_scanning_configuration: true
+          set_repo_policy: true
+          repo_policy_file: repo-policy.json
             
   
                   
