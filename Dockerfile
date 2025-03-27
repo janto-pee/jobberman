@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine As development
 
 LABEL org.opencontainers.image.authors="Ayobami Adejumo"
 LABEL org.opencontainers.image.title="Jobberman Backend Service"
@@ -17,9 +17,22 @@ RUN rm -rf node_modules
 RUN npm install
 RUN npx prisma generate
 
-ENV PORT=1337
-
+FROM node:20-alpine As build
+WORKDIR /app
+RUN apk add --no-cache openssl
+COPY package*.json .
+COPY --from=development /app/node_modules ./node_modules
+COPY . .
 RUN npm run build
+ENV NODE_ENV production
+RUN npm ci --only=production && npm cache clean --force
+
+FROM node:20-alpine As production
+RUN apk add --no-cache openssl
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/build ./dist
+
+ENV PORT=1337
 EXPOSE $PORT
 CMD [ "node", "build/src/index.js" ]
 
