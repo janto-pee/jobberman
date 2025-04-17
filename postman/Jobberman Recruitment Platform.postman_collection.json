@@ -1,0 +1,2447 @@
+{
+	"info": {
+		"_postman_id": "68bf1251-2b72-4ad4-9bac-c4bc355d028d",
+		"name": "Jobberman Recruitment Platform",
+		"description": "# Introduction\n\nThis collection will allow you to connect to [Jobberman Recruitment Platform](https://github.com/janto-pee/jobberman), which enables Employers, Company and Businesses - to post job vacancies and recieve applications from job seekers. This guide will help you to **generate access tokens**, **publish jobs**, **schedule interviews** and **manage an receive job ratings.**\n\nThis token will allow you to manage permissions and objects you manage, you can generate it by creating a session. Afterwards, make sure to select the environment in Postman and paste the resulting token under the `access_token` variable.\n\n# To Get Started\n\nTo test out the Next Generation Recruitment API collection, we recommend giving this guide a look before getting started. After completing the guide, try our sample requests in the Delegated and Application folders.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20491153",
+		"_collection_link": "https://ok2222-2860.postman.co/workspace/Next-Generation-Recruitment-Pla~7ea62d7a-e5c8-4e02-a0ce-36c4faf5a547/collection/20491153-68bf1251-2b72-4ad4-9bac-c4bc355d028d?action=share&source=collection_link&creator=20491153"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get Current User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUyOTQ0YTI2LTc4NjEtNDBlYS04NDVmLTk3ODg5MmE2ZGRmNSIsInVzZXJuYW1lIjoibGFrYWJvc2NoMSIsImZpcnN0X25hbWUiOiJsYWthMSIsImxhc3RfbmFtZSI6ImJvc2NoIiwiZW1haWwiOiJsYWthYm9jaDFAZ21haWwuY29tIiwiaXNfZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI1LTAzLTI2VDE2OjA2OjM4LjU4MloiLCJ1cGRhdGVkQXQiOiIyMDI1LTAzLTI2VDE2OjA2OjM4LjU4MloiLCJjb21wYW55SWQiOm51bGwsImFkZHJlc3NJZCI6Ijg5ZmZkZDgzLTA4OWItNDVlZC1iNmM5LTgzOThmNjYzZTY2OCIsInNlc3Npb24iOiI4MzRiMjcwZS03NGJmLTQyNWQtODFlMi0xOGE0Y2Y5OWJhODIiLCJpYXQiOjE3NDMwMDY2MjYsImV4cCI6MTc0MzAwNzUyNn0.Hh54jN2IOjbS88CIOHcdOv3r6BOmphoOGxrlzK7d3iKD8otAgqoZngb0LNUCb3mSvbRTAv5dWTXr3ngJRKLo13hF8HwskwrHy89OuwsW1AJo12Q-D6nvW73XOlhTJ3L6fwnTWUJP8uDG_k2vqv4w7USo0HpomKODRm7GrKTuVh1C7eiyicPdaZ5xSk9tKa0c6WOtgcdkGYGYwOyuQ7FLMy1DG5lWDTMBcLg_jjNsWZFNnyYbMdzhZU3l2uH_H2moqOfEPHjZQI5XqdB0PBK-Nk2-2NvpcIMRBsFBJHoltuMfVMVnYko5Cag-i8cTI9jqDbf3mVoCR_QbE-mIG_HT1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/user/me",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"user",
+								"me"
+							]
+						},
+						"description": "# Get Single User"
+					},
+					"response": [
+						{
+							"name": "Get Current User Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/user/me",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"user",
+										"me"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "395"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"18b-DztpVCxpC1KS6wXtu3P2ywjqXQ4\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 16:44:24 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"e2944a26-7861-40ea-845f-978892a6ddf5\",\n    \"username\": \"lakabosch1\",\n    \"first_name\": \"laka1\",\n    \"last_name\": \"bosch\",\n    \"email\": \"lakaboch1@gmail.com\",\n    \"is_email_verified\": false,\n    \"createdAt\": \"2025-03-26T16:06:38.582Z\",\n    \"updatedAt\": \"2025-03-26T16:06:38.582Z\",\n    \"companyId\": null,\n    \"addressId\": \"89ffdd83-089b-45ed-b6c9-8398f663e668\",\n    \"session\": \"834b270e-74bf-425d-81e2-18a4cf99ba82\",\n    \"iat\": 1743006626,\n    \"exp\": 1743007526\n}"
+						}
+					]
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n      \"email\": \"lakaboch1@gmail.com\",\r\n      \"username\": \"lakabosch1\",\r\n      \"first_name\": \"laka1\",\r\n      \"last_name\": \"bosch\",\r\n      \"hashed_password\": \"abcd1234\",\r\n      \"confirm_password\": \"abcd1234\",\r\n      \"street\": \"street\",\r\n      \"country\": \"Nigeria\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/users",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n      \"email\": \"lakaboch@gmail.com\",\r\n      \"username\": \"lakabosch\",\r\n      \"first_name\": \"laka\",\r\n      \"last_name\": \"bosch\",\r\n      \"hashed_password\": \"abcd1234\",\r\n      \"confirm_password\": \"abcd1234\",\r\n      \"street\": \"street\",\r\n      \"country\": \"Nigeria\"\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/users",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "733"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2dd-wWW5c5yKBiMuskaq/GZVqRqWtPM\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 16:06:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"User Successfully Created http://localhost:1337/api/users/verify/e2944a26-7861-40ea-845f-978892a6ddf5/208b8d29-74d8-49a3-a9d3-52a9121f7a3f\",\n    \"data\": {\n        \"id\": \"e2944a26-7861-40ea-845f-978892a6ddf5\",\n        \"username\": \"lakabosch1\",\n        \"first_name\": \"laka1\",\n        \"last_name\": \"bosch\",\n        \"email\": \"lakaboch1@gmail.com\",\n        \"is_email_verified\": false,\n        \"createdAt\": \"2025-03-26T16:06:38.582Z\",\n        \"updatedAt\": \"2025-03-26T16:06:38.582Z\",\n        \"companyId\": null,\n        \"addressId\": \"89ffdd83-089b-45ed-b6c9-8398f663e668\",\n        \"address\": {\n            \"id\": \"89ffdd83-089b-45ed-b6c9-8398f663e668\",\n            \"street\": \"street\",\n            \"street2\": null,\n            \"city\": null,\n            \"state_province_code\": null,\n            \"state_province_name\": null,\n            \"postal_code\": null,\n            \"country_code\": null,\n            \"latitude\": null,\n            \"longitude\": null,\n            \"country\": \"Nigeria\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Verify User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNDg1MTViYzMtZWEyMi00ZTA0LWEyODUtNzQ1M2M3NjdhYjViIiwic2Vzc2lvbiI6IjdhZTY4ZWI2LWMzNTUtNDAwMC04NTY2LTg1NjNmNGViNmZhNiIsImlhdCI6MTczMDQ5OTAxMSwiZXhwIjoxNzMwNDk5OTExfQ.KpH-oYAAOnl88-ENFW6SeyUgqkjo7sBm5NhWr3FfFnkd_ERVb2gIwf0aujBJw2J1iZijYZqebwQVjcF01qEFXpm9JXjy3q4yKqGmMsYGdK4kpJDjAgJss2fDg94DebpMi9tOetRLnbGVnfji6fVz3mz0CydgkB7GSrYFW5nuK5C1lVuaey0Han1_5uDDZeBq0IbuNhIPdxKq5UBSNXqaXBMkm0SaHIcDPuquc7POHhigdrmBt1jCUe5RPXqjVkkIomr1tUwyIg8qunuYGsmsBstoMPJlfLQoc3gc-An6Oa79PNPVhN4gEnGsb5_DvI3pHefTkBL_68Pp3RUZrA3pqg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/users/verify/{{id}}/{{verificationcode}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"users",
+								"verify",
+								"{{id}}",
+								"{{verificationcode}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Verify User Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/users/verify/{{id}}/{{verificationcode}}",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"users",
+										"verify",
+										"{{id}}",
+										"{{verificationcode}}"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1a-OGCM2zpihIiyUuJss6ehzym2/yg\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 16:40:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "user successfully verified"
+						}
+					]
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"abcde\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/users/resetpassword/{{id}}/{{passwordresetcode}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"users",
+								"resetpassword",
+								"{{id}}",
+								"{{passwordresetcode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"lakabosch6@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/users/forgot-password",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"users",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Job portals allow job seekers to apply for jobs and employers to find candidates. The Users tool allows you create, view, apply and review jobs with employers, and companies and build relationships."
+		},
+		{
+			"name": "Session",
+			"item": [
+				{
+					"name": "Create Session",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n      \"email\": \"lakaboch1@gmail.com\",\r\n      \"hashed_password\": \"abcd1234\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/auth",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"auth"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Session Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n      \"email\": \"lakaboch1@gmail.com\",\r\n      \"hashed_password\": \"abcd1234\"\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/auth",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"auth"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2032"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"7f0-nBCp8slvv0S/Apkwn7UAl+DUsLo\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 16:30:26 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"session\": {\n        \"id\": \"834b270e-74bf-425d-81e2-18a4cf99ba82\",\n        \"user_agent\": \"\",\n        \"client_ip\": \"\",\n        \"is_blocked\": false,\n        \"valid\": true,\n        \"username\": \"lakabosch1\",\n        \"createdAt\": \"2025-03-26T16:30:26.445Z\"\n    },\n    \"accessToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUyOTQ0YTI2LTc4NjEtNDBlYS04NDVmLTk3ODg5MmE2ZGRmNSIsInVzZXJuYW1lIjoibGFrYWJvc2NoMSIsImZpcnN0X25hbWUiOiJsYWthMSIsImxhc3RfbmFtZSI6ImJvc2NoIiwiZW1haWwiOiJsYWthYm9jaDFAZ21haWwuY29tIiwiaXNfZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI1LTAzLTI2VDE2OjA2OjM4LjU4MloiLCJ1cGRhdGVkQXQiOiIyMDI1LTAzLTI2VDE2OjA2OjM4LjU4MloiLCJjb21wYW55SWQiOm51bGwsImFkZHJlc3NJZCI6Ijg5ZmZkZDgzLTA4OWItNDVlZC1iNmM5LTgzOThmNjYzZTY2OCIsInNlc3Npb24iOiI4MzRiMjcwZS03NGJmLTQyNWQtODFlMi0xOGE0Y2Y5OWJhODIiLCJpYXQiOjE3NDMwMDY2MjYsImV4cCI6MTc0MzAwNzUyNn0.Hh54jN2IOjbS88CIOHcdOv3r6BOmphoOGxrlzK7d3iKD8otAgqoZngb0LNUCb3mSvbRTAv5dWTXr3ngJRKLo13hF8HwskwrHy89OuwsW1AJo12Q-D6nvW73XOlhTJ3L6fwnTWUJP8uDG_k2vqv4w7USo0HpomKODRm7GrKTuVh1C7eiyicPdaZ5xSk9tKa0c6WOtgcdkGYGYwOyuQ7FLMy1DG5lWDTMBcLg_jjNsWZFNnyYbMdzhZU3l2uH_H2moqOfEPHjZQI5XqdB0PBK-Nk2-2NvpcIMRBsFBJHoltuMfVMVnYko5Cag-i8cTI9jqDbf3mVoCR_QbE-mIG_HT1A\",\n    \"refreshToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUyOTQ0YTI2LTc4NjEtNDBlYS04NDVmLTk3ODg5MmE2ZGRmNSIsInVzZXJuYW1lIjoibGFrYWJvc2NoMSIsImZpcnN0X25hbWUiOiJsYWthMSIsImxhc3RfbmFtZSI6ImJvc2NoIiwiZW1haWwiOiJsYWthYm9jaDFAZ21haWwuY29tIiwiaXNfZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI1LTAzLTI2VDE2OjA2OjM4LjU4MloiLCJ1cGRhdGVkQXQiOiIyMDI1LTAzLTI2VDE2OjA2OjM4LjU4MloiLCJjb21wYW55SWQiOm51bGwsImFkZHJlc3NJZCI6Ijg5ZmZkZDgzLTA4OWItNDVlZC1iNmM5LTgzOThmNjYzZTY2OCIsInNlc3Npb24iOiI4MzRiMjcwZS03NGJmLTQyNWQtODFlMi0xOGE0Y2Y5OWJhODIiLCJpYXQiOjE3NDMwMDY2MjYsImV4cCI6MTc3NDU2NDIyNn0.IH0S7CBDsQgF-4Moy1hu9aJaAEicWVWBe8NB-hchmQ1d4Jbr7MkDkxC8dY-CWN-zYb5DWkzr7s5_UfRVrZN0hiTvoM513Hf03LjyNtvuQv7Qmc09TANg-Llhy-E8rSRH0XMnCYfoa5MEAFpILZsPm2JCgI_wwnp0v1sfk8tGK6gcasn45jxOPDjnLkAPxMgQUVTtiu8AhS2X-I95LjFU4dlZWpzMpcgFN8fcSKAdwjzEb2vi0AUyYPz2iXV2yXOXpa5PYCskjXKUx8tK6292Fva3XNFAoQUjxPwA2QdexPBRyq1y1AcDSvOfMPGYl3NaBpn3PbHtHfnKj95nSpIYzQ\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Session",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/auth",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Valid Session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.setEnvironmentVariable(\"accessToken\", jsonData.token);\r",
+									"// pm.globals.set(\"variable_key\", \"variable_value\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"lakabosch1@gmail.com\",\r\n    \"password\": \"abcd\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/auth",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "## Authentication\n\nAPI request requires authentication to set permissions and privileges to enable access to authorized users. Authentication helps to identify the user license that is responsible for making the request. Authentication is provided by access tokens and refresh tokens\n\n#### Role based access tokens?\n\nEach license has two tokens:\n\n- `Employer access token` - allows you to manage your job postings, scheduled interviews, salary expectations, set probation periods and more. The access token should never be shared as it gives full access to your account.\n    \n- `TB Salary access token` - allows applicant to apply to posted jobs, query endpoint requests to jobs\n    \n\n## Authentication example\n\nInclude this HTTP header for each API request:\n\n`Authorization: Bearer ${ACCESS_TOKEN}`[.](http://app.chatbot.com/settings/developers)\n\n## Error handling\n\nIn general, we use a consistent standard for error messages, that is, errors are returned using standard HTTP error code syntax. For example, most REST APIs include fields like `error`, `message`, `code` (an internal error code specific to your application), and sometimes `details` for additional information\n\n### HTTP status codes summary\n\n- 2xx – **The request indicate success. T**_he status response code from the server for successful HTTP requests_\n    \n- `4xx` – **Client Error**. The server cannot or will not process the request due to something that is perceived to be a client error e.g deceptive request routing\n    \n- `5xx` – **Server Error**. The request method is not supported by the server and cannot be handled"
+		},
+		{
+			"name": "Address",
+			"item": [
+				{
+					"name": "Create Address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUyOTQ0YTI2LTc4NjEtNDBlYS04NDVmLTk3ODg5MmE2ZGRmNSIsInVzZXJuYW1lIjoibGFrYWJvc2NoMSIsImZpcnN0X25hbWUiOiJsYWthMSIsImxhc3RfbmFtZSI6ImJvc2NoIiwiZW1haWwiOiJsYWthYm9jaDFAZ21haWwuY29tIiwiaXNfZW1haWxfdmVyaWZpZWQiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMDMtMjZUMTY6MDY6MzguNTgyWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDMtMjZUMTY6NDA6MDIuODY4WiIsImNvbXBhbnlJZCI6bnVsbCwiYWRkcmVzc0lkIjoiODlmZmRkODMtMDg5Yi00NWVkLWI2YzktODM5OGY2NjNlNjY4Iiwic2Vzc2lvbiI6IjMxOTNkMmM2LWZlNjEtNDE3My1iZDY3LWUxMjMwZmE2MDEzMCIsImlhdCI6MTc0MzAwODU5NCwiZXhwIjoxNzQzMDA5NDk0fQ.sPcvhTTUMa29sCxhwO-inLk0gACUWcuA-qyFjyO6wyXEwrBkqIJxsQSItGbmu8Cg3h41i8z5SnLl-dpg02xt9RzI4K4VGDbo3Ns8DabweU6qOzWnBE41BwVz9kcPLoTM9SaxbaR1uV-Mfs26Phnojl7Ju096mdMHCbKG4jgIvLYLZ5aR_bMSug2ANU8XwnjM8C_h7R7wCCOiYNDeO94JQQ8AFtXZtbS6krGOnA85R-T1HI_z_wIShssrjBS5GnqmAR3tlVuTOaCrA-J45494fUXqaCz2NL7Prl1tsBDVNUHI_eY3Yo_OYuZx9ouyy0B3RlNuxoL_Se4lzoB_Woxqrg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\r\n      \"street\": \"YbhEz\",\r\n      \"country\": \"5NFdp\",\r\n      \"city\": \"FyoFQ\",\r\n      \"street2\": \"eZvNm\",\r\n      \"state_province_code\": \"DPxjy\",\r\n      \"state_province_name\": \"EPaiN\",\r\n      \"postal_code\": \"BFiPY\",\r\n      \"country_code\": \"5zJwE\",\r\n       \"latitude\": 0.000,\r\n        \"longitude\": 0.00\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/address",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"address"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Address Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\r\n      \"street\": \"YbhEz\",\r\n      \"country\": \"5NFdp\",\r\n      \"city\": \"FyoFQ\",\r\n      \"street2\": \"eZvNm\",\r\n      \"state_province_code\": \"DPxjy\",\r\n      \"state_province_name\": \"EPaiN\",\r\n      \"postal_code\": \"BFiPY\",\r\n      \"country_code\": \"5zJwE\",\r\n       \"latitude\": 0.000,\r\n        \"longitude\": 0.00\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/address",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"address"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "309"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"135-TKgzx560chaFKbMbTAtqT7Fgges\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:06:51 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Address Successfully Created\",\n    \"data\": {\n        \"id\": \"0eceafe3-e603-4feb-8e8a-63a74b4c6f36\",\n        \"street\": \"YbhEz\",\n        \"street2\": \"eZvNm\",\n        \"city\": \"FyoFQ\",\n        \"state_province_code\": \"DPxjy\",\n        \"state_province_name\": \"EPaiN\",\n        \"postal_code\": \"BFiPY\",\n        \"country_code\": \"5zJwE\",\n        \"latitude\": 0,\n        \"longitude\": 0,\n        \"country\": \"5NFdp\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/address",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"address"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/address/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"address",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Address",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/address/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"address",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User Address",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/address/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"address",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Each user (employer and applicant) can add an adddress. Make sure the user has a valid `access_token.`"
+		},
+		{
+			"name": "TB Salary",
+			"item": [
+				{
+					"name": "Get All TBS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/applicants",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"applicants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get TBS Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/applicants/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"applicants",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create TBS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"taskLengthMinutes\": \"qVisz\", \"taskDescription\": \"uszxO\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/tbs",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"tbs"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create TBS Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"taskLengthMinutes\": \"qVisz\", \"taskDescription\": \"uszxO\" }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/tbs",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"tbs"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "159"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9f-2IP7QQ8VVxqjbBk4wFsDbopQRFE\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:11:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"TBS Successfully Created\",\n    \"data\": {\n        \"id\": \"ff7bf1fd-6e27-4f7a-94a9-56d1077bc2b7\",\n        \"taskLengthMinutes\": \"qVisz\",\n        \"taskDescription\": \"uszxO\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update TBS",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/tbs/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"tbs",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete TBS",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/tbs/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"tbs",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Returns, adds, and update TBS"
+		},
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "Create Company",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUyOTQ0YTI2LTc4NjEtNDBlYS04NDVmLTk3ODg5MmE2ZGRmNSIsInVzZXJuYW1lIjoibGFrYWJvc2NoMSIsImZpcnN0X25hbWUiOiJsYWthMSIsImxhc3RfbmFtZSI6ImJvc2NoIiwiZW1haWwiOiJsYWthYm9jaDFAZ21haWwuY29tIiwiaXNfZW1haWxfdmVyaWZpZWQiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMDMtMjZUMTY6MDY6MzguNTgyWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDMtMjZUMTY6NDA6MDIuODY4WiIsImNvbXBhbnlJZCI6bnVsbCwiYWRkcmVzc0lkIjoiODlmZmRkODMtMDg5Yi00NWVkLWI2YzktODM5OGY2NjNlNjY4Iiwic2Vzc2lvbiI6IjMxOTNkMmM2LWZlNjEtNDE3My1iZDY3LWUxMjMwZmE2MDEzMCIsImlhdCI6MTc0MzAwODU5NCwiZXhwIjoxNzQzMDA5NDk0fQ.sPcvhTTUMa29sCxhwO-inLk0gACUWcuA-qyFjyO6wyXEwrBkqIJxsQSItGbmu8Cg3h41i8z5SnLl-dpg02xt9RzI4K4VGDbo3Ns8DabweU6qOzWnBE41BwVz9kcPLoTM9SaxbaR1uV-Mfs26Phnojl7Ju096mdMHCbKG4jgIvLYLZ5aR_bMSug2ANU8XwnjM8C_h7R7wCCOiYNDeO94JQQ8AFtXZtbS6krGOnA85R-T1HI_z_wIShssrjBS5GnqmAR3tlVuTOaCrA-J45494fUXqaCz2NL7Prl1tsBDVNUHI_eY3Yo_OYuZx9ouyy0B3RlNuxoL_Se4lzoB_Woxqrg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n      \"name\" : \"7rDa6\",\r\n      \"email\" : \"xfNa9k@email.com\",\r\n      \"website\" : \"wMZXW\",\r\n      \"size\" : \"FyoFQ\",\r\n      \"street\": \"street\",\r\n      \"country\": \"country\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"company"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Company",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n      \"name\" : \"7rDa6\",\r\n      \"email\" : \"xfNa9k@email.com\",\r\n      \"website\" : \"wMZXW\",\r\n      \"size\" : \"FyoFQ\",\r\n      \"street\": \"street\",\r\n      \"country\": \"country\"\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/company",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"company"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1077"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"435-gnfkZNX+pg3piObMMN5fNXxDRaU\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:15:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"company Successfully Created\",\n    \"data\": {\n        \"id\": \"643d302c-eec7-4738-9ad9-b17601b883e7\",\n        \"name\": \"7rDa6\",\n        \"email\": \"xfNa9k@email.com\",\n        \"website\": \"wMZXW\",\n        \"size\": \"FyoFQ\",\n        \"createdAt\": \"2025-03-26T17:15:18.117Z\",\n        \"updatedAt\": \"2025-03-26T17:15:18.117Z\",\n        \"addressId\": \"c2c9ce63-9ab9-4f4f-b799-a5ce6b4649dd\",\n        \"address\": {\n            \"id\": \"c2c9ce63-9ab9-4f4f-b799-a5ce6b4649dd\",\n            \"street\": \"street\",\n            \"street2\": null,\n            \"city\": null,\n            \"state_province_code\": null,\n            \"state_province_name\": null,\n            \"postal_code\": null,\n            \"country_code\": null,\n            \"latitude\": null,\n            \"longitude\": null,\n            \"country\": \"country\"\n        }\n    },\n    \"user\": {\n        \"id\": \"e2944a26-7861-40ea-845f-978892a6ddf5\",\n        \"username\": \"lakabosch1\",\n        \"hashed_password\": \"$2b$10$TicmebBYptQ.d8/tY0Rz8.3rdcjC96ZBdOT.A5XpioAwz7lCK4vdq\",\n        \"first_name\": \"laka1\",\n        \"last_name\": \"bosch\",\n        \"email\": \"lakaboch1@gmail.com\",\n        \"is_email_verified\": true,\n        \"verificationCode\": \"208b8d29-74d8-49a3-a9d3-52a9121f7a3f\",\n        \"passwordResetCode\": null,\n        \"createdAt\": \"2025-03-26T16:06:38.582Z\",\n        \"updatedAt\": \"2025-03-26T17:15:18.345Z\",\n        \"companyId\": \"643d302c-eec7-4738-9ad9-b17601b883e7\",\n        \"addressId\": \"0eceafe3-e603-4feb-8e8a-63a74b4c6f36\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"company"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"company",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Company By Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/location/{{location}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"company",
+								"location",
+								"{{location}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/filter",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"company",
+								"filter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search For Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/search/company/keyword",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"search",
+								"company",
+								"keyword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Company",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"application_text\": \"string 1\",\r\n  \"resume\": false,\r\n  \"cover_letter\": false,\r\n  \"referral_information\": \"string 1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"company",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Company",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/company/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"company",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "A job application is a formal request for employment created by an applicant that typically includes a resume and a cover letter. This section will cover the basics of creating, getting and editting applications"
+		},
+		{
+			"name": "Job",
+			"item": [
+				{
+					"name": "Create Job",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUyOTQ0YTI2LTc4NjEtNDBlYS04NDVmLTk3ODg5MmE2ZGRmNSIsInVzZXJuYW1lIjoibGFrYWJvc2NoMSIsImZpcnN0X25hbWUiOiJsYWthMSIsImxhc3RfbmFtZSI6ImJvc2NoIiwiZW1haWwiOiJsYWthYm9jaDFAZ21haWwuY29tIiwiaXNfZW1haWxfdmVyaWZpZWQiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMDMtMjZUMTY6MDY6MzguNTgyWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDMtMjZUMTc6MTU6MTguMzQ1WiIsImNvbXBhbnlJZCI6IjY0M2QzMDJjLWVlYzctNDczOC05YWQ5LWIxNzYwMWI4ODNlNyIsImFkZHJlc3NJZCI6IjBlY2VhZmUzLWU2MDMtNGZlYi04ZThhLTYzYTc0YjRjNmYzNiIsInNlc3Npb24iOiJiZmIwYjZmZC05MWUwLTQzZGUtYWZhZi1hMWU2MzU1ZjNjYTciLCJpYXQiOjE3NDMwMDk3NjcsImV4cCI6MTc0MzAxMDY2N30.ZipfDi4T__vEaYNx7o4iGEOoHETZUuy5zyCxN3CEJnaLaWbAQf8y9iIoBZUte0mew2BLhzVnIB7FM8zHGWjqHJux0dc3A7XKzXtSLA0HhYSr4dO_1z0cD4QcgzVPJsXCUQ4bYmWoGeCU_xI5rXS1lMOYmVOi6eNGJL7UHjhiY8n-gZ1GjkXSkE3jrvECXGYPzYPL3g4mtlP2b_N039B_Et4gWI84nBl8S58RQ_VrqQlpxZD5eboacU5RmVu3ZncunZo9odn2LpM8fMpBAF-dcXEeCts-1jlQIQ1Ha3KYQuMrOt-dLWp8qnDlFDU0HMjk6WmhJ4YtFovzs_hZ3voHrg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n      \"title\" : \"ZAbXQ\",\r\n      \"subtitle\" : \"AILWa\",\r\n      \"description\" : \"203iY\",\r\n      \"qualification\" : \"PaaXd\",\r\n      \"complimentary_qualification\" : \"VmBgZ\",\r\n      \"job_type\" : \"XSQAu\",\r\n      \"visa_sponsorship\" : \"xmZHv\",\r\n      \"remote_posible\" : \"E8IQZ\",\r\n      \"preferred_timezones\" : \"Sfmc2\",\r\n      \"location\" : \"IfRCa\",\r\n      \"date_posted\" : \"EFSZG\",\r\n      \"relocation\" : \"F4atH\",\r\n      \"skills\" : \"rO674\",\r\n      \"employer_hiring_contact\" : \"tWxaQ\",\r\n      \"descriptionFormatting\" : \"LYeP6\",\r\n      \"probationaryPeriod\" : \"H9pQq\",\r\n      \"atsName\" : \"KOXLe\",\r\n      \"employersName\" : \"HH75q\",\r\n      \"period\" : \"6oNmN\",\r\n      \"status\": false,\r\n      \"name\" : \"zYWAt\",\r\n      \"email\" : \"oI4pVu@email.com\",\r\n      \"website\" : \"jbC26\",\r\n      \"size\" : \"ROWIC\",\r\n      \"street\" : \"Yz3yj\",\r\n      \"country\" : \"Yrc6H\",\r\n      \"currency\": \"NGN\",\r\n       \"maximumMinor\":\"eZn0c\",\r\n        \"minimumMinor\":\"zjdc8\",\r\n        \"taskLengthMinutes\":\"jMtFv\",\r\n        \"taskDescription\":\"6KOp8\",\r\n        \"totalSalaryMinor\":\"MJBBM\",\r\n        \"workingHours\": 29,\r\n        \"fixedOvertimePay\": true\r\n\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/jobs",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"jobs"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Job Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n      \"title\" : \"ZAbXQ\",\r\n      \"subtitle\" : \"AILWa\",\r\n      \"description\" : \"203iY\",\r\n      \"qualification\" : \"PaaXd\",\r\n      \"complimentary_qualification\" : \"VmBgZ\",\r\n      \"job_type\" : \"XSQAu\",\r\n      \"visa_sponsorship\" : \"xmZHv\",\r\n      \"remote_posible\" : \"E8IQZ\",\r\n      \"preferred_timezones\" : \"Sfmc2\",\r\n      \"location\" : \"IfRCa\",\r\n      \"date_posted\" : \"EFSZG\",\r\n      \"relocation\" : \"F4atH\",\r\n      \"skills\" : \"rO674\",\r\n      \"employer_hiring_contact\" : \"tWxaQ\",\r\n      \"descriptionFormatting\" : \"LYeP6\",\r\n      \"probationaryPeriod\" : \"H9pQq\",\r\n      \"atsName\" : \"KOXLe\",\r\n      \"employersName\" : \"HH75q\",\r\n      \"period\" : \"6oNmN\",\r\n      \"status\": false,\r\n      \"name\" : \"zYWAt\",\r\n      \"email\" : \"oI4pVu@email.com\",\r\n      \"website\" : \"jbC26\",\r\n      \"size\" : \"ROWIC\",\r\n      \"street\" : \"Yz3yj\",\r\n      \"country\" : \"Yrc6H\",\r\n      \"currency\": \"NGN\",\r\n       \"maximumMinor\":\"eZn0c\",\r\n        \"minimumMinor\":\"zjdc8\",\r\n        \"taskLengthMinutes\":\"jMtFv\",\r\n        \"taskDescription\":\"6KOp8\",\r\n        \"totalSalaryMinor\":\"MJBBM\",\r\n        \"workingHours\": 29,\r\n        \"fixedOvertimePay\": true\r\n\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/jobs",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"jobs"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1511"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5e7-bCSFGc2bswBTtvoB/QhbOqehMmU\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:23:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Job Successfully Created\",\n    \"data\": {\n        \"id\": \"2aa34c37-6430-485c-8071-8db33544ab1a\",\n        \"title\": \"ZAbXQ\",\n        \"subtitle\": \"AILWa\",\n        \"description\": \"203iY\",\n        \"qualification\": \"PaaXd\",\n        \"complimentary_qualification\": \"VmBgZ\",\n        \"job_type\": \"XSQAu\",\n        \"visa_sponsorship\": \"xmZHv\",\n        \"remote_posible\": \"E8IQZ\",\n        \"preferred_timezones\": \"Sfmc2\",\n        \"location\": \"IfRCa\",\n        \"date_posted\": \"EFSZG\",\n        \"relocation\": \"F4atH\",\n        \"skills\": \"rO674\",\n        \"employer_hiring_contact\": \"tWxaQ\",\n        \"descriptionFormatting\": \"LYeP6\",\n        \"probationaryPeriod\": \"H9pQq\",\n        \"company_id\": \"643d302c-eec7-4738-9ad9-b17601b883e7\",\n        \"salaryId\": \"a154e772-13f0-411b-989e-73758999447d\",\n        \"metadataId\": \"2dccc8be-6d71-43a9-b9fa-48f50bd62659\",\n        \"hasProbationPeriodId\": \"747e1976-adea-4ca8-9096-a475c9374f89\",\n        \"createdAt\": \"2025-03-26T17:23:09.677Z\",\n        \"updatedAt\": \"2025-03-26T17:23:09.677Z\",\n        \"company\": {\n            \"id\": \"643d302c-eec7-4738-9ad9-b17601b883e7\",\n            \"name\": \"7rDa6\",\n            \"email\": \"xfNa9k@email.com\",\n            \"website\": \"wMZXW\",\n            \"size\": \"FyoFQ\",\n            \"createdAt\": \"2025-03-26T17:15:18.117Z\",\n            \"updatedAt\": \"2025-03-26T17:15:18.117Z\",\n            \"addressId\": \"c2c9ce63-9ab9-4f4f-b799-a5ce6b4649dd\"\n        },\n        \"metadata\": {\n            \"id\": \"2dccc8be-6d71-43a9-b9fa-48f50bd62659\",\n            \"atsName\": \"KOXLe\",\n            \"employersName\": \"HH75q\"\n        },\n        \"salary\": {\n            \"id\": \"a154e772-13f0-411b-989e-73758999447d\",\n            \"currency\": \"NGN\",\n            \"maximumMinor\": \"eZn0c\",\n            \"minimumMinor\": \"zjdc8\",\n            \"fineGrainedSalaryInformationId\": \"edb7acf2-2a42-45c5-a825-eb447be15408\",\n            \"taskBasedSalaryInformationId\": \"b9407ecf-479d-4972-9461-065192a26630\"\n        },\n        \"hasProbationPeriod\": {\n            \"id\": \"747e1976-adea-4ca8-9096-a475c9374f89\",\n            \"period\": \"6oNmN\",\n            \"status\": false\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Find All Jobs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/job",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"job"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/job/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"job",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/search/jobs/filter",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"search",
+								"jobs",
+								"filter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Job By Loction",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/jobs/location/{{location}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"jobs",
+								"location",
+								"{{location}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search For Job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/search/jobs/keyword",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"search",
+								"jobs",
+								"keyword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Jobs",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"currency\": \"currency\",\r\n  \"maximumMinor\": \"maximumMinor\",\r\n  \"minimumMinor\": \"minimumMinor\",\r\n   \"period\": \"period\",\r\n  \"title\": \"string\",\r\n  \"subtitle\": \"string\",\r\n  \"description\": \"string\",\r\n  \"qualification\": \"string\",\r\n  \"complimentary_qualification\": \"string\",\r\n  \"job_type\": \"string\",\r\n  \"visa_sponsorship\": \"string\",\r\n  \"remote_posible\": \"string\",\r\n  \"preferred_timezones\": \"string\",\r\n  \"location\": \"string\",\r\n  \"date_posted\": \"string\",\r\n  \"relocation\": \"string\",\r\n  \"skills\": \"string\",\r\n  \"employer_hiring_contact\": \"string\",\r\n  \"probationaryPeriod\": \"string\",\r\n  \"hasProbationaryPeriod\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/job/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"job",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Jobs",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/job/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"job",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "A job post is created by an employer of a company. Job postings are public announcement of an open position in a company\n\nThis section will cover the basics of creating, getting a rating"
+		},
+		{
+			"name": "FGS",
+			"item": [
+				{
+					"name": "Create FG Salary",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"totalSalaryMinor\" : \"MJBBM\",\r\n        \"workingHours\": 29,\r\n        \"fixedOvertimePay\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/fgs",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"fgs"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create FG Salary",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"totalSalaryMinor\" : \"MJBBM\",\r\n        \"workingHours\": 29,\r\n        \"fixedOvertimePay\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/fgs",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"fgs"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "283"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"11b-u9W3EEIyB9deeRXhhQ50tiL/CAE\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:28:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Fine grained salary type successfully created\",\n    \"data\": {\n        \"id\": \"e555c997-2e52-4b6d-907b-71b88750d10f\",\n        \"totalSalaryMinor\": \"MJBBM\",\n        \"workingHours\": 29,\n        \"totalOvertimeHours\": null,\n        \"statutoryOvertimeHours\": null,\n        \"fixedOvertimeSalaryMinor\": null,\n        \"fixedOvertimePay\": true\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All FGSalary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/location",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"location"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single FG Salary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/location/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"location",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update FG Salary",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"latitude\": 9999.0000,\r\n    \"longitude\": 99999.000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/location/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"location",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete FG Salary",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/location/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"location",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Each user address (employer and applicant) can add a location. Make sure the user has an address and a valid `access_token.`"
+		},
+		{
+			"name": "Metadata",
+			"item": [
+				{
+					"name": "Create Metadata",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"atsName\": \"string\",\r\n  \"employersName\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/metadata",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"metadata"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Metadata Reponse",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"atsName\": \"string\",\r\n  \"employersName\": \"string\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/metadata",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"metadata"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "158"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9e-Pjt6BLbGzLnY6qdIIFmoCHLb1ks\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:30:55 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Job Metadata Successfully Created\",\n    \"data\": {\n        \"id\": \"f32ad0b9-3182-48dc-8bb5-e5b107df04aa\",\n        \"atsName\": \"string\",\n        \"employersName\": \"string\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Metadatas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/metadata",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"metadata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/metadata/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"metadata",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Metadata",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/metadata/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"metadata",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Metadata",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/metadata/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"metadata",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "A job post can have additional informational. This additional information are referred to s metadata\n\nThis section will cover the basics of creating, getting a metadata"
+		},
+		{
+			"name": "Probation Period",
+			"item": [
+				{
+					"name": "Create Probation Period",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"status\": false,\r\n  \"period\": \"3month\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/hpp",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"hpp"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Probation Period Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"status\": false,\r\n  \"period\": \"3month\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/hpp",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"hpp"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "161"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"a1-G2hr2LyJ18n80AcK7e5KA8L6D+Q\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:32:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Has probabtion information Successfully Created\",\n    \"data\": {\n        \"id\": \"b33db118-7d83-4e70-93eb-371ba888093d\",\n        \"period\": \"3month\",\n        \"status\": false\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Probation Period",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/hpp",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"hpp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Probation Period",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/hpp/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"hpp",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Probation Period",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/hpp/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"hpp",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Probation Period",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/hpp/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"hpp",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Some jobs have probation periods. Probation period a trial period at the beginning of an employment contract that allows employers to assess an employee's performance and suitability for the role\n\nThis section will cover the basics of creating, getting a probation"
+		},
+		{
+			"name": "Salary",
+			"item": [
+				{
+					"name": "Create Salary",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUyOTQ0YTI2LTc4NjEtNDBlYS04NDVmLTk3ODg5MmE2ZGRmNSIsInVzZXJuYW1lIjoibGFrYWJvc2NoMSIsImZpcnN0X25hbWUiOiJsYWthMSIsImxhc3RfbmFtZSI6ImJvc2NoIiwiZW1haWwiOiJsYWthYm9jaDFAZ21haWwuY29tIiwiaXNfZW1haWxfdmVyaWZpZWQiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMDMtMjZUMTY6MDY6MzguNTgyWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDMtMjZUMTc6MTU6MTguMzQ1WiIsImNvbXBhbnlJZCI6IjY0M2QzMDJjLWVlYzctNDczOC05YWQ5LWIxNzYwMWI4ODNlNyIsImFkZHJlc3NJZCI6IjBlY2VhZmUzLWU2MDMtNGZlYi04ZThhLTYzYTc0YjRjNmYzNiIsInNlc3Npb24iOiJkMGViZWFkNy01MzBhLTRkNDItYjViNy0zOGEyNjI0ZThiMDEiLCJpYXQiOjE3NDMwMTEwNTgsImV4cCI6MTc0MzAxMTk1OH0.S0lGcO3GrFqwrgJYlQyFXnRYQnd15AziGDXJtJTaWHOfFixdgVrQCVZG8jgw6DHIBIenQzvkF_lMqjsqyJ3v4-B3TmClfXZ_7l_ffnu0eu4PKycs_nUpl_BlR02Rh-JFHHqYoGZONCoSnwktzdpCxG5QxijdnfarFkt6ScAdDOljTg9ULQjsDb_89f8x4af7qp2yzsZJgofusamvep4hEDNEPaqPXjegGhC19ODtsDJGhUUoAcf6aNLSdd3sGFFXNsO-MKYjsPnvCKmBtepOnAItPIep5395p9e5kgeFJOu1nVzjjmF5r7Xck-u2RfVPtcVnlZV7UXL0T11KGVTEQA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"currency\": \"string\",\r\n  \"maximumMinor\": \"string\",\r\n  \"minimumMinor\": \"string\",\r\n  \"period\": \"string\",\r\n  \"totalSalaryMinor\" : \"MJBBM\",\r\n    \"workingHours\": 29,\r\n    \"fixedOvertimePay\": true,\r\n    \"taskLengthMinutes\": \"qVisz\", \"taskDescription\": \"uszxO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Salary",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"currency\": \"string\",\r\n  \"maximumMinor\": \"string\",\r\n  \"minimumMinor\": \"string\",\r\n  \"period\": \"string\",\r\n  \"totalSalaryMinor\" : \"MJBBM\",\r\n    \"workingHours\": 29,\r\n    \"fixedOvertimePay\": true,\r\n    \"taskLengthMinutes\": \"qVisz\", \"taskDescription\": \"uszxO\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/salary",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"salary"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "318"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"13e-kZtBBqh5/8EnlvFtTAohVtAtTjM\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:44:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Salary Successfully Created\",\n    \"data\": {\n        \"id\": \"1af4a800-77e7-4a3d-b651-e4028797a681\",\n        \"currency\": \"string\",\n        \"maximumMinor\": \"string\",\n        \"minimumMinor\": \"string\",\n        \"fineGrainedSalaryInformationId\": \"d7e2ef0b-b8b7-4e96-943f-9c0f5d44e12d\",\n        \"taskBasedSalaryInformationId\": \"a8559a68-3e05-4462-ac79-5b4ff71a6b90\"\n    }\n}"
+						},
+						{
+							"name": "Create Salary Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"currency\": \"string\",\r\n  \"maximumMinor\": \"string\",\r\n  \"minimumMinor\": \"string\",\r\n  \"period\": \"string\",\r\n  \"totalSalaryMinor\" : \"MJBBM\",\r\n    \"workingHours\": 29,\r\n    \"fixedOvertimePay\": true,\r\n    \"taskLengthMinutes\": \"qVisz\", \"taskDescription\": \"uszxO\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://jobberman.onrender.com/api/salary",
+									"protocol": "https",
+									"host": [
+										"jobberman",
+										"onrender",
+										"com"
+									],
+									"path": [
+										"api",
+										"salary"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "318"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"13e-kZtBBqh5/8EnlvFtTAohVtAtTjM\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 26 Mar 2025 17:44:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Salary Successfully Created\",\n    \"data\": {\n        \"id\": \"1af4a800-77e7-4a3d-b651-e4028797a681\",\n        \"currency\": \"string\",\n        \"maximumMinor\": \"string\",\n        \"minimumMinor\": \"string\",\n        \"fineGrainedSalaryInformationId\": \"d7e2ef0b-b8b7-4e96-943f-9c0f5d44e12d\",\n        \"taskBasedSalaryInformationId\": \"a8559a68-3e05-4462-ac79-5b4ff71a6b90\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Salary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Salary Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Salary Type Autocomplete",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/currency/autocomplete",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"currency",
+								"autocomplete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Salary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/filter/keyword",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"filter",
+								"keyword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Salary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/search/keyword",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"search",
+								"keyword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Salary",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"street\": \"street 1a\",\r\n  \"street2\": \"street 2\",\r\n  \"city\": \"city 1a\",\r\n  \"state_province_code\": \"12345\",\r\n  \"state_province_name\": \"state province name\",\r\n  \"postal_code\": \"12345\",\r\n  \"country_code\": \"234\",\r\n  \"location\": \"ghanag\",\r\n  \"country\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/{{id}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"{{id}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Salary",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://jobberman.onrender.com/api/salary/{{id}}",
+							"protocol": "https",
+							"host": [
+								"jobberman",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"salary",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Each job must have a salary. A job salary is the amount of money paid to an employee for their work"
+		}
+	]
+}

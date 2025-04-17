@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npx ts-node script.ts",
+    "start": "node build/src/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "migrate": "npx prisma migrate dev --name init",
     "build": "tsc",
@@ -15,7 +15,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "createdb": "docker run --name postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:13-alpine"
+    "createdb": "docker run --name postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:13-alpine",
+    "buildImage": "docker build -t jobberman ."
   },
   "keywords": [],
   "author": "",

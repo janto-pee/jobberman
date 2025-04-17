@@ -21,7 +21,7 @@ import {
 
 export async function findSalaryHandler(
   req: Request<{ id: string }>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -78,7 +78,7 @@ export async function findAllSalaryHandler(req: Request, res: Response) {
 
 export async function FilterSalaryHandler(
   req: Request<{}, QuerySalary["query"], {}>,
-  res: Response
+  res: Response,
 ) {
   try {
     const page =
@@ -100,7 +100,7 @@ export async function FilterSalaryHandler(
         workingHours,
       },
       page,
-      limit
+      limit,
     );
     if (!salary) {
       res.send("No salary found");
@@ -124,7 +124,7 @@ export async function FilterSalaryHandler(
 
 export async function searchSalaryHandler(
   req: Request<{}, { page: number; lmino: number; search: string }, {}>,
-  res: Response
+  res: Response,
 ) {
   try {
     const page =
@@ -156,7 +156,7 @@ export async function searchSalaryHandler(
 
 export async function autocompleteSalaryHandler(
   req: Request<{}, { page: number; lmino: number; currency: string }, {}>,
-  res: Response
+  res: Response,
 ) {
   try {
     const page =
@@ -171,7 +171,7 @@ export async function autocompleteSalaryHandler(
         },
       },
       page,
-      limit
+      limit,
     );
     if (!salary) {
       res.send("Salary not found");
@@ -204,7 +204,7 @@ export async function autocompleteSalaryHandler(
 
 export async function CreateFGSalaryHandler(
   req: Request<{}, {}, createsalaryInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const body = req.body;
@@ -237,7 +237,7 @@ export async function CreateFGSalaryHandler(
 
 export async function updateSalaryHandler(
   req: Request<{ id: string }, {}, createsalaryInput["body"]>,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id } = req.params;
@@ -279,7 +279,7 @@ export async function updateSalaryFKHandler(
     {},
     createsalaryInput["body"]
   >,
-  res: Response
+  res: Response,
 ) {
   try {
     const { id, fgsId, tbsId } = req.params;
