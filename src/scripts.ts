@@ -66,7 +66,7 @@ pool.on("error", (err) => logger.error(`PostgreSQL pool error: ${err}`));
 // Create Prisma adapter and client
 const adapter = new PrismaPg(pool);
 export const prisma = new PrismaClient({
-  adapter,
+  // adapter,
   log: [
     {
       emit: "event",

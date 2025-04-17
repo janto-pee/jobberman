@@ -30,7 +30,7 @@ export const createRateLimiter = (options: {
     standardHeaders,
     legacyHeaders,
     message: { status: false, message },
-    keyGenerator: (req) => req.ip,
+    // keyGenerator: (req) => req.ip,
     store: new RedisStore({
       sendCommand: (...args: string[]) => redisClient.sendCommand(args),
       prefix: keyPrefix,
