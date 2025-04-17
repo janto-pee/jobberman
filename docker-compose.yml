@@ -1,48 +1,88 @@
-# version: "3.9"
+version: "3.8"
 
 services:
-  postgres:
-    image: postgres:13-alpine
-    container_name: postgresdb
-    restart: always
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=secret
-    networks:
-      - jobberman-network
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root"]
-      interval: 1m30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
-
-  api:
+  app:
     build:
       context: .
-      dockerfile: Dockerfile
-    depends_on:
-      postgres:
-        condition: service_healthy
-        restart: true
-    restart: always
-    environment:
-      - port=1337
+      target: builder
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
-      - "${port}:1337"
-    env_file:
-      - .env
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+    command: npm run dev
+    depends_on:
+      - postgres
     networks:
       - jobberman-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:1337/healthcheck"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=jobberman
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - jobberman-network
 
 networks:
   jobberman-network:
-    name: jobberman-network
+    driver: bridge
+
+volumes:
+  postgres-data:
+# # version: "3.9"
+
+# services:
+#   postgres:
+#     image: postgres:13-alpine
+#     container_name: postgresdb
+#     restart: always
+#     environment:
+#       - POSTGRES_USER=root
+#       - POSTGRES_PASSWORD=secret
+#     networks:
+#       - jobberman-network
+#     ports:
+#       - "5432:5432"
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U root"]
+#       interval: 1m30s
+#       timeout: 30s
+#       retries: 5
+#       start_period: 30s
+
+#   api:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#         restart: true
+#     restart: always
+#     environment:
+#       - port=1337
+#     ports:
+#       - "${port}:1337"
+#     env_file:
+#       - .env
+#     networks:
+#       - jobberman-network
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:1337/healthcheck"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+#       start_period: 30s
+
+# networks:
+#   jobberman-network:
+#     name: jobberman-network

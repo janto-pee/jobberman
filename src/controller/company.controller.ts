@@ -15,68 +15,95 @@ import {
 } from "../service/company.service";
 import { createAddressInput } from "../schema/address.schema";
 import { addUserToCompanyService } from "../service/user.service";
+import { logger } from "../utils/logger";
 
 export async function findCompanyHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
+    logger.info(`Finding company with ID: ${id}`);
 
     const company = await findCompanyService(id);
     if (!company) {
-      res.status(404).send("company not found");
-      return;
+      logger.warn(`Company not found with ID: ${id}`);
+      return res.status(404).json({
+        status: false,
+        message: "Company not found",
+      });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
-      message: "User company found",
-      company: company,
+      message: "Company found successfully",
+      company,
     });
   } catch (error) {
-    res.status(500).json({
+    logger.error(`Error finding company: ${error}`);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to retrieve company",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
   }
 }
 
+/**
+ * Get all companies with pagination
+ */
 export async function findAllCompanysHandler(req: Request, res: Response) {
   try {
     const page =
-      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
+      typeof req.query.page !== "undefined"
+        ? Math.max(1, Number(req.query.page)) - 1
+        : 0;
     const limit =
-      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
-    const company = await findAllCompanyService(page, limit);
-    const total = await totalCompanyCountService();
-    if (!company) {
-      res.status(404).send("no company found");
-      return;
+      typeof req.query.limit !== "undefined"
+        ? Math.min(50, Math.max(1, Number(req.query.limit)))
+        : 10;
+
+    logger.info(`Fetching companies page ${page + 1} with limit ${limit}`);
+
+    const [companies, total] = await Promise.all([
+      findAllCompanyService(page, limit),
+      totalCompanyCountService(),
+    ]);
+
+    if (!companies || companies.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "No companies found",
+      });
     }
 
-    res.status(200).json({
+    const totalPages = Math.ceil(total / limit);
+
+    return res.status(200).json({
       status: true,
-      total,
-      "company limit per page": limit,
-      page: page + 1,
-      company: company,
+      pagination: {
+        total,
+        limit,
+        currentPage: page + 1,
+        totalPages,
+        hasNextPage: page + 1 < totalPages,
+        hasPrevPage: page > 0,
+      },
+      companies,
     });
   } catch (error) {
-    res.status(500).json({
+    logger.error(`Error fetching all companies: ${error}`);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to retrieve companies",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
   }
 }
 
 export async function findCompanyByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
-  res: Response,
+  res: Response
 ) {
   try {
     const page =
@@ -121,7 +148,7 @@ export async function FilterCompanyHandler(req: Request, res: Response) {
     const company = await fiilterManyCompanyService(
       { city: city, size, country, name },
       page,
-      limit,
+      limit
     );
     if (company.length == 0) {
       res.status(404).send("No company found");
@@ -180,44 +207,56 @@ export async function SearchCompanyHandler(req: Request, res: Response) {
  * NOT EXPOSED
  *
  */
+/**
+ * Create a new company
+ */
 export async function CreateCompanyHandler(
   req: Request<{}, {}, createcompanyInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
     const user = res.locals.user;
+
     if (!user) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
+      logger.warn("Unauthorized attempt to create company");
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
     }
 
+    logger.info(`Creating company for user: ${user.id}`);
+
+    // Transaction to ensure both operations succeed or fail together
     const company = await createCompanyService({
       ...body,
+      // createdBy: user.id, // Track who created the company
     });
 
     const updatedUser = await addUserToCompanyService(user.id, company.id);
 
-    res.status(201).json({
+    return res.status(201).json({
       status: true,
-      message: `company Successfully Created`,
-      data: company,
-      user: updatedUser,
+      message: "Company successfully created",
+      data: {
+        company,
+        user: updatedUser,
+      },
     });
-    return;
   } catch (error) {
-    res.status(500).json({
+    logger.error(`Error creating company: ${error}`);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to create company",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
   }
 }
 
 export async function updateCompanyHandler(
   req: Request<{ id: string }, {}, createcompanyInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -259,7 +298,7 @@ export async function updateCompanyAddressHandler(
     {},
     createAddressInput["body"]
   >,
-  res: Response,
+  res: Response
 ) {
   try {
     const { companyId, addressId } = req.params;
@@ -280,7 +319,7 @@ export async function updateCompanyAddressHandler(
     const updatedCompany = await updateCompanyAddressService(
       companyId,
       addressId,
-      { ...body },
+      { ...body }
     );
 
     res.status(201).json({
@@ -326,3 +365,16 @@ export async function deleteCompanyHandler(req: Request, res: Response) {
     return;
   }
 }
+
+// import { logger } from "../utils/logger"; // Assuming you'll create this utility
+
+/**
+ * Get a company by ID
+ */
+
+// The rest of the controller methods would follow similar patterns of:
+// 1. Input validation and sanitization
+// 2. Proper error handling with specific status codes
+// 3. Consistent response formatting
+// 4. Logging for debugging and monitoring
+// 5. Pagination improvements

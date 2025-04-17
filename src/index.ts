@@ -2,41 +2,51 @@ import express from "express";
 import config from "config";
 import cors from "cors";
 import helmet from "helmet";
-import morgan from "morgan";
 import { prisma } from "./scripts";
+import router from "./routes";
 import deserializeUser from "./middleware/deserializeUser";
+import { logger } from "./utils/logger";
+import { requestLogger } from "./middleware/requestLogger";
 
 async function main() {
   const app = express();
 
+  // Security and middleware
   app.use(helmet());
   app.use(cors());
-  app.use(morgan("dev"));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  // Logging middleware
+  app.use(requestLogger);
+
+  // Authentication middleware
   app.use(deserializeUser);
+
+  // Routes
+  app.use(router);
 
   const port = config.get<number>("port");
 
   app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+    logger.info(`Server running on port ${port}`);
   });
 }
 
 // Error handling for the main function
 main()
   .then(async () => {
-    console.log("Server started successfully");
+    logger.info("Server started successfully");
   })
   .catch(async (error) => {
-    console.error("Failed to start server:", error);
+    logger.error(`Failed to start server: ${error}`);
     await prisma.$disconnect();
     process.exit(1);
   });
 
 // Handle graceful shutdown
 process.on("SIGTERM", async () => {
-  console.log("SIGTERM received, shutting down gracefully");
+  logger.info("SIGTERM received, shutting down gracefully");
   await prisma.$disconnect();
   process.exit(0);
 });
