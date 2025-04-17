@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jobberman-config
+  namespace: jobberman
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
