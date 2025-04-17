@@ -1,11 +1,10 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// schema.prisma
-
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  previewFeatures = ["driverAdapters", "fullTextSearch", "metrics"]
+  engineType      = "binary"
 }
 
 datasource db {
@@ -13,136 +12,551 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Company model representing employers
 model Company {
-  id        String   @id @default(uuid())
-  name      String   @db.VarChar(255)
-  email     String   @unique
-  website   String   @db.VarChar(255)
-  size      String   @db.VarChar(255)
-  job       Job[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User[]
-  address   Address  @relation(fields: [addressId], references: [id])
-  addressId String   @unique
+  id          String  @id @default(uuid())
+  name        String  @db.VarChar(255)
+  email       String  @unique
+  website     String? @db.VarChar(255)
+  size        String  @db.VarChar(100)
+  industry    String? @db.VarChar(100)
+  description String? @db.Text
+  logo        String? @db.VarChar(255)
+  verified    Boolean @default(false)
+  active      Boolean @default(true)
+
+  // Relations
+  jobs      Job[]
+  users     User[]
+  address   Address @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId String  @unique
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  // Indexes for performance
+  @@index([name])
+  @@index([industry])
+  @@index([size])
+  @@index([created_at])
+  // @@fulltext([name, description, industry])
+  // Full text search index
+  @@map("companies")
 }
 
+// Address model for both companies and users
 model Address {
-  id                  String   @id @default(uuid())
-  street              String   @db.VarChar(255)
-  street2             String?  @db.VarChar(255)
-  city                String?  @db.VarChar(255)
-  state_province_code String?  @db.VarChar(255)
-  state_province_name String?  @db.VarChar(255)
-  postal_code         String?  @db.VarChar(255)
-  country_code        String?  @db.VarChar(255)
-  latitude            Int?
-  longitude           Int?
-  country             String   @db.VarChar(255)
-  company             Company?
-  user                User?
+  id                  String  @id @default(uuid())
+  street              String  @db.VarChar(255)
+  street2             String? @db.VarChar(255)
+  city                String? @db.VarChar(100)
+  state_province_code String? @db.VarChar(20)
+  state_province_name String? @db.VarChar(100)
+  postal_code         String? @db.VarChar(20)
+  country_code        String? @db.VarChar(10)
+  latitude            Float?
+  longitude           Float?
+  country             String  @db.VarChar(100)
+
+  // Relations
+  company Company?
+  user    User?
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  // Indexes for geospatial queries
+  @@index([city])
+  @@index([country])
+  @@index([postal_code])
+  @@index([latitude, longitude])
+  @@map("addresses")
 }
 
+// Job model representing job listings
 model Job {
-  id                          String                @id @default(uuid())
-  title                       String                @db.VarChar(255)
-  subtitle                    String                @db.VarChar(255)
-  description                 String                @db.VarChar(255)
-  qualification               String                @db.VarChar(255)
-  complimentary_qualification String                @db.VarChar(255)
-  job_type                    String                @db.VarChar(255)
-  visa_sponsorship            String                @db.VarChar(255)
-  remote_posible              String                @db.VarChar(255)
-  preferred_timezones         String                @db.VarChar(255)
-  location                    String                @db.VarChar(255)
-  date_posted                 String                @db.VarChar(255)
-  relocation                  String                @db.VarChar(255)
-  skills                      String                @db.VarChar(255)
-  employer_hiring_contact     String                @db.VarChar(255)
-  descriptionFormatting       String                @db.VarChar(255)
-  probationaryPeriod          String                @db.VarChar(255)
-  company                     Company               @relation(fields: [company_id], references: [id])
-  company_id                  String
-  salary                      Salary                @relation(fields: [salaryId], references: [id])
-  salaryId                    String                @unique
-  metadata                    MetaData              @relation(fields: [metadataId], references: [id])
-  metadataId                  String                @unique
-  hasProbationPeriod          HasProbationaryPeriod @relation(fields: [hasProbationPeriodId], references: [id])
-  hasProbationPeriodId        String                @unique
-  createdAt                   DateTime              @default(now())
-  updatedAt                   DateTime              @updatedAt
+  id                          String    @id @default(uuid())
+  title                       String    @db.VarChar(255)
+  subtitle                    String?   @db.VarChar(255)
+  description                 String    @db.Text
+  qualification               String    @db.Text
+  complimentary_qualification String?   @db.Text
+  job_type                    JobType   @default(FULL_TIME)
+  visa_sponsorship            Boolean   @default(false)
+  remote_possible             Boolean   @default(false)
+  preferred_timezones         String?   @db.VarChar(255)
+  location                    String    @db.VarChar(255)
+  date_posted                 DateTime  @default(now())
+  application_deadline        DateTime?
+  relocation                  Boolean   @default(false)
+  skills                      String[]  @db.VarChar(100)
+  employer_hiring_contact     String?   @db.VarChar(255)
+  status                      JobStatus @default(DRAFT)
+
+  // Relations
+  company              Company               @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  company_id           String
+  salary               Salary                @relation(fields: [salaryId], references: [id], onDelete: Cascade)
+  salaryId             String                @unique
+  metadata             MetaData              @relation(fields: [metadataId], references: [id], onDelete: Cascade)
+  metadataId           String                @unique
+  hasProbationPeriod   HasProbationaryPeriod @relation(fields: [hasProbationPeriodId], references: [id], onDelete: Cascade)
+  hasProbationPeriodId String                @unique
+  applications         JobApplication[]
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  // Indexes for performance
+  @@index([title])
+  @@index([job_type])
+  @@index([remote_possible])
+  @@index([date_posted])
+  @@index([status])
+  @@index([company_id])
+  // Full text search index
+  // @@fulltext([title, description, skills])
+  @@map("jobs")
 }
 
+// Job application model
+model JobApplication {
+  id          String            @id @default(uuid())
+  status      ApplicationStatus @default(PENDING)
+  coverLetter String?           @db.Text
+  resumeUrl   String?           @db.VarChar(255)
+
+  // Relations
+  job         Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId       String
+  applicant   User   @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  applicantId String
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  // Indexes
+  @@index([status])
+  @@index([jobId])
+  @@index([applicantId])
+  @@index([created_at])
+  @@map("job_applications")
+}
+
+// Probationary period information
 model HasProbationaryPeriod {
-  id     String  @id @default(uuid())
-  period String
-  status Boolean
-  job    Job?
+  id          String  @id @default(uuid())
+  period      String
+  status      Boolean
+  description String? @db.Text
+  job         Job?
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@map("probationary_periods")
 }
 
+// Job metadata
 model MetaData {
-  id            String @id @default(uuid())
-  atsName       String @db.VarChar(255)
-  employersName String @db.VarChar(255)
+  id            String  @id @default(uuid())
+  atsName       String? @db.VarChar(255)
+  employersName String  @db.VarChar(255)
+  sourceUrl     String? @db.VarChar(255)
   job           Job?
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@map("job_metadata")
 }
 
+// Salary information
 model Salary {
-  id                             String                       @id @default(uuid())
-  currency                       String                       @db.VarChar(255)
-  maximumMinor                   String                       @db.VarChar(255)
-  minimumMinor                   String                       @db.VarChar(255)
-  fineGrainedSalaryInformation   FineGrainedSalaryInformation @relation(fields: [fineGrainedSalaryInformationId], references: [id])
+  id           String    @id @default(uuid())
+  currency     String    @db.VarChar(10)
+  maximumMinor String    @db.VarChar(255)
+  minimumMinor String    @db.VarChar(255)
+  isPublic     Boolean   @default(true)
+  payPeriod    PayPeriod @default(YEARLY)
+
+  // Relations
+  fineGrainedSalaryInformation   FineGrainedSalaryInformation @relation(fields: [fineGrainedSalaryInformationId], references: [id], onDelete: Cascade)
   fineGrainedSalaryInformationId String                       @unique
-  taskBasedSalaryInformation     TaskBasedSalaryInformation   @relation(fields: [taskBasedSalaryInformationId], references: [id])
-  taskBasedSalaryInformationId   String                       @unique
-  Job                            Job?
+  taskBasedSalaryInformation     TaskBasedSalaryInformation?  @relation(fields: [taskBasedSalaryInformationId], references: [id], onDelete: SetNull)
+  taskBasedSalaryInformationId   String?                      @unique
+  job                            Job?
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@map("salaries")
 }
 
+// Detailed salary information
 model FineGrainedSalaryInformation {
-  id                       String  @id @default(uuid())
-  totalSalaryMinor         String  @db.VarChar(255)
+  id                       String   @id @default(uuid())
+  totalSalaryMinor         String   @db.VarChar(255)
   workingHours             Int
   totalOvertimeHours       Int?
   statutoryOvertimeHours   Int?
-  fixedOvertimeSalaryMinor String? @db.VarChar(255)
-  fixedOvertimePay         Boolean
+  fixedOvertimeSalaryMinor String?  @db.VarChar(255)
+  fixedOvertimePay         Boolean  @default(false)
+  benefits                 String[] @db.VarChar(255)
   salary                   Salary?
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@map("fine_grained_salary_info")
 }
 
+// Task-based salary information
 model TaskBasedSalaryInformation {
   id                String  @id @default(uuid())
-  taskLengthMinutes String  @db.VarChar(255)
-  taskDescription   String? @db.VarChar(255)
+  taskLengthMinutes Int
+  taskDescription   String? @db.Text
+  ratePerTask       String  @db.VarChar(255)
   salary            Salary?
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@map("task_based_salary_info")
 }
 
+// User model
 model User {
-  id                String    @id @default(uuid())
-  username          String    @unique
-  hashed_password   String    @db.VarChar(255)
-  first_name        String    @db.VarChar(255)
-  last_name         String    @db.VarChar(255)
-  email             String    @unique
-  is_email_verified Boolean   @default(false)
-  verificationCode  String?
-  passwordResetCode String?
-  session           Session[]
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  company           Company?  @relation(fields: [companyId], references: [id])
-  companyId         String?
-  address           Address   @relation(fields: [addressId], references: [id])
-  addressId         String    @unique
+  id                   String    @id @default(uuid())
+  username             String    @unique
+  hashed_password      String    @db.VarChar(255)
+  first_name           String    @db.VarChar(100)
+  last_name            String    @db.VarChar(100)
+  email                String    @unique
+  phone                String?   @db.VarChar(20)
+  bio                  String?   @db.Text
+  profile_image        String?   @db.VarChar(255)
+  role                 UserRole  @default(JOBSEEKER)
+  is_email_verified    Boolean   @default(false)
+  is_active            Boolean   @default(true)
+  verificationCode     String?
+  passwordResetCode    String?
+  passwordResetExpires DateTime?
+
+  // Relations
+  sessions     Session[]
+  company      Company?         @relation(fields: [companyId], references: [id])
+  companyId    String?
+  address      Address          @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId    String           @unique
+  applications JobApplication[]
+  skills       UserSkill[]
+  education    Education[]
+  experience   WorkExperience[]
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  // Indexes
+  @@index([email])
+  @@index([username])
+  @@index([role])
+  @@index([is_active])
+  @@index([companyId])
+  // Full text search
+  // @@fulltext([first_name, last_name, bio])
+  @@map("users")
 }
 
+// User skills
+model UserSkill {
+  id                String     @id @default(uuid())
+  name              String     @db.VarChar(100)
+  level             SkillLevel @default(BEGINNER)
+  yearsOfExperience Int?
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, name])
+  @@index([name])
+  @@map("user_skills")
+}
+
+// Education history
+model Education {
+  id           String    @id @default(uuid())
+  institution  String    @db.VarChar(255)
+  degree       String    @db.VarChar(255)
+  fieldOfStudy String    @db.VarChar(255)
+  startDate    DateTime
+  endDate      DateTime?
+  description  String?   @db.Text
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("education")
+}
+
+// Work experience
+model WorkExperience {
+  id          String    @id @default(uuid())
+  company     String    @db.VarChar(255)
+  position    String    @db.VarChar(255)
+  location    String?   @db.VarChar(255)
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean   @default(false)
+  description String?   @db.Text
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("work_experience")
+}
+
+// User session
 model Session {
   id         String   @id @default(uuid())
   user_agent String   @db.VarChar(255)
-  client_ip  String   @db.VarChar(255)
+  client_ip  String   @db.VarChar(100)
   is_blocked Boolean  @default(false)
   valid      Boolean  @default(true)
-  user       User     @relation(fields: [username], references: [username])
-  username   String
-  createdAt  DateTime @default(now())
+  expires_at DateTime
+
+  // Relations
+  user     User   @relation(fields: [username], references: [username], onDelete: Cascade)
+  username String
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@index([username])
+  @@index([valid])
+  @@index([expires_at])
+  @@map("sessions")
 }
+
+// Enums for better type safety
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  TEMPORARY
+  INTERNSHIP
+  FREELANCE
+  REMOTE
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  FILLED
+  EXPIRED
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  INTERVIEW
+  REJECTED
+  HIRED
+}
+
+enum UserRole {
+  ADMIN
+  EMPLOYER
+  JOBSEEKER
+  RECRUITER
+}
+
+enum PayPeriod {
+  HOURLY
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+// generator client {
+//   provider        = "prisma-client-js"
+//   previewFeatures = ["driverAdapters"]
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// model Company {
+//   id        String   @id @default(uuid())
+//   name      String   @db.VarChar(255)
+//   email     String   @unique
+//   website   String   @db.VarChar(255)
+//   size      String   @db.VarChar(255)
+//   job       Job[]
+//   created_at DateTime @default(now())
+//   updated_at DateTime @updatedAt
+//   User      User[]
+//   address   Address  @relation(fields: [addressId], references: [id])
+//   addressId String   @unique
+// }
+
+// model Address {
+//   id                  String   @id @default(uuid())
+//   street              String   @db.VarChar(255)
+//   street2             String?  @db.VarChar(255)
+//   city                String?  @db.VarChar(255)
+//   state_province_code String?  @db.VarChar(255)
+//   state_province_name String?  @db.VarChar(255)
+//   postal_code         String?  @db.VarChar(255)
+//   country_code        String?  @db.VarChar(255)
+//   latitude            Int?
+//   longitude           Int?
+//   country             String   @db.VarChar(255)
+//   company             Company?
+//   user                User?
+// }
+
+// model Job {
+//   id                          String                @id @default(uuid())
+//   title                       String                @db.VarChar(255)
+//   subtitle                    String                @db.VarChar(255)
+//   description                 String                @db.VarChar(255)
+//   qualification               String                @db.VarChar(255)
+//   complimentary_qualification String                @db.VarChar(255)
+//   job_type                    String                @db.VarChar(255)
+//   visa_sponsorship            String                @db.VarChar(255)
+//   remote_posible              String                @db.VarChar(255)
+//   preferred_timezones         String                @db.VarChar(255)
+//   location                    String                @db.VarChar(255)
+//   date_posted                 String                @db.VarChar(255)
+//   relocation                  String                @db.VarChar(255)
+//   skills                      String                @db.VarChar(255)
+//   employer_hiring_contact     String                @db.VarChar(255)
+//   descriptionFormatting       String                @db.VarChar(255)
+//   probationaryPeriod          String                @db.VarChar(255)
+//   company                     Company               @relation(fields: [company_id], references: [id])
+//   company_id                  String
+//   salary                      Salary                @relation(fields: [salaryId], references: [id])
+//   salaryId                    String                @unique
+//   metadata                    MetaData              @relation(fields: [metadataId], references: [id])
+//   metadataId                  String                @unique
+//   hasProbationPeriod          HasProbationaryPeriod @relation(fields: [hasProbationPeriodId], references: [id])
+//   hasProbationPeriodId        String                @unique
+//   created_at                   DateTime              @default(now())
+//   updated_at                   DateTime              @updatedAt
+// }
+
+// model HasProbationaryPeriod {
+//   id     String  @id @default(uuid())
+//   period String
+//   status Boolean
+//   job    Job?
+// }
+
+// model MetaData {
+//   id            String @id @default(uuid())
+//   atsName       String @db.VarChar(255)
+//   employersName String @db.VarChar(255)
+//   job           Job?
+// }
+
+// model Salary {
+//   id                             String                       @id @default(uuid())
+//   currency                       String                       @db.VarChar(255)
+//   maximumMinor                   String                       @db.VarChar(255)
+//   minimumMinor                   String                       @db.VarChar(255)
+//   fineGrainedSalaryInformation   FineGrainedSalaryInformation @relation(fields: [fineGrainedSalaryInformationId], references: [id])
+//   fineGrainedSalaryInformationId String                       @unique
+//   taskBasedSalaryInformation     TaskBasedSalaryInformation   @relation(fields: [taskBasedSalaryInformationId], references: [id])
+//   taskBasedSalaryInformationId   String                       @unique
+//   Job                            Job?
+// }
+
+// model FineGrainedSalaryInformation {
+//   id                       String  @id @default(uuid())
+//   totalSalaryMinor         String  @db.VarChar(255)
+//   workingHours             Int
+//   totalOvertimeHours       Int?
+//   statutoryOvertimeHours   Int?
+//   fixedOvertimeSalaryMinor String? @db.VarChar(255)
+//   fixedOvertimePay         Boolean
+//   salary                   Salary?
+// }
+
+// model TaskBasedSalaryInformation {
+//   id                String  @id @default(uuid())
+//   taskLengthMinutes String  @db.VarChar(255)
+//   taskDescription   String? @db.VarChar(255)
+//   salary            Salary?
+// }
+
+// model User {
+//   id                String    @id @default(uuid())
+//   username          String    @unique
+//   hashed_password   String    @db.VarChar(255)
+//   first_name        String    @db.VarChar(255)
+//   last_name         String    @db.VarChar(255)
+//   email             String    @unique
+//   is_email_verified Boolean   @default(false)
+//   verificationCode  String?
+//   passwordResetCode String?
+//   session           Session[]
+//   created_at         DateTime  @default(now())
+//   updated_at         DateTime  @updatedAt
+//   company           Company?  @relation(fields: [companyId], references: [id])
+//   companyId         String?
+//   address           Address   @relation(fields: [addressId], references: [id])
+//   addressId         String    @unique
+// }
+
+// model Session {
+//   id         String   @id @default(uuid())
+//   user_agent String   @db.VarChar(255)
+//   client_ip  String   @db.VarChar(255)
+//   is_blocked Boolean  @default(false)
+//   valid      Boolean  @default(true)
+//   user       User     @relation(fields: [username], references: [username])
+//   username   String
+//   created_at  DateTime @default(now())
+// }

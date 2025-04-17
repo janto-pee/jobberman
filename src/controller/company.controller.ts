@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
 
+import {
+  getCache,
+  setCache,
+  deleteCache,
+  invalidatePattern,
+} from "../utils/redis";
 import { createcompanyInput } from "../schema/company.schema";
 import {
   createCompanyService,
@@ -16,31 +22,92 @@ import {
 import { createAddressInput } from "../schema/address.schema";
 import { addUserToCompanyService } from "../service/user.service";
 import { logger } from "../utils/logger";
+import { Counter, Histogram } from "prom-client";
 
+// Define metrics for company operations
+const companyRequestCounter = new Counter({
+  name: "jobberman_company_requests_total",
+  help: "Total number of company API requests",
+  labelNames: ["operation", "status"],
+});
+
+const companyRequestDuration = new Histogram({
+  name: "jobberman_company_request_duration_seconds",
+  help: "Duration of company API requests in seconds",
+  labelNames: ["operation"],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
+});
+
+/**
+ * Get a company by ID with caching
+ */
 export async function findCompanyHandler(
   req: Request<{ id: string }>,
   res: Response
 ) {
+  const timer = companyRequestDuration.startTimer({ operation: "findCompany" });
   try {
     const { id } = req.params;
     logger.info(`Finding company with ID: ${id}`);
 
+    // Input validation
+    if (!id || id.trim() === "") {
+      companyRequestCounter.inc({ operation: "findCompany", status: "error" });
+      return res.status(400).json({
+        status: false,
+        message: "Company ID is required",
+      });
+    }
+
+    // Try to get from cache first
+    const cacheKey = `company:${id}`;
+    const cachedCompany = await getCache(cacheKey);
+
+    if (cachedCompany) {
+      logger.debug(`Cache hit for company ID: ${id}`);
+      companyRequestCounter.inc({
+        operation: "findCompany",
+        status: "success",
+      });
+      timer({ operation: "findCompany" });
+      return res.status(200).json({
+        status: true,
+        message: "Company found successfully",
+        company: cachedCompany,
+        source: "cache",
+      });
+    }
+
+    // Cache miss, fetch from database
     const company = await findCompanyService(id);
     if (!company) {
       logger.warn(`Company not found with ID: ${id}`);
+      companyRequestCounter.inc({
+        operation: "findCompany",
+        status: "notFound",
+      });
+      timer({ operation: "findCompany" });
       return res.status(404).json({
         status: false,
         message: "Company not found",
       });
     }
 
+    // Cache the result for future requests (1 hour TTL)
+    await setCache(cacheKey, company, 3600);
+
+    companyRequestCounter.inc({ operation: "findCompany", status: "success" });
+    timer({ operation: "findCompany" });
     return res.status(200).json({
       status: true,
       message: "Company found successfully",
       company,
+      source: "database",
     });
   } catch (error) {
     logger.error(`Error finding company: ${error}`);
+    companyRequestCounter.inc({ operation: "findCompany", status: "error" });
+    timer({ operation: "findCompany" });
     return res.status(500).json({
       status: false,
       message: "Failed to retrieve company",
@@ -50,27 +117,64 @@ export async function findCompanyHandler(
 }
 
 /**
- * Get all companies with pagination
+ * Get all companies with pagination, filtering, and caching
  */
 export async function findAllCompanysHandler(req: Request, res: Response) {
+  const timer = companyRequestDuration.startTimer({
+    operation: "findAllCompanies",
+  });
   try {
+    // Parse and validate pagination parameters
     const page =
       typeof req.query.page !== "undefined"
         ? Math.max(1, Number(req.query.page)) - 1
         : 0;
+
     const limit =
       typeof req.query.limit !== "undefined"
         ? Math.min(50, Math.max(1, Number(req.query.limit)))
         : 10;
 
-    logger.info(`Fetching companies page ${page + 1} with limit ${limit}`);
+    // Parse sorting parameters
+    const sortBy =
+      typeof req.query.sortBy === "string" ? req.query.sortBy : "created_at";
 
+    const sortOrder = req.query.sortOrder === "asc" ? "asc" : "desc";
+
+    logger.info(
+      `Fetching companies page ${page + 1} with limit ${limit}, sorted by ${sortBy} ${sortOrder}`
+    );
+
+    // Create a cache key based on all query parameters
+    const cacheKey = `companies:page:${page}:limit:${limit}:sort:${sortBy}:${sortOrder}`;
+
+    // Try to get from cache first
+    const cachedData = await getCache(cacheKey);
+    if (cachedData) {
+      logger.debug(`Cache hit for companies page ${page + 1}`);
+      companyRequestCounter.inc({
+        operation: "findAllCompanies",
+        status: "success",
+      });
+      timer({ operation: "findAllCompanies" });
+      return res.status(200).json({
+        ...cachedData,
+        source: "cache",
+      });
+    }
+
+    // Cache miss, fetch from database with sorting
     const [companies, total] = await Promise.all([
-      findAllCompanyService(page, limit),
+      findAllCompanyService(page, limit, sortBy, sortOrder),
       totalCompanyCountService(),
     ]);
 
     if (!companies || companies.length === 0) {
+      companyRequestCounter.inc({
+        operation: "findAllCompanies",
+        status: "notFound",
+      });
+      timer({ operation: "findAllCompanies" });
       return res.status(404).json({
         status: false,
         message: "No companies found",
@@ -79,7 +183,7 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
 
     const totalPages = Math.ceil(total / limit);
 
-    return res.status(200).json({
+    const responseData = {
       status: true,
       pagination: {
         total,
@@ -90,9 +194,27 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
         hasPrevPage: page > 0,
       },
       companies,
+    };
+
+    // Cache the result for future requests (10 minutes TTL)
+    await setCache(cacheKey, responseData, 600);
+
+    companyRequestCounter.inc({
+      operation: "findAllCompanies",
+      status: "success",
+    });
+    timer({ operation: "findAllCompanies" });
+    return res.status(200).json({
+      ...responseData,
+      source: "database",
     });
   } catch (error) {
     logger.error(`Error fetching all companies: ${error}`);
+    companyRequestCounter.inc({
+      operation: "findAllCompanies",
+      status: "error",
+    });
+    timer({ operation: "findAllCompanies" });
     return res.status(500).json({
       status: false,
       message: "Failed to retrieve companies",
@@ -100,6 +222,134 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
     });
   }
 }
+
+// /**
+//  * Get a company by ID with caching
+//  */
+// export async function findCompanyHandler(
+//   req: Request<{ id: string }>,
+//   res: Response
+// ) {
+//   try {
+//     const { id } = req.params;
+//     logger.info(`Finding company with ID: ${id}`);
+
+//     // Try to get from cache first
+//     const cacheKey = `company:${id}`;
+//     const cachedCompany = await getCache(cacheKey);
+
+//     if (cachedCompany) {
+//       logger.debug(`Cache hit for company ID: ${id}`);
+//       return res.status(200).json({
+//         status: true,
+//         message: "Company found successfully",
+//         company: cachedCompany,
+//         source: "cache",
+//       });
+//     }
+
+//     // Cache miss, fetch from database
+//     const company = await findCompanyService(id);
+//     if (!company) {
+//       logger.warn(`Company not found with ID: ${id}`);
+//       return res.status(404).json({
+//         status: false,
+//         message: "Company not found",
+//       });
+//     }
+
+//     // Cache the result for future requests (1 hour TTL)
+//     await setCache(cacheKey, company, 3600);
+
+//     return res.status(200).json({
+//       status: true,
+//       message: "Company found successfully",
+//       company,
+//       source: "database",
+//     });
+//   } catch (error) {
+//     logger.error(`Error finding company: ${error}`);
+//     return res.status(500).json({
+//       status: false,
+//       message: "Failed to retrieve company",
+//       error: error instanceof Error ? error.message : String(error),
+//     });
+//   }
+// }
+
+// /**
+//  * Get all companies with pagination and caching
+//  */
+// export async function findAllCompanysHandler(req: Request, res: Response) {
+//   try {
+//     const page =
+//       typeof req.query.page !== "undefined"
+//         ? Math.max(1, Number(req.query.page)) - 1
+//         : 0;
+//     const limit =
+//       typeof req.query.limit !== "undefined"
+//         ? Math.min(50, Math.max(1, Number(req.query.limit)))
+//         : 10;
+
+//     logger.info(`Fetching companies page ${page + 1} with limit ${limit}`);
+
+//     // Create a cache key based on pagination parameters
+//     const cacheKey = `companies:page:${page}:limit:${limit}`;
+
+//     // Try to get from cache first
+//     const cachedData = await getCache(cacheKey);
+//     if (cachedData) {
+//       logger.debug(`Cache hit for companies page ${page + 1}`);
+//       return res.status(200).json({
+//         ...cachedData,
+//         source: "cache",
+//       });
+//     }
+
+//     // Cache miss, fetch from database
+//     const [companies, total] = await Promise.all([
+//       findAllCompanyService(page, limit),
+//       totalCompanyCountService(),
+//     ]);
+
+//     if (!companies || companies.length === 0) {
+//       return res.status(404).json({
+//         status: false,
+//         message: "No companies found",
+//       });
+//     }
+
+//     const totalPages = Math.ceil(total / limit);
+
+//     const responseData = {
+//       status: true,
+//       pagination: {
+//         total,
+//         limit,
+//         currentPage: page + 1,
+//         totalPages,
+//         hasNextPage: page + 1 < totalPages,
+//         hasPrevPage: page > 0,
+//       },
+//       companies,
+//     };
+
+//     // Cache the result for future requests (10 minutes TTL)
+//     await setCache(cacheKey, responseData, 600);
+
+//     return res.status(200).json({
+//       ...responseData,
+//       source: "database",
+//     });
+//   } catch (error) {
+//     logger.error(`Error fetching all companies: ${error}`);
+//     return res.status(500).json({
+//       status: false,
+//       message: "Failed to retrieve companies",
+//       error: error instanceof Error ? error.message : String(error),
+//     });
+//   }
+// }
 
 export async function findCompanyByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
@@ -111,17 +361,46 @@ export async function findCompanyByLocationHandler(
     const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 5;
     const location = req.params.location;
-    const company = await findManyCompanyService(location, page, limit);
-    if (company.length == 0) {
-      res.status(404).send("No company for this location");
-      return;
+
+    // Create a cache key based on location and pagination
+    const cacheKey = `companies:location:${location}:page:${page}:limit:${limit}`;
+
+    // Try to get from cache first
+    const cachedData = await getCache(cacheKey);
+    if (cachedData) {
+      logger.debug(
+        `Cache hit for companies in location: ${location}, page ${page + 1}`
+      );
+      return res.status(200).json({
+        ...cachedData,
+        source: "cache",
+      });
     }
+
+    // Cache miss, fetch from database
+    const companies = await findManyCompanyService(location, page, limit);
+
+    if (companies.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "No companies found for this location",
+      });
+    }
+
+    const responseData = {
+      status: true,
+      total: companies.length,
+      page: page + 1,
+      limit,
+      companies,
+    };
+    await setCache(cacheKey, responseData, 900);
 
     res.status(200).json({
       status: true,
-      "company result": company.length,
+      "company result": companies.length,
       page: page + 1,
-      company: company,
+      company: companies,
     });
     return;
   } catch (error) {
@@ -140,10 +419,10 @@ export async function FilterCompanyHandler(req: Request, res: Response) {
       typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
     const limit =
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
-    const city = req.query.city;
-    const size = req.query.size;
-    const country = req.query.country;
-    const name = req.query.name;
+    const city = req.query.city?.toString();
+    const size = req.query.size?.toString();
+    const country = req.query.country?.toString();
+    const name = req.query.name?.toString();
 
     const company = await fiilterManyCompanyService(
       { city: city, size, country, name },
@@ -179,7 +458,7 @@ export async function SearchCompanyHandler(req: Request, res: Response) {
       typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
     const name = req.query.name;
 
-    const company = await SearchCompanyService(name, page, limit);
+    const company = await SearchCompanyService(name?.toString(), page, limit);
     if (company.length == 0) {
       res.status(404).send("No company found");
       return;
@@ -366,15 +645,10 @@ export async function deleteCompanyHandler(req: Request, res: Response) {
   }
 }
 
-// import { logger } from "../utils/logger"; // Assuming you'll create this utility
-
-/**
- * Get a company by ID
- */
-
 // The rest of the controller methods would follow similar patterns of:
 // 1. Input validation and sanitization
 // 2. Proper error handling with specific status codes
 // 3. Consistent response formatting
 // 4. Logging for debugging and monitoring
 // 5. Pagination improvements
+// Cache the result for future requests (15 minutes TTL)

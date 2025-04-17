@@ -23,6 +23,10 @@ const companyInput = object({
   }).optional(),
   latitude: number({ required_error: `latitude is required` }).optional(),
   longitude: number({ required_error: `longitude is required` }).optional(),
+
+  industry: string({ required_error: `potal code is required` }).optional(),
+  description: string({ required_error: `potal code is required` }).optional(),
+  logo: string({ required_error: `potal code is required` }).optional(),
 });
 
 const companyUpdate = object({
