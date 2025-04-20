@@ -139,6 +139,13 @@ export async function findEmailService(email: string) {
  * @param input - User data including address information
  * @returns Created user object
  */
+// : Promise<
+//   | (User & {
+//       address: Address | null;
+//       company: { id: string; name: string } | null;
+//     })
+//   | null
+// >
 export async function createUserService(input: userService) {
   try {
     const hashedPassword = await hashPassword(input.hashed_password);
@@ -173,8 +180,8 @@ export async function createUserService(input: userService) {
               state_province_name: input.state_province_name,
               postal_code: input.postal_code,
               country_code: input.country_code,
-              latitude: input.longitude, // Fix the swapped coordinates
-              longitude: input.latitude, // Fix the swapped coordinates
+              latitude: input.latitude,
+              longitude: input.longitude,
             },
           },
         },
