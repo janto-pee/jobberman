@@ -88,78 +88,16 @@ export async function totalAddressCountService() {
 }
 
 /**
- * Search address by name
- * @param name - Name to search for
- * @param page - Page number (0-based)
- * @param limit - Number of items per page
- * @returns Array of address matching the search
- */
-export async function SearchAddressService(
-  name: string | undefined,
-  page: number = 0,
-  limit: number = 10
-) {
-  try {
-    if (!name) {
-      throw new Error("Search name parameter is required");
-    }
-
-    const address = await prisma.address.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: name,
-              mode: "insensitive",
-            },
-          },
-          {
-            description: {
-              contains: name,
-              mode: "insensitive",
-            },
-          },
-          {
-            industry: {
-              contains: name,
-              mode: "insensitive",
-            },
-          },
-        ],
-      },
-      include: {
-        address: true,
-      },
-      skip: page * limit,
-      take: limit,
-      orderBy: {
-        name: "asc",
-      },
-    });
-
-    return address;
-  } catch (error) {
-    logger.error(`Error in SearchAddressService: ${error}`);
-    throw error;
-  }
-}
-
-/**
  * Create a new address with address
  * @param input - Address data including address
  * @returns Created address with address
  */
 export async function createAddressService(input: addressInput) {
   try {
-    // Validate required fields
-    if (!input.name || !input.email) {
-      throw new Error("Address name and email are required");
-    }
-
     // Check if address with same email already exists
     const existingAddress = await prisma.address.findUnique({
       where: {
-        email: input.email,
+        user: input.email,
       },
     });
 
