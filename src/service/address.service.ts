@@ -31,12 +31,12 @@ export async function findAddressService(id: string) {
 }
 
 /**
- * Find all companies with pagination and sorting
+ * Find all address with pagination and sorting
  * @param page - Page number (0-based)
  * @param limit - Number of items per page
  * @param sortBy - Field to sort by
  * @param sortOrder - Sort direction (asc/desc)
- * @returns Array of companies
+ * @returns Array of address
  */
 export async function findAllAddressService(
   page: number = 0,
@@ -57,22 +57,16 @@ export async function findAllAddressService(
       [actualSortField]: sortOrder,
     };
 
-    const companies = await prisma.address.findMany({
+    const address = await prisma.address.findMany({
       skip: page * limit,
       take: limit,
       orderBy,
       include: {
-        address: true,
-        _count: {
-          select: {
-            jobs: true,
-            users: true,
-          },
-        },
+        user: true,
       },
     });
 
-    return companies;
+    return address;
   } catch (error) {
     logger.error(`Error in findAllAddressService: ${error}`);
     throw error;
@@ -80,179 +74,8 @@ export async function findAllAddressService(
 }
 
 /**
- * Find companies by location with pagination
- * @param location - Location to search for
- * @param page - Page number (0-based)
- * @param limit - Number of items per page
- * @returns Array of companies matching the location
- */
-export async function findManyAddressService(
-  location: string,
-  page: number = 0,
-  limit: number = 10
-) {
-  try {
-    if (!location) {
-      throw new Error("Location parameter is required");
-    }
-
-    const normalizedLocation = location.trim().toLowerCase();
-
-    const companies = await prisma.address.findMany({
-      where: {
-        address: {
-          OR: [
-            {
-              city: {
-                contains: normalizedLocation,
-                mode: "insensitive",
-              },
-            },
-            {
-              street: {
-                contains: normalizedLocation,
-                mode: "insensitive",
-              },
-            },
-            {
-              country: {
-                contains: normalizedLocation,
-                mode: "insensitive",
-              },
-            },
-            {
-              state_province_name: {
-                contains: normalizedLocation,
-                mode: "insensitive",
-              },
-            },
-          ],
-        },
-      },
-      include: {
-        address: true,
-        _count: {
-          select: {
-            jobs: true,
-          },
-        },
-      },
-      skip: page * limit,
-      take: limit,
-      orderBy: {
-        created_at: "desc",
-      },
-    });
-
-    return companies;
-  } catch (error) {
-    logger.error(`Error in findManyAddressService: ${error}`);
-    throw error;
-  }
-}
-
-/**
- * Filter companies by multiple criteria
- * @param searchParams - Object containing filter criteria
- * @param page - Page number (0-based)
- * @param limit - Number of items per page
- * @returns Array of filtered companies
- */
-export async function fiilterManyAddressService(
-  searchParam: {
-    city?: string | undefined;
-    size?: string | undefined;
-    country?: string | undefined;
-    name?: string | undefined;
-  },
-  page: number = 0,
-  limit: number = 10
-) {
-  try {
-    // Build dynamic where clause based on provided parameters
-    const whereClause: any = {
-      AND: [],
-    };
-
-    if (searchParam.name) {
-      whereClause.AND.push({
-        name: {
-          contains: searchParam.name,
-          mode: "insensitive",
-        },
-      });
-    }
-
-    if (searchParam.size) {
-      whereClause.AND.push({
-        size: {
-          contains: searchParam.size,
-          mode: "insensitive",
-        },
-      });
-    }
-
-    if (searchParam.city || searchParam.country) {
-      const addressConditions: Prisma.AddressWhereInput = { OR: [] };
-
-      if (searchParam.city) {
-        addressConditions.OR &&
-          addressConditions.OR.push({
-            city: {
-              contains: searchParam.city,
-              mode: "insensitive",
-            },
-          });
-      }
-
-      if (searchParam.country) {
-        addressConditions.OR &&
-          addressConditions.OR.push({
-            country: {
-              contains: searchParam.country,
-              mode: "insensitive",
-            },
-          });
-      }
-
-      whereClause.AND.push({
-        address: addressConditions,
-      });
-    }
-
-    // If no filters were provided, remove the AND clause
-    if (whereClause.AND.length === 0) {
-      delete whereClause.AND;
-    }
-
-    const companies = await prisma.address.findMany({
-      where: whereClause,
-      include: {
-        address: true,
-        _count: {
-          select: {
-            jobs: true,
-            users: true,
-          },
-        },
-      },
-      skip: page * limit,
-      take: limit,
-      orderBy: {
-        created_at: "desc",
-      },
-    });
-
-    return companies;
-  } catch (error) {
-    logger.error(`Error in fiilterManyAddressService: ${error}`);
-    throw error;
-  }
-}
-
-/**
- * Get total count of companies
- * @returns Total number of companies
+ * Get total count of address
+ * @returns Total number of address
  */
 export async function totalAddressCountService() {
   try {
@@ -265,11 +88,11 @@ export async function totalAddressCountService() {
 }
 
 /**
- * Search companies by name
+ * Search address by name
  * @param name - Name to search for
  * @param page - Page number (0-based)
  * @param limit - Number of items per page
- * @returns Array of companies matching the search
+ * @returns Array of address matching the search
  */
 export async function SearchAddressService(
   name: string | undefined,
@@ -281,7 +104,7 @@ export async function SearchAddressService(
       throw new Error("Search name parameter is required");
     }
 
-    const companies = await prisma.address.findMany({
+    const address = await prisma.address.findMany({
       where: {
         OR: [
           {
@@ -314,7 +137,7 @@ export async function SearchAddressService(
       },
     });
 
-    return companies;
+    return address;
   } catch (error) {
     logger.error(`Error in SearchAddressService: ${error}`);
     throw error;
