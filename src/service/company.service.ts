@@ -592,3 +592,218 @@ export async function deleteCompanyService(id: string) {
     throw error;
   }
 }
+
+/**
+ * Get company statistics
+ * @returns Object with company statistics
+ */
+export async function getCompanyStatisticsService() {
+  try {
+    const [
+      totalCompanies,
+      companiesByIndustry,
+      companiesBySize,
+      companiesByCountry,
+      recentlyAddedCompanies,
+    ] = await Promise.all([
+      prisma.company.count(),
+      prisma.$queryRaw`
+        SELECT industry, COUNT(*) as count 
+        FROM "Company" 
+        WHERE industry IS NOT NULL 
+        GROUP BY industry 
+        ORDER BY count DESC
+      `,
+      prisma.$queryRaw`
+        SELECT size, COUNT(*) as count 
+        FROM "Company" 
+        WHERE size IS NOT NULL 
+        GROUP BY size 
+        ORDER BY count DESC
+      `,
+      prisma.$queryRaw`
+        SELECT a.country, COUNT(*) as count 
+        FROM "Company" c
+        JOIN "Address" a ON c.id = a.company_id
+        WHERE a.country IS NOT NULL 
+        GROUP BY a.country 
+        ORDER BY count DESC
+        LIMIT 10
+      `,
+      prisma.company.findMany({
+        take: 5,
+        orderBy: { created_at: "desc" },
+        select: {
+          id: true,
+          name: true,
+          industry: true,
+          created_at: true,
+          logo: true,
+        },
+      }),
+    ]);
+
+    return {
+      totalCompanies,
+      companiesByIndustry,
+      companiesBySize,
+      companiesByCountry,
+      recentlyAddedCompanies,
+    };
+  } catch (error) {
+    logger.error(`Error in getCompanyStatisticsService: ${error}`);
+    throw error;
+  }
+}
+
+/**
+ * Get trending companies based on job postings and user interactions
+ * @param limit - Number of trending companies to return
+ * @returns Array of trending companies
+ */
+export async function getTrendingCompaniesService(limit: number = 5) {
+  try {
+    // Get companies with the most recent job postings
+    const companies = await prisma.company.findMany({
+      where: {
+        jobs: {
+          some: {
+            created_at: {
+              gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
+            },
+          },
+        },
+      },
+      include: {
+        address: true,
+        _count: {
+          select: {
+            jobs: true,
+            users: true,
+          },
+        },
+        jobs: {
+          take: 3,
+          orderBy: {
+            created_at: "desc",
+          },
+          select: {
+            id: true,
+            title: true,
+            created_at: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          jobs: {
+            _count: "desc",
+          },
+        },
+        {
+          users: {
+            _count: "desc",
+          },
+        },
+      ],
+      take: limit,
+    });
+
+    return companies;
+  } catch (error) {
+    logger.error(`Error in getTrendingCompaniesService: ${error}`);
+    throw error;
+  }
+}
+
+/**
+ * Verify a company
+ * @param id - Company ID
+ * @param verificationData - Verification data
+ * @returns Updated company with verification status
+ */
+export async function verifyCompanyService(
+  id: string,
+  verificationData: {
+    isVerified: boolean;
+    verifiedBy?: string;
+    verificationNotes?: string;
+  }
+) {
+  try {
+    if (!id) {
+      throw new Error("Company ID is required");
+    }
+
+    // Check if company exists
+    const existingCompany = await prisma.company.findUnique({
+      where: { id },
+    });
+
+    if (!existingCompany) {
+      throw new Error("Company not found");
+    }
+
+    // Update company verification status
+    const updatedCompany = await prisma.company.update({
+      where: {
+        id,
+      },
+      data: {
+        is_verified: verificationData.isVerified,
+        verified_by: verificationData.verifiedBy || null,
+        verification_notes: verificationData.verificationNotes || null,
+        verification_date: verificationData.isVerified ? new Date() : null,
+        updated_at: new Date(),
+      },
+      include: {
+        address: true,
+      },
+    });
+
+    logger.info(
+      `Company verification status updated: ${id}, isVerified: ${verificationData.isVerified}`
+    );
+    return updatedCompany;
+  } catch (error) {
+    logger.error(`Error in verifyCompanyService: ${error}`);
+    throw error;
+  }
+}
+
+/**
+ * Get featured companies
+ * @param limit - Number of featured companies to return
+ * @returns Array of featured companies
+ */
+export async function getFeaturedCompaniesService(limit: number = 6) {
+  try {
+    // Get verified companies with the most jobs
+    const companies = await prisma.company.findMany({
+      where: {
+        is_verified: true,
+      },
+      include: {
+        address: true,
+        _count: {
+          select: {
+            jobs: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          jobs: {
+            _count: "desc",
+          },
+        },
+      ],
+      take: limit,
+    });
+
+    return companies;
+  } catch (error) {
+    logger.error(`Error in getFeaturedCompaniesService: ${error}`);
+    throw error;
+  }
+}

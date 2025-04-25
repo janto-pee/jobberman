@@ -517,6 +517,279 @@ export async function deleteCompanyHandler(req: Request, res: Response) {
   }
 }
 
+/**
+ * Get company statistics
+ */
+export async function getCompanyStatisticsHandler(req: Request, res: Response) {
+  const timer = companyRequestDuration.startTimer({
+    operation: "getCompanyStatistics",
+  });
+  try {
+    logger.info("Fetching company statistics");
+
+    // Try to get from cache first
+    const cacheKey = "company:statistics";
+    const cachedData = await getCache(cacheKey);
+
+    if (cachedData) {
+      logger.debug("Cache hit for company statistics");
+      companyRequestCounter.inc({
+        operation: "getCompanyStatistics",
+        status: "success",
+      });
+      timer({ operation: "getCompanyStatistics" });
+      return res.status(200).json({
+        status: true,
+        data: cachedData,
+        source: "cache",
+      });
+    }
+
+    // Cache miss, fetch from database
+    const statistics = await getCompanyStatisticsService();
+
+    // Cache the result for future requests (1 hour TTL)
+    await setCache(cacheKey, statistics, 3600);
+
+    companyRequestCounter.inc({
+      operation: "getCompanyStatistics",
+      status: "success",
+    });
+    timer({ operation: "getCompanyStatistics" });
+    return res.status(200).json({
+      status: true,
+      data: statistics,
+      source: "database",
+    });
+  } catch (error) {
+    logger.error(`Error fetching company statistics: ${error}`);
+    companyRequestCounter.inc({
+      operation: "getCompanyStatistics",
+      status: "error",
+    });
+    timer({ operation: "getCompanyStatistics" });
+    return res.status(500).json({
+      status: false,
+      message: "Failed to retrieve company statistics",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+/**
+ * Get trending companies
+ */
+export async function getTrendingCompaniesHandler(req: Request, res: Response) {
+  const timer = companyRequestDuration.startTimer({
+    operation: "getTrendingCompanies",
+  });
+  try {
+    const limit =
+      typeof req.query.limit !== "undefined"
+        ? Math.min(20, Math.max(1, Number(req.query.limit)))
+        : 5;
+
+    logger.info(`Fetching trending companies with limit ${limit}`);
+
+    // Try to get from cache first
+    const cacheKey = `companies:trending:limit:${limit}`;
+    const cachedData = await getCache(cacheKey);
+
+    if (cachedData) {
+      logger.debug(`Cache hit for trending companies with limit ${limit}`);
+      companyRequestCounter.inc({
+        operation: "getTrendingCompanies",
+        status: "success",
+      });
+      timer({ operation: "getTrendingCompanies" });
+      return res.status(200).json({
+        status: true,
+        data: cachedData,
+        source: "cache",
+      });
+    }
+
+    // Cache miss, fetch from database
+    const trendingCompanies = await getTrendingCompaniesService(limit);
+
+    if (!trendingCompanies || trendingCompanies.length === 0) {
+      companyRequestCounter.inc({
+        operation: "getTrendingCompanies",
+        status: "notFound",
+      });
+      timer({ operation: "getTrendingCompanies" });
+      return res.status(404).json({
+        status: false,
+        message: "No trending companies found",
+      });
+    }
+
+    // Cache the result for future requests (15 minutes TTL)
+    await setCache(cacheKey, trendingCompanies, 900);
+
+    companyRequestCounter.inc({
+      operation: "getTrendingCompanies",
+      status: "success",
+    });
+    timer({ operation: "getTrendingCompanies" });
+    return res.status(200).json({
+      status: true,
+      data: trendingCompanies,
+      source: "database",
+    });
+  } catch (error) {
+    logger.error(`Error fetching trending companies: ${error}`);
+    companyRequestCounter.inc({
+      operation: "getTrendingCompanies",
+      status: "error",
+    });
+    timer({ operation: "getTrendingCompanies" });
+    return res.status(500).json({
+      status: false,
+      message: "Failed to retrieve trending companies",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+/**
+ * Verify a company (admin only)
+ */
+export async function verifyCompanyHandler(req: Request, res: Response) {
+  const timer = companyRequestDuration.startTimer({
+    operation: "verifyCompany",
+  });
+  try {
+    const { id } = req.params;
+    const { isVerified, verificationNotes } = req.body;
+
+    // Get user from auth middleware
+    const user = res.locals.user;
+
+    if (!user || user.role !== "ADMIN") {
+      logger.warn(
+        `Unauthorized attempt to verify company by user: ${user?.id}`
+      );
+      companyRequestCounter.inc({
+        operation: "verifyCompany",
+        status: "unauthorized",
+      });
+      timer({ operation: "verifyCompany" });
+      return res.status(403).json({
+        status: false,
+        message: "Only administrators can verify companies",
+      });
+    }
+
+    logger.info(`Verifying company ${id} by admin ${user.id}`);
+
+    const updatedCompany = await verifyCompanyService(id, {
+      isVerified,
+      verifiedBy: user.id,
+      verificationNotes,
+    });
+
+    // Invalidate any cached data for this company
+    await invalidatePattern(`company:${id}*`);
+
+    companyRequestCounter.inc({
+      operation: "verifyCompany",
+      status: "success",
+    });
+    timer({ operation: "verifyCompany" });
+    return res.status(200).json({
+      status: true,
+      message: `Company ${isVerified ? "verified" : "unverified"} successfully`,
+      data: updatedCompany,
+    });
+  } catch (error) {
+    logger.error(`Error verifying company: ${error}`);
+    companyRequestCounter.inc({ operation: "verifyCompany", status: "error" });
+    timer({ operation: "verifyCompany" });
+    return res.status(500).json({
+      status: false,
+      message: "Failed to verify company",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+/**
+ * Get featured companies for homepage
+ */
+export async function getFeaturedCompaniesHandler(req: Request, res: Response) {
+  const timer = companyRequestDuration.startTimer({
+    operation: "getFeaturedCompanies",
+  });
+  try {
+    const limit =
+      typeof req.query.limit !== "undefined"
+        ? Math.min(12, Math.max(1, Number(req.query.limit)))
+        : 6;
+
+    logger.info(`Fetching featured companies with limit ${limit}`);
+
+    // Try to get from cache first
+    const cacheKey = `companies:featured:limit:${limit}`;
+    const cachedData = await getCache(cacheKey);
+
+    if (cachedData) {
+      logger.debug(`Cache hit for featured companies with limit ${limit}`);
+      companyRequestCounter.inc({
+        operation: "getFeaturedCompanies",
+        status: "success",
+      });
+      timer({ operation: "getFeaturedCompanies" });
+      return res.status(200).json({
+        status: true,
+        data: cachedData,
+        source: "cache",
+      });
+    }
+
+    // Cache miss, fetch from database
+    const featuredCompanies = await getFeaturedCompaniesService(limit);
+
+    if (!featuredCompanies || featuredCompanies.length === 0) {
+      companyRequestCounter.inc({
+        operation: "getFeaturedCompanies",
+        status: "notFound",
+      });
+      timer({ operation: "getFeaturedCompanies" });
+      return res.status(404).json({
+        status: false,
+        message: "No featured companies found",
+      });
+    }
+
+    // Cache the result for future requests (30 minutes TTL)
+    await setCache(cacheKey, featuredCompanies, 1800);
+
+    companyRequestCounter.inc({
+      operation: "getFeaturedCompanies",
+      status: "success",
+    });
+    timer({ operation: "getFeaturedCompanies" });
+    return res.status(200).json({
+      status: true,
+      data: featuredCompanies,
+      source: "database",
+    });
+  } catch (error) {
+    logger.error(`Error fetching featured companies: ${error}`);
+    companyRequestCounter.inc({
+      operation: "getFeaturedCompanies",
+      status: "error",
+    });
+    timer({ operation: "getFeaturedCompanies" });
+    return res.status(500).json({
+      status: false,
+      message: "Failed to retrieve featured companies",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 // The rest of the controller methods would follow similar patterns of:
 // 1. Input validation and sanitization
 // 2. Proper error handling with specific status codes
