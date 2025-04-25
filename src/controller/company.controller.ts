@@ -14,10 +14,14 @@ import {
   findAllCompanyService,
   findCompanyService,
   findManyCompanyService,
+  getCompanyStatisticsService,
+  getFeaturedCompaniesService,
+  getTrendingCompaniesService,
   SearchCompanyService,
   totalCompanyCountService,
   updateCompanyAddressService,
   updateCompanyService,
+  verifyCompanyService,
 } from "../service/company.service";
 import { createAddressInput } from "../schema/address.schema";
 import { addUserToCompanyService } from "../service/user.service";
@@ -353,171 +357,6 @@ export async function SearchCompanyHandler(req: Request, res: Response) {
 }
 
 /**
- *
- * MUTTIONS
- * NOT EXPOSED
- *
- */
-/**
- * Create a new company
- */
-export async function CreateCompanyHandler(
-  req: Request<{}, {}, createcompanyInput["body"]>,
-  res: Response
-) {
-  try {
-    const body = req.body;
-    const user = res.locals.user;
-
-    if (!user) {
-      logger.warn("Unauthorized attempt to create company");
-      return res.status(401).json({
-        status: false,
-        message: "Authentication required",
-      });
-    }
-
-    logger.info(`Creating company for user: ${user.id}`);
-
-    // Transaction to ensure both operations succeed or fail together
-    const company = await createCompanyService({
-      ...body,
-      // createdBy: user.id, // Track who created the company
-    });
-
-    const updatedUser = await addUserToCompanyService(user.id, company.id);
-
-    return res.status(201).json({
-      status: true,
-      message: "Company successfully created",
-      data: {
-        company,
-        user: updatedUser,
-      },
-    });
-  } catch (error) {
-    logger.error(`Error creating company: ${error}`);
-    return res.status(500).json({
-      status: false,
-      message: "Failed to create company",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-}
-
-export async function updateCompanyHandler(
-  req: Request<{ id: string }, {}, createcompanyInput["body"]>,
-  res: Response
-) {
-  try {
-    const { id } = req.params;
-    const body = req.body;
-
-    //get user
-    const user = res.locals.user;
-    if (!user) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
-    }
-
-    const company = await findCompanyService(id);
-    if (!company) {
-      res.status(404).sendStatus(400);
-      return;
-    }
-    const updatedCompany = await updateCompanyService(id, body);
-
-    res.status(200).json({
-      status: true,
-      message: "company updated successfully",
-      data: updatedCompany,
-    });
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
-  }
-}
-
-export async function updateCompanyAddressHandler(
-  req: Request<
-    { companyId: string; addressId: string },
-    {},
-    createAddressInput["body"]
-  >,
-  res: Response
-) {
-  try {
-    const { companyId, addressId } = req.params;
-    const body = req.body;
-
-    //get user
-    const user = res.locals.user;
-    if (!user) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
-    }
-    const company = await findCompanyService(companyId);
-    if (!company) {
-      res.sendStatus(400);
-      return;
-    }
-
-    const updatedCompany = await updateCompanyAddressService(
-      companyId,
-      addressId,
-      { ...body }
-    );
-
-    res.status(201).json({
-      status: true,
-      message: "company updated successfully",
-      data: updatedCompany,
-    });
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
-  }
-}
-
-export async function deleteCompanyHandler(req: Request, res: Response) {
-  try {
-    const { id } = req.params;
-
-    //get user
-    const user = res.locals.user;
-    if (!user) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
-    }
-
-    const company = await deleteCompanyService(id);
-    res.status(200).json({
-      status: true,
-      message: `company Successfully Deleted`,
-      data: company,
-    });
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
-  }
-}
-
-/**
  * Get company statistics
  */
 export async function getCompanyStatisticsHandler(req: Request, res: Response) {
@@ -787,6 +626,170 @@ export async function getFeaturedCompaniesHandler(req: Request, res: Response) {
       message: "Failed to retrieve featured companies",
       error: error instanceof Error ? error.message : String(error),
     });
+  }
+}
+/**
+ *
+ * MUTTIONS
+ * NOT EXPOSED
+ *
+ */
+/**
+ * Create a new company
+ */
+export async function CreateCompanyHandler(
+  req: Request<{}, {}, createcompanyInput["body"]>,
+  res: Response
+) {
+  try {
+    const body = req.body;
+    const user = res.locals.user;
+
+    if (!user) {
+      logger.warn("Unauthorized attempt to create company");
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
+    }
+
+    logger.info(`Creating company for user: ${user.id}`);
+
+    // Transaction to ensure both operations succeed or fail together
+    const company = await createCompanyService({
+      ...body,
+      // createdBy: user.id, // Track who created the company
+    });
+
+    const updatedUser = await addUserToCompanyService(user.id, company.id);
+
+    return res.status(201).json({
+      status: true,
+      message: "Company successfully created",
+      data: {
+        company,
+        user: updatedUser,
+      },
+    });
+  } catch (error) {
+    logger.error(`Error creating company: ${error}`);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to create company",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+export async function updateCompanyHandler(
+  req: Request<{ id: string }, {}, createcompanyInput["body"]>,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
+    const body = req.body;
+
+    //get user
+    const user = res.locals.user;
+    if (!user) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
+    const company = await findCompanyService(id);
+    if (!company) {
+      res.status(404).sendStatus(400);
+      return;
+    }
+    const updatedCompany = await updateCompanyService(id, body);
+
+    res.status(200).json({
+      status: true,
+      message: "company updated successfully",
+      data: updatedCompany,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+    return;
+  }
+}
+
+export async function updateCompanyAddressHandler(
+  req: Request<
+    { companyId: string; addressId: string },
+    {},
+    createAddressInput["body"]
+  >,
+  res: Response
+) {
+  try {
+    const { companyId, addressId } = req.params;
+    const body = req.body;
+
+    //get user
+    const user = res.locals.user;
+    if (!user) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+    const company = await findCompanyService(companyId);
+    if (!company) {
+      res.sendStatus(400);
+      return;
+    }
+
+    const updatedCompany = await updateCompanyAddressService(
+      companyId,
+      addressId,
+      { ...body }
+    );
+
+    res.status(201).json({
+      status: true,
+      message: "company updated successfully",
+      data: updatedCompany,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+    return;
+  }
+}
+
+export async function deleteCompanyHandler(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+
+    //get user
+    const user = res.locals.user;
+    if (!user) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
+    const company = await deleteCompanyService(id);
+    res.status(200).json({
+      status: true,
+      message: `company Successfully Deleted`,
+      data: company,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "server error",
+      error: error,
+    });
+    return;
   }
 }
 

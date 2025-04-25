@@ -750,10 +750,10 @@ export async function verifyCompanyService(
         id,
       },
       data: {
-        is_verified: verificationData.isVerified,
-        verified_by: verificationData.verifiedBy || null,
-        verification_notes: verificationData.verificationNotes || null,
-        verification_date: verificationData.isVerified ? new Date() : null,
+        verified: verificationData.isVerified,
+        // verified_by: verificationData.verifiedBy || null,
+        // verification_notes: verificationData.verificationNotes || null,
+        // verification_date: verificationData.isVerified ? new Date() : null,
         updated_at: new Date(),
       },
       include: {
@@ -781,7 +781,7 @@ export async function getFeaturedCompaniesService(limit: number = 6) {
     // Get verified companies with the most jobs
     const companies = await prisma.company.findMany({
       where: {
-        is_verified: true,
+        verified: true,
       },
       include: {
         address: true,
