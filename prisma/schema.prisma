@@ -256,8 +256,8 @@ model User {
   sessions     Session[]
   company      Company?         @relation(fields: [companyId], references: [id])
   companyId    String?
-  address      Address          @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  addressId    String           @unique
+  address      Address?         @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId    String?          @unique
   applications JobApplication[]
   skills       UserSkill[]
   education    Education[]

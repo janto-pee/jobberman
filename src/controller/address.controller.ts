@@ -5,8 +5,12 @@ import {
   deleteAddressService,
   findAddressService,
   findAllAddressService,
+  getAddressesByCountryService,
+  getAddressStatisticsService,
+  searchAddressesService,
   totalAddressCountService,
   updateAddressService,
+  validateAddressService,
 } from "../service/address.service";
 import { addUserToAddressService } from "../service/user.service";
 import { logger } from "../utils/logger";
@@ -152,75 +156,67 @@ export async function CreateAddressHandler(
   }
 }
 
-/**
- * Update an existing address
- */
-// export async function updateAddressHandler(
-//   req: Request<{ id: string }, {}, createAddressInput["body"]>,
-//   res: Response,
-// ) {
-//   try {
-//     const { id } = req.params;
-//     const body = req.body;
-
-//     const user = res.locals.user;
-//     if (!user) {
-//       return res.status(401).json({
-//         status: false,
-//         message: "Authentication required"
-//       });
-//     }
-
-//     const address = await findAddressService(id);
-//     if (!address) {
-//       return res.status(404).json({
-//         status: false,
-//         message: "Address not found"
-//       });
-//     }
-
-//     // Check if the address belongs to the user
-//     if (user.addressId !== id) {
-//       return res.status(403).json({
-//         status: false,
-//         message: "You don't have permission to update this address"
-//       });
-//     }
 export async function updateAddressHandler(
   req: Request<{ id: string }, {}, createAddressInput["body"]>,
   res: Response
 ) {
-  const { id } = req.params;
-  const body = req.body;
-
-  //get user
-  const user = res.locals.user;
-  if (!user) {
-    res.status(500).json({ error: "unauthorised" });
-    return;
-  }
-
-  const address = await findAddressService(id);
-  if (!address) {
-    res.sendStatus(400);
-    return;
-  }
+  const start = Date.now();
+  const operation = "update";
 
   try {
+    const { id } = req.params;
+    const body = req.body;
+
+    addressRequestCounter.inc({ operation, status: "attempt" });
+
+    // Get user
+    const user = res.locals.user;
+    if (!user) {
+      addressRequestCounter.inc({ operation, status: "unauthorized" });
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
+    }
+
+    const address = await findAddressService(id);
+    if (!address) {
+      addressRequestCounter.inc({ operation, status: "notFound" });
+      return res.status(404).json({
+        status: false,
+        message: "Address not found",
+      });
+    }
+
+    // Check if the address belongs to the user
+    if (user.addressId !== id) {
+      addressRequestCounter.inc({ operation, status: "forbidden" });
+      return res.status(403).json({
+        status: false,
+        message: "You don't have permission to update this address",
+      });
+    }
+
     const updatedAddress = await updateAddressService(id, body);
 
-    res.status(200).json({
+    addressRequestCounter.inc({ operation, status: "success" });
+
+    return res.status(200).json({
       status: true,
-      message: "password changed successfully",
+      message: "Address updated successfully",
       data: updatedAddress,
     });
   } catch (error) {
-    res.status(500).json({
+    addressRequestCounter.inc({ operation, status: "error" });
+    logger.error("Error in updateAddressHandler:", error);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to update address",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
+  } finally {
+    const duration = (Date.now() - start) / 1000;
+    addressRequestDuration.observe({ operation }, duration);
   }
 }
 
@@ -248,5 +244,195 @@ export async function deleteAddressHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+  }
+}
+
+/**
+ * Search addresses by various criteria
+ */
+export async function searchAddressesHandler(req: Request, res: Response) {
+  const start = Date.now();
+  const operation = "search";
+
+  try {
+    const searchTerm = (req.query.q as string) || "";
+    const page =
+      typeof req.query.page !== "undefined"
+        ? Math.max(0, Number(req.query.page) - 1)
+        : 0;
+    const limit =
+      typeof req.query.limit !== "undefined"
+        ? Math.min(50, Math.max(1, Number(req.query.limit)))
+        : 10;
+
+    addressRequestCounter.inc({ operation, status: "attempt" });
+
+    const addresses = await searchAddressesService(searchTerm, page, limit);
+    const total = await totalAddressCountService();
+
+    addressRequestCounter.inc({ operation, status: "success" });
+
+    return res.status(200).json({
+      status: true,
+      message: "Addresses retrieved successfully",
+      searchTerm,
+      total,
+      page: page + 1,
+      limit,
+      data: addresses,
+    });
+  } catch (error) {
+    addressRequestCounter.inc({ operation, status: "error" });
+    logger.error("Error in searchAddressesHandler:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to search addresses",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  } finally {
+    const duration = (Date.now() - start) / 1000;
+    addressRequestDuration.observe({ operation }, duration);
+  }
+}
+
+/**
+ * Get addresses by country
+ */
+export async function getAddressesByCountryHandler(
+  req: Request,
+  res: Response
+) {
+  const start = Date.now();
+  const operation = "getByCountry";
+
+  try {
+    const { countryCode } = req.params;
+    const page =
+      typeof req.query.page !== "undefined"
+        ? Math.max(0, Number(req.query.page) - 1)
+        : 0;
+    const limit =
+      typeof req.query.limit !== "undefined"
+        ? Math.min(50, Math.max(1, Number(req.query.limit)))
+        : 10;
+
+    addressRequestCounter.inc({ operation, status: "attempt" });
+
+    if (!countryCode || countryCode.length < 2) {
+      addressRequestCounter.inc({ operation, status: "invalid" });
+      return res.status(400).json({
+        status: false,
+        message: "Valid country code is required",
+      });
+    }
+
+    const addresses = await getAddressesByCountryService(
+      countryCode,
+      page,
+      limit
+    );
+
+    addressRequestCounter.inc({ operation, status: "success" });
+
+    return res.status(200).json({
+      status: true,
+      message: `Addresses in ${countryCode} retrieved successfully`,
+      countryCode,
+      page: page + 1,
+      limit,
+      count: addresses.length,
+      data: addresses,
+    });
+  } catch (error) {
+    addressRequestCounter.inc({ operation, status: "error" });
+    logger.error("Error in getAddressesByCountryHandler:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to retrieve addresses by country",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  } finally {
+    const duration = (Date.now() - start) / 1000;
+    addressRequestDuration.observe({ operation }, duration);
+  }
+}
+
+/**
+ * Validate address data
+ */
+export async function validateAddressHandler(
+  req: Request<{}, {}, createAddressInput["body"]>,
+  res: Response
+) {
+  const start = Date.now();
+  const operation = "validate";
+
+  try {
+    const body = req.body;
+
+    addressRequestCounter.inc({ operation, status: "attempt" });
+
+    const validationResult = await validateAddressService(body);
+
+    if (!validationResult.isValid) {
+      addressRequestCounter.inc({ operation, status: "invalid" });
+      return res.status(400).json({
+        status: false,
+        message: "Address validation failed",
+        errors: validationResult.errors,
+      });
+    }
+
+    addressRequestCounter.inc({ operation, status: "success" });
+
+    return res.status(200).json({
+      status: true,
+      message: "Address data is valid",
+      data: body,
+    });
+  } catch (error) {
+    addressRequestCounter.inc({ operation, status: "error" });
+    logger.error("Error in validateAddressHandler:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to validate address",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  } finally {
+    const duration = (Date.now() - start) / 1000;
+    addressRequestDuration.observe({ operation }, duration);
+  }
+}
+
+/**
+ * Get address statistics
+ */
+export async function getAddressStatisticsHandler(req: Request, res: Response) {
+  const start = Date.now();
+  const operation = "statistics";
+
+  try {
+    addressRequestCounter.inc({ operation, status: "attempt" });
+
+    const statistics = await getAddressStatisticsService();
+
+    addressRequestCounter.inc({ operation, status: "success" });
+
+    return res.status(200).json({
+      status: true,
+      message: "Address statistics retrieved successfully",
+      data: statistics,
+    });
+  } catch (error) {
+    addressRequestCounter.inc({ operation, status: "error" });
+    logger.error("Error in getAddressStatisticsHandler:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to retrieve address statistics",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  } finally {
+    const duration = (Date.now() - start) / 1000;
+    addressRequestDuration.observe({ operation }, duration);
   }
 }

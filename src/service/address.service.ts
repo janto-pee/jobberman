@@ -95,44 +95,30 @@ export async function totalAddressCountService() {
 export async function createAddressService(input: addressInput) {
   try {
     // Check if address with same email already exists
-    const existingAddress = await prisma.address.findUnique({
-      where: {
-        user: input.email,
-      },
-    });
+    // const existingAddress = await prisma.address.findUnique({
+    //   where: {
+    //     user: input.email,
+    //   },
+    // });
 
-    if (existingAddress) {
-      throw new Error("A address with this email already exists");
-    }
+    // if (existingAddress) {
+    //   throw new Error("A address with this email already exists");
+    // }
 
     // Use transaction to ensure both address and address are created
     const address = await prisma.$transaction(async (tx) => {
       const createdAddress = await tx.address.create({
         data: {
-          name: input.name,
-          email: input.email,
-          website: input.website,
-          size: input.size,
-          industry: input.industry,
-          description: input.description,
-          logo: input.logo,
-          address: {
-            create: {
-              street: input.street,
-              street2: input.street2 || null,
-              city: input.city,
-              state_province_code: input.state_province_code,
-              state_province_name: input.state_province_name,
-              postal_code: input.postal_code,
-              country_code: input.country_code,
-              latitude: input.latitude || null,
-              longitude: input.longitude || null,
-              country: input.country,
-            },
-          },
-        },
-        include: {
-          address: true,
+          street: input.street,
+          street2: input.street2 || null,
+          city: input.city,
+          state_province_code: input.state_province_code,
+          state_province_name: input.state_province_name,
+          postal_code: input.postal_code,
+          country_code: input.country_code,
+          latitude: input.latitude || null,
+          longitude: input.longitude || null,
+          country: input.country,
         },
       });
 
@@ -153,7 +139,7 @@ export async function createAddressService(input: addressInput) {
  * @param update - Updated address data
  * @returns Updated address
  */
-export async function updateAddressService(id: string, update: addressUpdate) {
+export async function updateAddressService(id: string, update: addressInput) {
   try {
     if (!id) {
       throw new Error("Address ID is required");
@@ -177,9 +163,6 @@ export async function updateAddressService(id: string, update: addressUpdate) {
         ...update,
         updated_at: new Date(),
       },
-      include: {
-        address: true,
-      },
     });
 
     logger.info(`Address updated successfully: ${id}`);
@@ -199,7 +182,6 @@ export async function updateAddressService(id: string, update: addressUpdate) {
  */
 export async function updateAddressAddressService(
   addressId: string,
-  addressId: string,
   update: addressInput
 ) {
   try {
@@ -213,9 +195,6 @@ export async function updateAddressAddressService(
       const address = await tx.address.findFirst({
         where: {
           id: addressId,
-          address: {
-            id: addressId,
-          },
         },
       });
 
@@ -230,29 +209,16 @@ export async function updateAddressAddressService(
         },
         data: {
           updated_at: new Date(),
-          address: {
-            update: {
-              where: {
-                id: addressId,
-              },
-              data: {
-                street: update.street,
-                street2: update.street2 || null,
-                city: update.city,
-                state_province_code: update.state_province_code,
-                state_province_name: update.state_province_name,
-                postal_code: update.postal_code,
-                country_code: update.country_code,
-                latitude: update.latitude || null,
-                longitude: update.longitude || null,
-                country: update.country,
-                updated_at: new Date(),
-              },
-            },
-          },
-        },
-        include: {
-          address: true,
+          street: update.street,
+          street2: update.street2 || null,
+          city: update.city,
+          state_province_code: update.state_province_code,
+          state_province_name: update.state_province_name,
+          postal_code: update.postal_code,
+          country_code: update.country_code,
+          latitude: update.latitude || null,
+          longitude: update.longitude || null,
+          country: update.country,
         },
       });
     });
@@ -281,10 +247,6 @@ export async function deleteAddressService(id: string) {
     // Check if address exists
     const existingAddress = await prisma.address.findUnique({
       where: { id },
-      include: {
-        jobs: true,
-        users: true,
-      },
     });
 
     if (!existingAddress) {
@@ -294,7 +256,7 @@ export async function deleteAddressService(id: string) {
     // Use transaction to handle cascading deletes properly
     const deletedAddress = await prisma.$transaction(async (tx) => {
       // Update users to remove address association
-      if (existingAddress.users.length > 0) {
+      if (existingAddress.id.length > 0) {
         await tx.user.updateMany({
           where: {
             addressId: id,
@@ -305,22 +267,10 @@ export async function deleteAddressService(id: string) {
         });
       }
 
-      // Delete jobs associated with the address
-      if (existingAddress.jobs.length > 0) {
-        await tx.job.deleteMany({
-          where: {
-            address_id: id,
-          },
-        });
-      }
-
       // Delete the address and cascade to address
       const deleted = await tx.address.delete({
         where: {
           id,
-        },
-        include: {
-          address: true,
         },
       });
 
@@ -335,65 +285,169 @@ export async function deleteAddressService(id: string) {
   }
 }
 
-// import { prisma } from "../scripts";
-// import { addressInput } from "../schema/address.schema";
+/**
+ * Search addresses by various criteria
+ * @param searchTerm - Text to search for in address fields
+ * @param page - Page number (0-based)
+ * @param limit - Number of items per page
+ * @returns Array of matching addresses
+ */
+export async function searchAddressesService(
+  searchTerm: string,
+  page: number = 0,
+  limit: number = 10
+) {
+  try {
+    const searchQuery = searchTerm.trim();
 
-// export async function findAddressService(query: string) {
-//   const user = await prisma.address.findUnique({
-//     where: {
-//       id: query,
-//     },
-//   });
-//   return user;
-// }
+    if (!searchQuery) {
+      return findAllAddressService(page, limit);
+    }
 
-// export async function findAllAddressService(page: number, limit: number) {
-//   const address = await prisma.address.findMany({
-//     skip: page,
-//     take: limit,
-//   });
-//   return address;
-// }
+    const addresses = await prisma.address.findMany({
+      where: {
+        OR: [
+          { street: { contains: searchQuery, mode: "insensitive" } },
+          { city: { contains: searchQuery, mode: "insensitive" } },
+          {
+            state_province_name: { contains: searchQuery, mode: "insensitive" },
+          },
+          { postal_code: { contains: searchQuery, mode: "insensitive" } },
+          { country: { contains: searchQuery, mode: "insensitive" } },
+        ],
+      },
+      skip: page * limit,
+      take: limit,
+      include: {
+        user: true,
+      },
+    });
 
-// export async function totalAddressCountService() {
-//   const address = await prisma.address.count();
-//   return address;
-// }
+    return addresses;
+  } catch (error) {
+    logger.error(`Error in searchAddressesService: ${error}`);
+    throw error;
+  }
+}
 
-// /**
-//  *
-//  * ! MUTATIONS
-//  *
-//  */
-// export async function createAddressService(input: addressInput) {
-//   const user = await prisma.address.create({
-//     data: {
-//       ...input,
-//     },
-//   });
-//   return user;
-// }
+/**
+ * Get addresses by country
+ * @param countryCode - Country code to filter by
+ * @param page - Page number (0-based)
+ * @param limit - Number of items per page
+ * @returns Array of addresses in the specified country
+ */
+export async function getAddressesByCountryService(
+  countryCode: string,
+  page: number = 0,
+  limit: number = 10
+) {
+  try {
+    const addresses = await prisma.address.findMany({
+      where: {
+        country_code: countryCode,
+      },
+      skip: page * limit,
+      take: limit,
+      include: {
+        user: true,
+      },
+    });
 
-// export async function updateAddressService(
-//   query: string,
-//   update: addressInput,
-// ) {
-//   const updateUser = await prisma.address.update({
-//     where: {
-//       id: query,
-//     },
-//     data: {
-//       ...update,
-//     },
-//   });
-//   return updateUser;
-// }
+    return addresses;
+  } catch (error) {
+    logger.error(`Error in getAddressesByCountryService: ${error}`);
+    throw error;
+  }
+}
 
-// export async function deleteAddressService(query: string) {
-//   const deleteUser = await prisma.address.delete({
-//     where: {
-//       id: query,
-//     },
-//   });
-//   return deleteUser;
-// }
+/**
+ * Validate address data
+ * @param addressData - Address data to validate
+ * @returns Validation result with errors if any
+ */
+export async function validateAddressService(addressData: addressInput) {
+  try {
+    const errors: Record<string, string> = {};
+
+    // Basic validation
+    if (!addressData.street || addressData.street.trim().length < 3) {
+      errors.street =
+        "Street address is required and must be at least 3 characters";
+    }
+
+    if (!addressData.city || addressData.city.trim().length < 2) {
+      errors.city = "City is required and must be at least 2 characters";
+    }
+
+    if (
+      !addressData.postal_code ||
+      !/^[a-zA-Z0-9\s-]{3,10}$/.test(addressData.postal_code)
+    ) {
+      errors.postal_code = "Valid postal code is required";
+    }
+
+    if (!addressData.country || addressData.country.trim().length < 2) {
+      errors.country = "Country is required";
+    }
+
+    if (
+      !addressData.country_code ||
+      !/^[A-Z]{2,3}$/.test(addressData.country_code)
+    ) {
+      errors.country_code =
+        "Valid country code is required (2-3 uppercase letters)";
+    }
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors,
+    };
+  } catch (error) {
+    logger.error(`Error in validateAddressService: ${error}`);
+    throw error;
+  }
+}
+
+/**
+ * Get address statistics
+ * @returns Statistics about addresses in the system
+ */
+export async function getAddressStatisticsService() {
+  try {
+    const totalCount = await prisma.address.count();
+
+    const countryStats = await prisma.$queryRaw`
+      SELECT country, country_code, COUNT(*) as count 
+      FROM "Address" 
+      GROUP BY country, country_code 
+      ORDER BY count DESC
+    `;
+
+    const stateStats = await prisma.$queryRaw`
+      SELECT state_province_name, COUNT(*) as count 
+      FROM "Address" 
+      GROUP BY state_province_name 
+      ORDER BY count DESC 
+      LIMIT 10
+    `;
+
+    const cityStats = await prisma.$queryRaw`
+      SELECT city, COUNT(*) as count 
+      FROM "Address" 
+      GROUP BY city 
+      ORDER BY count DESC 
+      LIMIT 10
+    `;
+
+    return {
+      totalAddresses: totalCount,
+      byCountry: countryStats,
+      topStates: stateStats,
+      topCities: cityStats,
+    };
+  } catch (error) {
+    logger.error(`Error in getAddressStatisticsService: ${error}`);
+    throw error;
+  }
+}
