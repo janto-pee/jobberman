@@ -139,13 +139,7 @@ export async function findEmailService(email: string) {
  * @param input - User data including address information
  * @returns Created user object
  */
-// : Promise<
-//   | (User & {
-//       address: Address | null;
-//       company: { id: string; name: string } | null;
-//     })
-//   | null
-// >
+
 export async function createUserService(input: userService) {
   try {
     const hashedPassword = await hashPassword(input.hashed_password);

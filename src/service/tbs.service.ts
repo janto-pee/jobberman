@@ -1,7 +1,6 @@
 import { prisma } from "../scripts";
 import { tbs } from "../schema/tbs.schema";
 import { Prisma } from "@prisma/client";
-import { addressInput } from "../schema/address.schema";
 import { logger } from "../utils/logger";
 
 /**
@@ -147,7 +146,7 @@ export async function createTBSService(input: tbs) {
  * @param update - Updated taskBasedSalaryInformation data
  * @returns Updated taskBasedSalaryInformation
  */
-export async function updateTBSService(id: string, update: companyUpdate) {
+export async function updateTBSService(id: string, update: tbs) {
   try {
     if (!id) {
       throw new Error("TBS ID is required");
@@ -171,93 +170,12 @@ export async function updateTBSService(id: string, update: companyUpdate) {
         ...update,
         updated_at: new Date(),
       },
-      include: {
-        address: true,
-      },
     });
 
     logger.info(`TBS updated successfully: ${id}`);
     return updatedTBS;
   } catch (error) {
     logger.error(`Error in updateTBSService: ${error}`);
-    throw error;
-  }
-}
-
-/**
- * Update taskBasedSalaryInformation address
- * @param companyId - TBS ID
- * @param addressId - Address ID
- * @param update - Updated address data
- * @returns Updated taskBasedSalaryInformation with address
- */
-export async function updateTBSAddressService(
-  companyId: string,
-  addressId: string,
-  update: addressInput
-) {
-  try {
-    if (!companyId || !addressId) {
-      throw new Error("TBS ID and Address ID are required");
-    }
-
-    // Use transaction to ensure data consistency
-    const updatedTBS = await prisma.$transaction(async (tx) => {
-      // Verify taskBasedSalaryInformation exists and owns this address
-      const taskBasedSalaryInformation =
-        await tx.taskBasedSalaryInformation.findFirst({
-          where: {
-            id: companyId,
-            address: {
-              id: addressId,
-            },
-          },
-        });
-
-      if (!taskBasedSalaryInformation) {
-        throw new Error("TBS not found or does not own this address");
-      }
-
-      // Update the taskBasedSalaryInformation with the new address data
-      return await tx.taskBasedSalaryInformation.update({
-        where: {
-          id: companyId,
-        },
-        data: {
-          updated_at: new Date(),
-          address: {
-            update: {
-              where: {
-                id: addressId,
-              },
-              data: {
-                street: update.street,
-                street2: update.street2 || null,
-                city: update.city,
-                state_province_code: update.state_province_code,
-                state_province_name: update.state_province_name,
-                postal_code: update.postal_code,
-                country_code: update.country_code,
-                latitude: update.latitude || null,
-                longitude: update.longitude || null,
-                country: update.country,
-                updated_at: new Date(),
-              },
-            },
-          },
-        },
-        include: {
-          address: true,
-        },
-      });
-    });
-
-    logger.info(
-      `TBS address updated successfully: TBS ${companyId}, Address ${addressId}`
-    );
-    return updatedTBS;
-  } catch (error) {
-    logger.error(`Error in updateTBSAddressService: ${error}`);
     throw error;
   }
 }
@@ -276,10 +194,6 @@ export async function deleteTBSService(id: string) {
     // Check if taskBasedSalaryInformation exists
     const existingTBS = await prisma.taskBasedSalaryInformation.findUnique({
       where: { id },
-      include: {
-        jobs: true,
-        users: true,
-      },
     });
 
     if (!existingTBS) {
@@ -287,39 +201,10 @@ export async function deleteTBSService(id: string) {
     }
 
     // Use transaction to handle cascading deletes properly
-    const deletedTBS = await prisma.$transaction(async (tx) => {
-      // Update users to remove taskBasedSalaryInformation association
-      if (existingTBS.users.length > 0) {
-        await tx.user.updateMany({
-          where: {
-            companyId: id,
-          },
-          data: {
-            companyId: null,
-          },
-        });
-      }
-
-      // Delete jobs associated with the taskBasedSalaryInformation
-      if (existingTBS.jobs.length > 0) {
-        await tx.job.deleteMany({
-          where: {
-            company_id: id,
-          },
-        });
-      }
-
-      // Delete the taskBasedSalaryInformation and cascade to address
-      const deleted = await tx.taskBasedSalaryInformation.delete({
-        where: {
-          id,
-        },
-        include: {
-          address: true,
-        },
-      });
-
-      return deleted;
+    const deletedTBS = await prisma.taskBasedSalaryInformation.delete({
+      where: {
+        id: id,
+      },
     });
 
     logger.info(`TBS deleted successfully: ${id}`);
@@ -329,61 +214,3 @@ export async function deleteTBSService(id: string) {
     throw error;
   }
 }
-
-// export async function findTBSService(query: string) {
-//   const user = await prisma.taskBasedSalaryInformation.findUnique({
-//     where: {
-//       id: query,
-//     },
-//   });
-//   return user;
-// }
-
-// export async function findAllTBSService(page: number, limit: number) {
-//   const TBS = await prisma.taskBasedSalaryInformation.findMany({
-//     skip: page,
-//     take: limit,
-//   });
-//   return TBS;
-// }
-
-// export async function totalTBSCountService() {
-//   const TBS = await prisma.taskBasedSalaryInformation.count();
-//   return TBS;
-// }
-
-// /**
-//  *
-//  * ! MUTATIONS
-//  *
-//  */
-
-// export async function createTBSService(input: tbs) {
-//   const user = await prisma.taskBasedSalaryInformation.create({
-//     data: {
-//       ...input,
-//     },
-//   });
-//   return user;
-// }
-
-// export async function updateTBSService(query: string, update: tbs) {
-//   const updateUser = await prisma.taskBasedSalaryInformation.update({
-//     where: {
-//       id: query,
-//     },
-//     data: {
-//       ...update,
-//     },
-//   });
-//   return updateUser;
-// }
-
-// export async function deleteTBSService(query: string) {
-//   const deleteUser = await prisma.taskBasedSalaryInformation.delete({
-//     where: {
-//       id: query,
-//     },
-//   });
-//   return deleteUser;
-// }
