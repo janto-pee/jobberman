@@ -1,8 +1,7 @@
 import { prisma } from "../scripts";
-import { hppInput } from "../schema/hpp.schema";
 import { Prisma } from "@prisma/client";
 import { logger } from "../utils/logger";
-import { fgsInput } from "../schema/fgs.schema";
+import { hppInput } from "../schema/hpp.schema";
 
 /**
  * Find a taskBasedSalaryInformation by ID with related data
@@ -147,7 +146,7 @@ export async function createHPPService(input: hppInput) {
  * @param update - Updated taskBasedSalaryInformation data
  * @returns Updated taskBasedSalaryInformation
  */
-export async function updateHPPService(id: string, update: fgsInput) {
+export async function updateHPPService(id: string, update: hppInput) {
   try {
     if (!id) {
       throw new Error("HPP ID is required");

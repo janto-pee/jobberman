@@ -3,130 +3,196 @@ import { createHPPInput } from "../schema/hpp.schema";
 import {
   createHPPService,
   deleteHPPService,
-  findAllHPPService,
   findHPPService,
+  findAllHPPService,
   totalHPPCountService,
   updateHPPService,
 } from "../service/hpp.service";
+import { logger } from "../utils/logger";
+import { Counter, Histogram } from "prom-client";
 
+// Define metrics for hpp operations
+const hppRequestCounter = new Counter({
+  name: "jobberman_hpp_requests_total",
+  help: "Total number of hpp API requests",
+  labelNames: ["operation", "status"],
+});
+
+const hppRequestDuration = new Histogram({
+  name: "jobberman_hpp_request_duration_seconds",
+  help: "Duration of hpp API requests in seconds",
+  labelNames: ["operation"],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
+});
+
+/**
+ * Get hpp by ID
+ */
 export async function findHPPHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
 
-    const HPP = await findHPPService(id);
-    if (!HPP) {
-      res.send("HPP not found");
-      return;
+    const hpp = await findHPPService(id);
+    if (!hpp) {
+      return res.status(404).json({
+        status: false,
+        message: "HPP not found",
+      });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
-      message: "HPP found",
-      HPP: HPP,
+      message: "HPP retrieved successfully",
+      data: hpp,
     });
   } catch (error) {
-    res.status(500).json({
+    logger.error("Error in findHPPHandler:", error);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to retrieve hpp",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
-  }
-}
-export async function findAllHPPHandler(req: Request, res: Response) {
-  try {
-    const page =
-      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    const limit =
-      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
-    const HPP = await findAllHPPService(page, limit);
-    const total = await totalHPPCountService();
-    if (!HPP) {
-      res.status(404).send("HPP not found");
-      return;
-    }
-
-    res.status(200).json({
-      status: true,
-      total,
-      "HPP limit per page": limit,
-      page: page + 1,
-      HPP: HPP,
-    });
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
   }
 }
 
 /**
- *
- * ! MUTATIONS
- *
+ * Get all hpp with pagination
  */
+export async function findAllHPPHandler(req: Request, res: Response) {
+  try {
+    const page =
+      typeof req.query.page !== "undefined"
+        ? Math.max(0, Number(req.query.page) - 1)
+        : 0;
+    const limit =
+      typeof req.query.limit !== "undefined"
+        ? Math.min(50, Math.max(1, Number(req.query.limit)))
+        : 10;
 
+    const hpp = await findAllHPPService(page, limit);
+    const total = await totalHPPCountService();
+
+    if (!hpp || hpp.length === 0) {
+      return res.status(200).json({
+        status: true,
+        message: "No hpp found",
+        total: 0,
+        page: page + 1,
+        limit,
+        data: [],
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "HPPes retrieved successfully",
+      total,
+      page: page + 1,
+      limit,
+      data: hpp,
+    });
+  } catch (error) {
+    logger.error("Error in findAllHPPHandler:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to retrieve hpp",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+/**
+ * Create a new hpp
+ */
 export async function CreateHPPHandler(
   req: Request<{}, {}, createHPPInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
 
-    const HPP = await createHPPService({
+    const user = res.locals.user;
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
+    }
+
+    const hpp = await createHPPService({
       ...body,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       status: true,
-      message: `Has probabtion information Successfully Created`,
-      data: HPP,
+      message: "HPP created successfully",
+      data: hpp,
     });
-    return;
   } catch (error) {
-    res.status(500).json({
+    logger.error("Error in CreateHPPHandler:", error);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to create hpp",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
   }
 }
 
 export async function updateHPPHandler(
   req: Request<{ id: string }, {}, createHPPInput["body"]>,
-  res: Response,
+  res: Response
 ) {
+  const start = Date.now();
+  const operation = "update";
+
   try {
     const { id } = req.params;
     const body = req.body;
-    const HPP = await findHPPService(id);
-    if (!HPP) {
-      res.sendStatus(400);
-      return;
+
+    hppRequestCounter.inc({ operation, status: "attempt" });
+
+    // Get user
+    const user = res.locals.user;
+    if (!user) {
+      hppRequestCounter.inc({ operation, status: "unauthorized" });
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
     }
 
-    const updatedAddress = await updateHPPService(id, body);
+    const hpp = await findHPPService(id);
+    if (!hpp) {
+      hppRequestCounter.inc({ operation, status: "notFound" });
+      return res.status(404).json({
+        status: false,
+        message: "HPP not found",
+      });
+    }
 
-    res.status(200).json({
+    const updatedHPP = await updateHPPService(id, body);
+
+    hppRequestCounter.inc({ operation, status: "success" });
+
+    return res.status(200).json({
       status: true,
-      message: "password changed successfully",
-      data: updatedAddress,
+      message: "HPP updated successfully",
+      data: updatedHPP,
     });
   } catch (error) {
-    res.status(500).json({
+    hppRequestCounter.inc({ operation, status: "error" });
+    logger.error("Error in updateHPPHandler:", error);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to update hpp",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
+  } finally {
+    const duration = (Date.now() - start) / 1000;
+    hppRequestDuration.observe({ operation }, duration);
   }
 }
 
@@ -134,11 +200,18 @@ export async function deleteHPPHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    const HPP = await deleteHPPService(id);
+    //get user
+    const user = res.locals.user;
+    if (!user) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
+    const hpp = await deleteHPPService(id);
     res.status(200).json({
       status: true,
-      message: `Address Successfully Deleted`,
-      data: HPP,
+      message: `HPP Successfully Deleted`,
+      data: hpp,
     });
     return;
   } catch (error) {
