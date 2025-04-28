@@ -1,133 +1,207 @@
 import { Request, Response } from "express";
+import { createFGSInput } from "../schema/fgs.schema";
 import {
   createFGSService,
   deleteFGSService,
-  findAllFGSService,
   findFGSService,
+  findAllFGSService,
   totalFGSCountService,
   updateFGSService,
 } from "../service/fgs.service";
-import { createFGSInput } from "../schema/fgs.schema";
+import { logger } from "../utils/logger";
+import { Counter, Histogram } from "prom-client";
 
+// Define metrics for fgs operations
+const fgsRequestCounter = new Counter({
+  name: "jobberman_fgs_requests_total",
+  help: "Total number of fgs API requests",
+  labelNames: ["operation", "status"],
+});
+
+const fgsRequestDuration = new Histogram({
+  name: "jobberman_fgs_request_duration_seconds",
+  help: "Duration of fgs API requests in seconds",
+  labelNames: ["operation"],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
+});
+
+/**
+ * Get fgs by ID
+ */
 export async function findFGSHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
 
-    const FGS = await findFGSService(id);
-    if (!FGS) {
-      res.send("FGS not found");
-      return;
+    const fgs = await findFGSService(id);
+    if (!fgs) {
+      return res.status(404).json({
+        status: false,
+        message: "FGS not found",
+      });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
-      message: "FGS found",
-      "Fixed Grain Salary": FGS,
+      message: "FGS retrieved successfully",
+      data: fgs,
     });
   } catch (error) {
-    res.status(500).json({
+    logger.error("Error in findFGSHandler:", error);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to retrieve fgs",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
-  }
-}
-
-export async function findAllFGSHandler(req: Request, res: Response) {
-  try {
-    const page =
-      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    const limit =
-      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
-    const FGS = await findAllFGSService(page, limit);
-    const total = await totalFGSCountService();
-    if (!FGS) {
-      res.status(404).send("FGS not found");
-      return;
-    }
-
-    res.status(200).json({
-      status: true,
-      total,
-      "FGS limit per page": limit,
-      page: page + 1,
-      FGS: FGS,
-    });
-    return;
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
   }
 }
 
 /**
- *
- * ! MUTATIONS
- *
+ * Get all fgs with pagination
  */
+export async function findAllFGSHandler(req: Request, res: Response) {
+  try {
+    const page =
+      typeof req.query.page !== "undefined"
+        ? Math.max(0, Number(req.query.page) - 1)
+        : 0;
+    const limit =
+      typeof req.query.limit !== "undefined"
+        ? Math.min(50, Math.max(1, Number(req.query.limit)))
+        : 10;
 
+    const fgs = await findAllFGSService(page, limit);
+    const total = await totalFGSCountService();
+
+    if (!fgs || fgs.length === 0) {
+      return res.status(200).json({
+        status: true,
+        message: "No fgs found",
+        total: 0,
+        page: page + 1,
+        limit,
+        data: [],
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "FGSes retrieved successfully",
+      total,
+      page: page + 1,
+      limit,
+      data: fgs,
+    });
+  } catch (error) {
+    logger.error("Error in findAllFGSHandler:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to retrieve fgs",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+/**
+ * Create a new fgs
+ */
 export async function CreateFGSHandler(
   req: Request<{}, {}, createFGSInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
 
-    const FGS = await createFGSService({
+    const user = res.locals.user;
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
+    }
+
+    const fgs = await createFGSService({
       ...body,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       status: true,
-      message: `Fine grained salary type successfully created`,
-      data: FGS,
+      message: "FGS created successfully",
+      data: fgs,
     });
-    return;
   } catch (error) {
-    res.status(500).json({
+    logger.error("Error in CreateFGSHandler:", error);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to create fgs",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
   }
 }
 
 export async function updateFGSHandler(
   req: Request<{ id: string }, {}, createFGSInput["body"]>,
-  res: Response,
+  res: Response
 ) {
+  const start = Date.now();
+  const operation = "update";
+
   try {
     const { id } = req.params;
     const body = req.body;
-    const FGS = await findFGSService(id);
-    if (!FGS) {
-      res.sendStatus(400);
-      return;
+
+    fgsRequestCounter.inc({ operation, status: "attempt" });
+
+    // Get user
+    const user = res.locals.user;
+    if (!user) {
+      fgsRequestCounter.inc({ operation, status: "unauthorized" });
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
     }
+
+    const fgs = await findFGSService(id);
+    if (!fgs) {
+      fgsRequestCounter.inc({ operation, status: "notFound" });
+      return res.status(404).json({
+        status: false,
+        message: "FGS not found",
+      });
+    }
+
+    // Check if the fgs belongs to the user
+    // if (user.fgsId !== id) {
+    //   fgsRequestCounter.inc({ operation, status: "forbidden" });
+    //   return res.status(403).json({
+    //     status: false,
+    //     message: "You don't have permission to update this fgs",
+    //   });
+    // }
 
     const updatedFGS = await updateFGSService(id, body);
 
-    res.status(200).json({
+    fgsRequestCounter.inc({ operation, status: "success" });
+
+    return res.status(200).json({
       status: true,
-      message: "password changed successfully",
+      message: "FGS updated successfully",
       data: updatedFGS,
     });
   } catch (error) {
-    res.status(500).json({
+    fgsRequestCounter.inc({ operation, status: "error" });
+    logger.error("Error in updateFGSHandler:", error);
+    return res.status(500).json({
       status: false,
-      message: "server error",
-      error: error,
+      message: "Failed to update fgs",
+      error: error instanceof Error ? error.message : String(error),
     });
-    return;
+  } finally {
+    const duration = (Date.now() - start) / 1000;
+    fgsRequestDuration.observe({ operation }, duration);
   }
 }
 
@@ -135,11 +209,18 @@ export async function deleteFGSHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    const FGS = await deleteFGSService(id);
+    //get user
+    const user = res.locals.user;
+    if (!user) {
+      res.status(500).json({ error: "unauthorised" });
+      return;
+    }
+
+    const fgs = await deleteFGSService(id);
     res.status(200).json({
       status: true,
       message: `FGS Successfully Deleted`,
-      data: FGS,
+      data: fgs,
     });
     return;
   } catch (error) {

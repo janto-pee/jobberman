@@ -18,7 +18,7 @@ import { Counter, Histogram } from "prom-client";
 
 // Define metrics for address operations
 const addressRequestCounter = new Counter({
-  name: "jobberman_ddress_requests_total",
+  name: "jobberman_address_requests_total",
   help: "Total number of address API requests",
   labelNames: ["operation", "status"],
 });
