@@ -1,4 +1,10 @@
 import { Request, Response } from "express";
+import {
+  getCache,
+  setCache,
+  deleteCache,
+  invalidatePattern,
+} from "../utils/redis";
 import { createMetadataInput } from "../schema/metadata.schema";
 import {
   createMetadataService,

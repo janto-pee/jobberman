@@ -1,4 +1,10 @@
 import { Request, Response } from "express";
+import {
+  getCache,
+  setCache,
+  deleteCache,
+  invalidatePattern,
+} from "../utils/redis";
 import { createAddressInput } from "../schema/address.schema";
 import {
   createAddressService,
@@ -37,9 +43,29 @@ export async function findAddressHandler(
   req: Request<{ id: string }>,
   res: Response
 ) {
+  const timer = addressRequestDuration.startTimer({ operation: "findAddress" });
   try {
     const { id } = req.params;
+    // Try to get from cache first
+    const cacheKey = `address:${id}`;
+    const cachedAddress = await getCache(cacheKey);
 
+    if (cachedAddress) {
+      logger.debug(`Cache hit for company ID: ${id}`);
+      addressRequestCounter.inc({
+        operation: "findAddress",
+        status: "success",
+      });
+      timer({ operation: "findAddress" });
+      return res.status(200).json({
+        status: true,
+        message: "Address found successfully",
+        company: cachedAddress,
+        source: "cache",
+      });
+    }
+
+    // Cache miss, fetch from database
     const address = await findAddressService(id);
     if (!address) {
       return res.status(404).json({
@@ -47,6 +73,11 @@ export async function findAddressHandler(
         message: "Address not found",
       });
     }
+    // Cache the result for future requests (1 hour TTL)
+    await setCache(cacheKey, address, 3600);
+
+    addressRequestCounter.inc({ operation: "findAddress", status: "success" });
+    timer({ operation: "findCompany" });
 
     return res.status(200).json({
       status: true,
@@ -67,6 +98,7 @@ export async function findAddressHandler(
  * Get all addresses with pagination
  */
 export async function findAllAddressHandler(req: Request, res: Response) {
+  const timer = addressRequestDuration.startTimer({ operation: "findAddress" });
   try {
     const page =
       typeof req.query.page !== "undefined"
@@ -77,8 +109,36 @@ export async function findAllAddressHandler(req: Request, res: Response) {
         ? Math.min(50, Math.max(1, Number(req.query.limit)))
         : 10;
 
+    logger.info(`Fetching address page ${page + 1} with limit ${limit}`);
+
+    // Create a cache key based on all query parameters
+    const cacheKey = `address:page:${page}:limit:${limit}`;
+
+    // Try to get from cache first
+    const cachedData = await getCache(cacheKey);
+    if (cachedData) {
+      logger.debug(`Cache hit for address page ${page + 1}`);
+      addressRequestCounter.inc({
+        operation: "findAllCompanies",
+        status: "success",
+      });
+      timer({ operation: "findAllCompanies" });
+      return res.status(200).json({
+        ...cachedData,
+        source: "cache",
+      });
+    }
+
     const addresses = await findAllAddressService(page, limit);
     const total = await totalAddressCountService();
+    const responseData = {
+      status: true,
+      message: "Address retrieved successfully",
+      total,
+      page: page + 1,
+      limit,
+      data: addresses,
+    };
 
     if (!addresses || addresses.length === 0) {
       return res.status(200).json({
@@ -90,15 +150,16 @@ export async function findAllAddressHandler(req: Request, res: Response) {
         data: [],
       });
     }
+    // Cache the result for future requests (10 minutes TTL)
+    await setCache(cacheKey, responseData, 600);
 
-    return res.status(200).json({
-      status: true,
-      message: "Addresses retrieved successfully",
-      total,
-      page: page + 1,
-      limit,
-      data: addresses,
+    addressRequestCounter.inc({
+      operation: "findAllCompanies",
+      status: "success",
     });
+    timer({ operation: "findAllCompanies" });
+
+    return res.status(200).json(responseData);
   } catch (error) {
     logger.error("Error in findAllAddressHandler:", error);
     return res.status(500).json({
@@ -116,6 +177,7 @@ export async function CreateAddressHandler(
   req: Request<{}, {}, createAddressInput["body"]>,
   res: Response
 ) {
+  const timer = addressRequestDuration.startTimer({ operation: "findAddress" });
   try {
     const body = req.body;
 
@@ -220,6 +282,7 @@ export async function updateAddressHandler(
   }
 }
 
+const timer = addressRequestDuration.startTimer({ operation: "findAddress" });
 export async function deleteAddressHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
