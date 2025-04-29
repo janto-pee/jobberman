@@ -1,13 +1,11 @@
 import express from "express";
 import {
-  autocompleteSalaryHandler,
-  CreateFGSalaryHandler,
+  CreateSalaryHandler,
   deleteSalaryHandler,
   FilterSalaryHandler,
-  findAllSalaryHandler,
+  findAllSalarysHandler,
   findSalaryHandler,
-  searchSalaryHandler,
-  updateSalaryFKHandler,
+  SearchSalaryHandler,
   updateSalaryHandler,
 } from "../controller/salary.controller";
 import requireUser from "../middleware/requireUser";
@@ -18,11 +16,10 @@ const router = express.Router();
 /**
  * QUERY ROUTES
  */
-router.get("/api/salary", findAllSalaryHandler); //all salary
+router.get("/api/salary", findAllSalarysHandler); //all salary
 router.get("/api/salary/:id", findSalaryHandler); //Salary details
-router.get("/api/salary/currency/autocomplete", autocompleteSalaryHandler); //autocomplete
 router.get("/api/salary/filter/keyword", FilterSalaryHandler); // Filter Salary
-router.get("/api/salary/search/keyword", searchSalaryHandler); //Search Salary
+router.get("/api/salary/search/keyword", SearchSalaryHandler); //Search Salary
 //all report
 
 /**
@@ -31,16 +28,10 @@ router.get("/api/salary/search/keyword", searchSalaryHandler); //Search Salary
 
 router.post(
   "/api/salary",
-  validateResource(createSalarySchema),
-  requireUser,
-  CreateFGSalaryHandler,
+  [validateResource(createSalarySchema), requireUser],
+  CreateSalaryHandler
 );
 router.put("/api/salary/:id", requireUser, updateSalaryHandler);
-router.put(
-  "/api/salary/:salaryId/:fgsId/:tbsId",
-  requireUser,
-  updateSalaryFKHandler,
-);
 router.delete("/api/salary/:id", requireUser, deleteSalaryHandler);
 
 export default router;
