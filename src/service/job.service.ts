@@ -32,28 +32,32 @@ export async function findJobService(query: string) {
  * Find all jobs with pagination
  * @param page Page number (0-indexed)
  * @param limit Number of items per page
- * @returns Array of jobs
+ * @returns Array of jobs and total count
  */
 export async function findAllJobsService(page: number, limit: number) {
   try {
-    const jobs = await prisma.job.findMany({
-      skip: page * limit,
-      take: limit,
-      include: {
-        salary: true,
-        company: {
-          select: {
-            name: true,
-            logo: true,
-            address: true,
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        skip: page * limit,
+        take: limit,
+        include: {
+          salary: true,
+          company: {
+            select: {
+              name: true,
+              logo: true,
+              address: true,
+            },
           },
         },
-      },
-      orderBy: {
-        date_posted: "desc",
-      },
-    });
-    return jobs;
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count(),
+    ]);
+
+    return { jobs, total, page, limit };
   } catch (error: any) {
     throw new Error(`Error finding all jobs: ${error.message}`);
   }
@@ -64,7 +68,7 @@ export async function findAllJobsService(page: number, limit: number) {
  * @param searchParam Object containing search criteria
  * @param skip Number of items to skip
  * @param limit Number of items per page
- * @returns Array of jobs matching criteria
+ * @returns Array of jobs matching criteria and total count
  */
 export async function findManyJobsService(
   searchParam: any,
@@ -74,27 +78,38 @@ export async function findManyJobsService(
   try {
     // Filter out undefined or null values from searchParam
     const filteredParams = Object.entries(searchParam)
-      .filter(([_, value]) => value !== undefined && value !== null)
-      .reduce((acc, [key, value]) => {
-        acc[key] = { contains: value, mode: "insensitive" };
-        return acc;
-      }, {});
+      .filter(
+        ([_, value]) => value !== undefined && value !== null && value !== ""
+      )
+      .reduce(
+        (acc, [key, value]) => {
+          acc[key] = { contains: value, mode: "insensitive" };
+          return acc;
+        },
+        {} as Record<string, any>
+      );
 
-    const jobs = await prisma.job.findMany({
-      where: filteredParams,
-      skip: skip,
-      take: limit,
-      include: {
-        salary: true,
-        company: true,
-        metadata: true,
-        hasProbationPeriod: true,
-      },
-      orderBy: {
-        date_posted: "desc",
-      },
-    });
-    return jobs;
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: filteredParams,
+        skip: skip,
+        take: limit,
+        include: {
+          salary: true,
+          company: true,
+          metadata: true,
+          hasProbationPeriod: true,
+        },
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count({
+        where: filteredParams,
+      }),
+    ]);
+
+    return { jobs, total, page: Math.floor(skip / limit) + 1, limit };
   } catch (error: any) {
     throw new Error(`Error finding jobs by criteria: ${error.message}`);
   }
@@ -117,7 +132,7 @@ export async function totalJobCountService() {
  * @param searchParam Search parameters
  * @param skip Number of items to skip
  * @param limit Number of items per page
- * @returns Array of jobs matching any of the criteria
+ * @returns Array of jobs matching any of the criteria and total count
  */
 export async function fiilterManyJobService(
   searchParam: any,
@@ -193,24 +208,29 @@ export async function fiilterManyJobService(
       orConditions.push({ salary: { OR: salaryConditions } });
     }
 
-    const jobs = await prisma.job.findMany({
-      where: {
-        OR: orConditions.length > 0 ? orConditions : undefined,
-      },
-      include: {
-        salary: true,
-        metadata: true,
-        hasProbationPeriod: true,
-        company: true,
-      },
-      skip: skip,
-      take: limit,
-      orderBy: {
-        date_posted: "desc",
-      },
-    });
+    const whereCondition = orConditions.length > 0 ? { OR: orConditions } : {};
 
-    return jobs;
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: whereCondition,
+        include: {
+          salary: true,
+          metadata: true,
+          hasProbationPeriod: true,
+          company: true,
+        },
+        skip: skip,
+        take: limit,
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count({
+        where: whereCondition,
+      }),
+    ]);
+
+    return { jobs, total, page: Math.floor(skip / limit) + 1, limit };
   } catch (error: any) {
     throw new Error(`Error filtering jobs: ${error.message}`);
   }
@@ -221,38 +241,51 @@ export async function fiilterManyJobService(
  * @param title Title keyword to search
  * @param skip Number of items to skip
  * @param limit Number of items per page
- * @returns Array of jobs matching the title keyword
+ * @returns Array of jobs matching the title keyword and total count
  */
 export async function SearchJobService(
-  title: any,
+  title: string,
   skip: number,
   limit: number
 ) {
   try {
-    const jobs = await prisma.job.findMany({
-      where: {
-        OR: [
-          { title: { contains: title, mode: "insensitive" } },
-          { skills: { contains: title, mode: "insensitive" } },
-          { description: { contains: title, mode: "insensitive" } },
-        ],
-      },
-      include: {
-        salary: true,
-        company: {
-          select: {
-            name: true,
-            logo: true,
+    if (!title || typeof title !== "string") {
+      throw new Error("Search term is required");
+    }
+
+    const whereCondition = {
+      OR: [
+        { title: { contains: title, mode: "insensitive" } },
+        { skills: { contains: title, mode: "insensitive" } },
+        { description: { contains: title, mode: "insensitive" } },
+      ],
+    };
+
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: whereCondition,
+        include: {
+          salary: true,
+          company: {
+            select: {
+              name: true,
+              logo: true,
+              address: true,
+            },
           },
         },
-      },
-      skip: skip,
-      take: limit,
-      orderBy: {
-        date_posted: "desc",
-      },
-    });
-    return jobs;
+        skip: skip,
+        take: limit,
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count({
+        where: whereCondition,
+      }),
+    ]);
+
+    return { jobs, total, page: Math.floor(skip / limit) + 1, limit };
   } catch (error: any) {
     throw new Error(`Error searching jobs: ${error.message}`);
   }
@@ -263,50 +296,58 @@ export async function SearchJobService(
  * @param location Location to search for
  * @param skip Number of items to skip
  * @param limit Number of items per page
- * @returns Array of jobs in the specified location
+ * @returns Array of jobs in the specified location and total count
  */
 export async function findJobLocationService(
-  location: any,
+  location: string,
   skip: number,
   limit: number
 ) {
   try {
-    const jobs = await prisma.job.findMany({
-      where: {
-        OR: [
-          { location: { contains: location, mode: "insensitive" } },
-          {
-            company: {
-              address: {
-                /**
-                 * Defines search conditions for matching job locations across city, country, and state
-                 * Performs a case-insensitive search using the provided location parameter
-                 */
-                OR: [
-                  { city: { contains: location, mode: "insensitive" } },
-                  { country: { contains: location, mode: "insensitive" } },
-                  { state: { contains: location, mode: "insensitive" } },
-                ],
-              },
+    if (!location || typeof location !== "string") {
+      throw new Error("Location is required");
+    }
+
+    const whereCondition = {
+      OR: [
+        { location: { contains: location, mode: "insensitive" } },
+        {
+          company: {
+            address: {
+              OR: [
+                { city: { contains: location, mode: "insensitive" } },
+                { country: { contains: location, mode: "insensitive" } },
+                { state: { contains: location, mode: "insensitive" } },
+              ],
             },
           },
-        ],
-      },
-      include: {
-        salary: true,
-        company: {
-          include: {
-            address: true,
+        },
+      ],
+    };
+
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: whereCondition,
+        include: {
+          salary: true,
+          company: {
+            include: {
+              address: true,
+            },
           },
         },
-      },
-      skip: skip,
-      take: limit,
-      orderBy: {
-        date_posted: "desc",
-      },
-    });
-    return jobs;
+        skip: skip,
+        take: limit,
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count({
+        where: whereCondition,
+      }),
+    ]);
+
+    return { jobs, total, page: Math.floor(skip / limit) + 1, limit };
   } catch (error: any) {
     throw new Error(`Error finding jobs by location: ${error.message}`);
   }
@@ -320,6 +361,10 @@ export async function findJobLocationService(
  */
 export async function findJobCompanyService(id: string, companyId: string) {
   try {
+    if (!id || !companyId) {
+      throw new Error("Job ID and Company ID are required");
+    }
+
     const job = await prisma.job.findUnique({
       where: {
         id: id,
@@ -349,6 +394,11 @@ export async function findJobCompanyService(id: string, companyId: string) {
  */
 export async function createJobService(input: jobServiceInput) {
   try {
+    // Validate required fields
+    if (!input.title || !input.company_id) {
+      throw new Error("Job title and company ID are required");
+    }
+
     const job = await prisma.job.create({
       data: {
         title: input.title,
@@ -422,6 +472,14 @@ export async function createJobService(input: jobServiceInput) {
     });
     return job;
   } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        throw new Error("A job with similar unique constraints already exists");
+      }
+      if (error.code === "P2025") {
+        throw new Error("Company not found");
+      }
+    }
     throw new Error(`Error creating job: ${error.message}`);
   }
 }
@@ -434,6 +492,10 @@ export async function createJobService(input: jobServiceInput) {
  */
 export async function updateJobService(query: string, update: jobInput) {
   try {
+    if (!query) {
+      throw new Error("Job ID is required");
+    }
+
     const updateUser = await prisma.job.update({
       where: {
         id: query,
@@ -450,344 +512,333 @@ export async function updateJobService(query: string, update: jobInput) {
     });
     return updateUser;
   } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        throw new Error("Job not found");
+      }
+    }
     throw new Error(`Error updating job: ${error.message}`);
   }
 }
 
 /**
- * Update a job and its related entities
- * @param salaryId Salary ID
- * @param metadataId Metadata ID
- * @param hppId HasProbationPeriod ID
- * @param id Job ID
- * @param update Job data to update
- * @returns Updated job with related entities
+ * Delete a job by ID
+ * @param query Job ID
+ * @returns Deleted job
  */
-// export async function updateJobFkService(
-//   salaryId: string,
-//   metadataId: string,
-//   hppId: string,
-//   id: string,
-//   update: jobServiceInput,
-// ) {
-//   try {
-//     const updateUser = await prisma.job.update({
-//       where: {
-//         id: id,
-//       },
-//       data: {
-//         title: update.title,
-//         subtitle: update.subtitle,
-//         description: update.description,
-//         qualification: update.qualification,
-//         complimentary_qualification: update.complimentary_qualification,
-//         job_type: update.job_type,
-//         visa_sponsorship: update.visa_sponsorship,
-//         remote_posible: update.remote_posible,
-//         preferred_timezones: update.preferred_timezones
-// company_id: string,
-export async function updateJobFkService(
-  salaryId: string,
-  metadataId: string,
-  hppId: string,
-  id: string,
-  update: jobServiceInput
-) {
-  const updateUser = await prisma.job.update({
-    where: {
-      id: id,
-    },
-    data: {
-      company: {
-        connect: {
-          id: update.company_id,
-        },
-      },
-      salary: {
-        update: {
-          where: {
-            id: salaryId,
-          },
-          data: {
-            currency: update.currency,
-            maximumMinor: update.maximumMinor,
-            minimumMinor: update.minimumMinor,
-          },
-        },
-      },
-      metadata: {
-        update: {
-          where: {
-            id: metadataId,
-          },
-          data: {
-            atsName: update.atsName,
-            employersName: update.employersName,
-          },
-        },
-      },
-      hasProbationPeriod: {
-        update: {
-          where: {
-            id: hppId,
-          },
-          data: {
-            period: update.period,
-            status: false,
-          },
-        },
-      },
-    },
-    include: {
-      company: true,
-      salary: true,
-      metadata: true,
-      hasProbationPeriod: true,
-    },
-  });
-  return updateUser;
-}
-
 export async function deleteJobService(query: string) {
-  const deleteUser = await prisma.job.delete({
-    where: {
-      id: query,
-    },
-  });
-  return deleteUser;
+  try {
+    if (!query) {
+      throw new Error("Job ID is required");
+    }
+
+    const deletedJob = await prisma.job.delete({
+      where: {
+        id: query,
+      },
+      include: {
+        salary: true,
+        metadata: true,
+        hasProbationPeriod: true,
+      },
+    });
+    return deletedJob;
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        throw new Error("Job not found");
+      }
+      if (error.code === "P2003") {
+        throw new Error("Cannot delete job with related records");
+      }
+    }
+    throw new Error(`Error deleting job: ${error.message}`);
+  }
 }
 
-// import { prisma } from "../scripts";
-// import { jobInput, jobServiceInput } from "../schema/job.schema";
+/**
+ * Find jobs by company ID with pagination
+ * @param companyId Company ID
+ * @param page Page number (0-indexed)
+ * @param limit Number of items per page
+ * @returns Array of jobs for the company and total count
+ */
+export async function findJobsByCompanyService(
+  companyId: string,
+  page: number,
+  limit: number
+) {
+  try {
+    if (!companyId) {
+      throw new Error("Company ID is required");
+    }
 
-// export async function findJobService(query: string) {
-//   const user = await prisma.job.findUnique({
-//     where: {
-//       id: query,
-//     },
-//   });
-//   return user;
-// }
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: {
+          company_id: companyId,
+        },
+        include: {
+          salary: true,
+          metadata: true,
+          hasProbationPeriod: true,
+        },
+        skip: page * limit,
+        take: limit,
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count({
+        where: {
+          company_id: companyId,
+        },
+      }),
+    ]);
 
-// export async function findAllJobsService(page: number, limit: number) {
-//   const jobs = await prisma.job.findMany({
-//     skip: page,
-//     take: limit,
-//   });
-//   return jobs;
-// }
+    return { jobs, total, page, limit };
+  } catch (error: any) {
+    throw new Error(`Error finding jobs by company: ${error.message}`);
+  }
+}
 
-// export async function findManyJobsService(
-//   searchParam: any,
-//   skip: number,
-//   limit: number,
-// ) {
-//   const jobs = await prisma.job.findMany({
-//     where: {
-//       ...searchParam,
-//     },
-//     skip: skip,
-//     take: limit,
-//   });
-//   return jobs;
-// }
+/**
+ * Find recent jobs with pagination
+ * @param days Number of days to look back
+ * @param page Page number (0-indexed)
+ * @param limit Number of items per page
+ * @returns Array of recent jobs and total count
+ */
+export async function findRecentJobsService(
+  days: number = 7,
+  page: number = 0,
+  limit: number = 10
+) {
+  try {
+    const dateThreshold = new Date();
+    dateThreshold.setDate(dateThreshold.getDate() - days);
 
-// export async function totalJobCountService() {
-//   const job = await prisma.job.count();
-//   return job;
-// }
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: {
+          date_posted: {
+            gte: dateThreshold,
+          },
+        },
+        include: {
+          salary: true,
+          company: {
+            select: {
+              name: true,
+              logo: true,
+              address: true,
+            },
+          },
+        },
+        skip: page * limit,
+        take: limit,
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count({
+        where: {
+          date_posted: {
+            gte: dateThreshold,
+          },
+        },
+      }),
+    ]);
 
-// export async function fiilterManyJobService(
-//   searchParam: any,
-//   skip: number,
-//   limit: number,
-// ) {
-//   const companys = await prisma.job.findMany({
-//     where: {
-//       OR: [
-//         {
-//           title: {
-//             contains: searchParam.title,
-//           },
-//         },
-//         { qualification: { contains: searchParam.qualification } },
-//         { job_type: { contains: searchParam.job_type } },
-//         { visa_sponsorship: { contains: searchParam.visa_sponsorship } },
-//         { remote_posible: { contains: searchParam.remote_posible } },
-//         { location: { contains: searchParam.location } },
-//         { skills: { contains: searchParam.qualification } },
-//         {
-//           salary: {
-//             OR: [
-//               {
-//                 currency: {
-//                   contains: searchParam.currency,
-//                 },
-//               },
-//               { minimumMinor: { contains: searchParam.salary } },
-//             ],
-//           },
-//         },
-//       ],
-//     },
-//     include: {
-//       salary: true,
-//       metadata: true,
-//       hasProbationPeriod: true,
-//       company: true,
-//     },
-//     skip: skip,
-//     take: limit,
-//   });
-//   return companys;
-// }
+    return { jobs, total, page, limit };
+  } catch (error: any) {
+    throw new Error(`Error finding recent jobs: ${error.message}`);
+  }
+}
 
-// export async function SearchJobService(
-//   title: any,
-//   skip: number,
-//   limit: number,
-// ) {
-//   const jobs = await prisma.job.findMany({
-//     where: {
-//       title: {
-//         contains: title,
-//       },
-//     },
-//     skip: skip,
-//     take: limit,
-//   });
-//   return jobs;
-// }
-// export async function findJobLocationService(
-//   location: any,
-//   skip: number,
-//   limit: number,
-// ) {
-//   const jobs = await prisma.job.findMany({
-//     where: {
-//       company: {
-//         OR: [
-//           {
-//             address: {
-//               OR: [
-//                 {
-//                   city: {
-//                     contains: location,
-//                   },
-//                 },
-//                 { country: { contains: location } },
-//               ],
-//             },
-//           },
-//         ],
-//       },
-//     },
-//     include: {
-//       salary: true,
-//     },
-//     skip: skip,
-//     take: limit,
-//   });
-//   return jobs;
-// }
+/**
+ * Find jobs by skill requirements
+ * @param skills Array of skills to search for
+ * @param page Page number (0-indexed)
+ * @param limit Number of items per page
+ * @returns Array of jobs matching the skills and total count
+ */
+export async function findJobsBySkillsService(
+  skills: string[],
+  page: number = 0,
+  limit: number = 10
+) {
+  try {
+    if (!skills || !skills.length) {
+      throw new Error("At least one skill is required");
+    }
 
-// export async function findJobCompanyService(id: string, companyId: string) {
-//   const user = await prisma.job.findUnique({
-//     where: {
-//       id: id,
-//       company_id: companyId,
-//     },
-//   });
+    const skillConditions = skills.map((skill) => ({
+      skills: {
+        contains: skill,
+        mode: "insensitive" as Prisma.QueryMode,
+      },
+    }));
 
-//   return user;
-// }
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: {
+          OR: skillConditions,
+        },
+        include: {
+          salary: true,
+          company: {
+            select: {
+              name: true,
+              logo: true,
+              address: true,
+            },
+          },
+        },
+        skip: page * limit,
+        take: limit,
+        orderBy: {
+          date_posted: "desc",
+        },
+      }),
+      prisma.job.count({
+        where: {
+          OR: skillConditions,
+        },
+      }),
+    ]);
 
-// /**
-//  *
-//  *
-//  * MUTATIONS END POINT
-//  * NOT EXPOSED
-//  *
-//  */
+    return { jobs, total, page, limit };
+  } catch (error: any) {
+    throw new Error(`Error finding jobs by skills: ${error.message}`);
+  }
+}
 
-// export async function createJobService(input: jobServiceInput) {
-//   const user = await prisma.job.create({
-//     data: {
-//       title: input.title,
-//       subtitle: input.subtitle,
-//       description: input.description,
-//       qualification: input.qualification,
-//       complimentary_qualification: input.complimentary_qualification,
-//       job_type: input.job_type,
-//       visa_sponsorship: input.visa_sponsorship,
-//       remote_posible: input.remote_posible,
-//       preferred_timezones: input.preferred_timezones,
-//       location: input.location,
-//       date_posted: input.date_posted,
-//       relocation: input.relocation,
-//       skills: input.skills,
-//       employer_hiring_contact: input.employer_hiring_contact,
-//       descriptionFormatting: input.descriptionFormatting,
-//       probationaryPeriod: input.probationaryPeriod,
-//       metadata: {
-//         create: {
-//           atsName: input.atsName,
-//           employersName: input.employersName,
-//         },
-//       },
-//       hasProbationPeriod: {
-//         create: {
-//           period: input.period,
-//           status: false,
-//         },
-//       },
-//       company: {
-//         connect: {
-//           id: input.company_id,
-//         },
-//       },
-//       salary: {
-//         create: {
-//           currency: input.currency,
-//           maximumMinor: input.maximumMinor,
-//           minimumMinor: input.minimumMinor,
-//           fineGrainedSalaryInformation: {
-//             create: {
-//               totalSalaryMinor: input.totalSalaryMinor,
-//               workingHours: input.workingHours,
-//               totalOvertimeHours: input.totalOvertimeHours,
-//               statutoryOvertimeHours: input.statutoryOvertimeHours,
-//               fixedOvertimeSalaryMinor: input.fixedOvertimeSalaryMinor,
-//               fixedOvertimePay: input.fixedOvertimePay,
-//             },
-//           },
-//           taskBasedSalaryInformation: {
-//             create: {
-//               taskLengthMinutes: input.taskLengthMinutes,
-//               taskDescription: input.taskDescription,
-//             },
-//           },
-//         },
-//       },
-//     },
-//     include: {
-//       company: true,
-//       metadata: true,
-//       salary: true,
-//       hasProbationPeriod: true,
-//     },
-//   });
-//   return user;
-// }
+/**
+ * Update a job's salary information
+ * @param jobId Job ID
+ * @param salaryId Salary ID
+ * @param salaryData Salary data to update
+ * @returns Updated job with salary information
+ */
+export async function updateJobSalaryService(
+  jobId: string,
+  salaryId: string,
+  salaryData: {
+    currency?: string;
+    maximumMinor?: string;
+    minimumMinor?: string;
+    totalSalaryMinor?: string;
+    workingHours?: number;
+  }
+) {
+  try {
+    if (!jobId || !salaryId) {
+      throw new Error("Job ID and Salary ID are required");
+    }
 
-// export async function updateJobService(query: string, update: jobInput) {
-//   const updateUser = await prisma.job.update({
-//     where: {
-//       id: query,
-//     },
-//     data: {
-//       ...update,
-//     },
-//   });
-//   return updateUser;
-// }
+    const { totalSalaryMinor, workingHours, ...salaryFields } = salaryData;
+
+    const updatedJob = await prisma.job.update({
+      where: {
+        id: jobId,
+      },
+      data: {
+        salary: {
+          update: {
+            where: {
+              id: salaryId,
+            },
+            data: {
+              ...salaryFields,
+              fineGrainedSalaryInformation:
+                totalSalaryMinor || workingHours
+                  ? {
+                      update: {
+                        totalSalaryMinor,
+                        workingHours,
+                      },
+                    }
+                  : undefined,
+            },
+          },
+        },
+      },
+      include: {
+        salary: {
+          include: {
+            fineGrainedSalaryInformation: true,
+            taskBasedSalaryInformation: true,
+          },
+        },
+        company: true,
+      },
+    });
+
+    return updatedJob;
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        throw new Error("Job or salary record not found");
+      }
+    }
+    throw new Error(`Error updating job salary: ${error.message}`);
+  }
+}
+
+/**
+ * Find featured or promoted jobs
+ * @param page Page number (0-indexed)
+ * @param limit Number of items per page
+ * @returns Array of featured jobs and total count
+ */
+export async function findFeaturedJobsService(
+  page: number = 0,
+  limit: number = 10
+) {
+  try {
+    // This assumes you have a "featured" or "promoted" field in your schema
+    // If not, you could implement a different logic for featuring jobs
+
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: {
+          metadata: {
+            // Assuming you might add a "featured" field to metadata
+            // featured: true,
+            // For now, let's use a workaround - get jobs from premium companies
+            employersName: {
+              not: null,
+            },
+          },
+        },
+        include: {
+          salary: true,
+          company: {
+            select: {
+              name: true,
+              logo: true,
+              address: true,
+            },
+          },
+        },
+        skip: page * limit,
+        take: limit,
+        orderBy: [{ date_posted: "desc" }],
+      }),
+      prisma.job.count({
+        where: {
+          metadata: {
+            employersName: {
+              not: null,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return { jobs, total, page, limit };
+  } catch (error: any) {
+    throw new Error(`Error finding featured jobs: ${error.message}`);
+  }
+}

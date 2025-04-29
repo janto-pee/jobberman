@@ -8,7 +8,7 @@ import {
   findJobHandler,
   findJobsByLocationHandler,
   SearchJobHandler,
-  updateJobFKHandler,
+  // updateJobFKHandler,
   updateJobHandler,
 } from "../controller/Job.controller";
 import requireUser from "../middleware/requireUser";
@@ -42,11 +42,11 @@ router.put(
   updateJobHandler
 );
 
-router.put(
-  "/api/jobs/:id/:salaryId/:metadataId/:hppId",
-  [validateResource(createJobSchema), requireUser],
-  updateJobFKHandler
-);
+// router.put(
+//   "/api/jobs/:id/:salaryId/:metadataId/:hppId",
+//   [validateResource(createJobSchema), requireUser],
+//   updateJobFKHandler
+// );
 
 router.delete("/api/jobs/:id", requireUser, deleteJobHandler);
 

@@ -8,11 +8,72 @@ import {
   findManyJobsService,
   SearchJobService,
   totalJobCountService,
-  updateJobFkService,
   updateJobService,
 } from "../service/job.service";
 import { findCompanyService } from "../service/company.service";
 import { findUserService } from "../service/user.service";
+import { createJobSchema } from "../schema/job.schema";
+
+// Create a utility function
+function sendResponse(
+  res: Response,
+  status: boolean,
+  statusCode: number,
+  message: string,
+  data?: any
+) {
+  return res.status(statusCode).json({
+    status,
+    message,
+    ...(data && { data }),
+  });
+}
+
+function getPaginationParams(req: Request) {
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const limit = Math.max(1, parseInt(req.query.lmino as string) || 10);
+
+  return {
+    page,
+    limit,
+    skip: (page - 1) * limit,
+  };
+}
+
+// Add this utility function
+async function checkCompanyAuthorization(userId: string, companyId?: string) {
+  const user = await findUserService(userId);
+
+  if (!user?.companyId) {
+    return {
+      authorized: false,
+      message: "User is not affiliated with any company",
+    };
+  }
+
+  if (companyId && user.companyId !== companyId) {
+    return {
+      authorized: false,
+      message: "Unauthorized: User does not belong to this company",
+    };
+  }
+
+  return { authorized: true, user };
+}
+
+// For error responses
+function sendErrorResponse(
+  res: Response,
+  statusCode: number,
+  message: string,
+  error?: any
+) {
+  return res.status(statusCode).json({
+    status: false,
+    message,
+    ...(error && { error }),
+  });
+}
 
 /**
  *
@@ -20,66 +81,62 @@ import { findUserService } from "../service/user.service";
  * EXPOSED
  *
  */
+
+// Import at the top
+
+// Then in your routes file:
+// router.post('/jobs', validateRequest(createJobSchema), CreateJobHandler);
+
 export async function findJobHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
 
     const job = await findJobService(id);
     if (!job) {
-      res.send("could not find user's job");
-      return;
+      return sendResponse(res, false, 404, "Job not found");
     }
-    res.status(200).json({
-      status: true,
-      message: "job found",
-      job: job,
-    });
+
+    return sendResponse(res, true, 200, "Job found", { job });
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
+    return sendErrorResponse(res, 500, "Server error", error);
   }
 }
 
 export async function findAllJobsHandler(req: Request, res: Response) {
   try {
-    const page =
-      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    const limit =
-      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
-    const job = await findAllJobsService(page, limit);
-    const total = await totalJobCountService();
-    if (!job) {
-      res.send("could not find user's job");
-      return;
+    // Validate and parse query parameters
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.lmino as string) || 10;
+
+    if (page < 1 || limit < 1) {
+      return sendErrorResponse(res, 400, "Invalid pagination parameters");
     }
 
-    res.status(200).json({
-      status: true,
+    const job = await findAllJobsService(page - 1, limit);
+    const total = await totalJobCountService();
+
+    if (!job) {
+      return sendResponse(res, false, 404, "No jobs found");
+    }
+
+    return sendResponse(res, true, 200, "Jobs retrieved successfully", {
       total,
-      "job limit per page": limit,
-      page: page + 1,
-      job: job,
+      limit,
+      page,
+      jobs: job,
+      totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
+    return sendErrorResponse(res, 500, "Server error", error);
   }
 }
 
 export async function findJobsByLocationHandler(
   req: Request<{ location: string }, { page: number; lmino: number }, {}>,
-  res: Response,
+  res: Response
 ) {
   try {
     const page =
@@ -94,7 +151,7 @@ export async function findJobsByLocationHandler(
         },
       },
       page,
-      limit,
+      limit
     );
     if (!job) {
       res.send("No job for this location");
@@ -119,7 +176,7 @@ export async function findJobsByLocationHandler(
 
 export async function FilterJobHandler(
   req: Request<{}, FilterjobQuery["query"], {}>,
-  res: Response,
+  res: Response
 ) {
   try {
     const page =
@@ -154,7 +211,7 @@ export async function FilterJobHandler(
         currency,
       },
       page,
-      limit,
+      limit
     );
     if (!job) {
       res.send("Job not found");
@@ -176,33 +233,50 @@ export async function FilterJobHandler(
   }
 }
 
+/**
+ * Search for jobs by title
+ * @param req Express request object
+ * @param res Express response object
+ * @returns Jobs matching the search criteria
+ */
 export async function SearchJobHandler(req: Request, res: Response) {
   try {
-    const page =
-      typeof req.query.page !== "undefined" ? Number(req.query.page) - 1 : 0;
-    const limit =
-      typeof req.query.lmino !== "undefined" ? Number(req.query.lmino) : 10;
-    const title = req.query.title;
+    const pagination = getPaginationParams(req);
+    const title = req.query.title as string;
 
-    const job = await SearchJobService(title, page, limit);
-    if (job.length == 0) {
-      res.status(404).send("No job found");
-      return;
+    if (!title || title.trim() === "") {
+      return sendErrorResponse(res, 400, "Search title is required");
     }
-    res.status(200).json({
-      status: true,
-      "total result": job.length,
-      page: page + 1,
-      job: job,
-    });
-    return;
+
+    const jobs = await SearchJobService(
+      title,
+      pagination.page - 1,
+      pagination.limit
+    );
+
+    if (jobs.jobs.length === 0) {
+      return sendResponse(
+        res,
+        false,
+        404,
+        "No jobs found matching your search criteria"
+      );
+    }
+
+    return sendResponse(
+      res,
+      true,
+      200,
+      "Search results retrieved successfully",
+      {
+        total: jobs.jobs.length,
+        page: pagination.page,
+        limit: pagination.limit,
+        jobs,
+      }
+    );
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
+    return sendErrorResponse(res, 500, "Server error", error);
   }
 }
 
@@ -216,7 +290,7 @@ export async function SearchJobHandler(req: Request, res: Response) {
 
 export async function CreateJobHandler(
   req: Request<{}, {}, createJobInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
@@ -257,9 +331,10 @@ export async function CreateJobHandler(
   }
 }
 
+// Then use it in handlers like:
 export async function updateJobHandler(
   req: Request<{ id: string }, {}, createJobInput["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -267,100 +342,22 @@ export async function updateJobHandler(
 
     const job = await findJobService(id);
     if (!job) {
-      res.sendStatus(400);
-      return;
-    }
-    //
-    //
-    //
-    //
-    //
-    //get user
-    const resUser = res.locals.user;
-    const user = await findUserService(resUser.id);
-    if (!user?.companyId) {
-      res
-        .status(500)
-        .json({ error: "please create a company before you create a job" });
-      return;
+      return sendResponse(res, false, 404, "Job not found");
     }
 
-    const company = await findCompanyService(user.companyId);
-
-    if (!user || user.companyId !== company?.id) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
-    }
-
-    const updatedjob = await updateJobService(id, body);
-
-    res.status(200).json({
-      status: true,
-      message: "password changed successfully",
-      data: updatedjob,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
-  }
-}
-
-export async function updateJobFKHandler(
-  req: Request<
-    {
-      salaryId: string;
-      metadataId: string;
-      hppId: string;
-      id: string;
-    },
-    {},
-    createJobInput["body"]
-  >,
-  res: Response,
-) {
-  try {
-    const { salaryId, metadataId, hppId, id } = req.params;
-    const body = req.body;
-    const job = await findJobService(id);
-    if (!job) {
-      res.status(404).sendStatus(400);
-      return;
-    }
-
-    //get user
-    const resUser = res.locals.user;
-    const user = await findUserService(resUser.id);
-
-    if (!user || user.companyId !== job.company_id) {
-      res.status(500).json({ error: "unauthorised" });
-      return;
-    }
-
-    const updatedJob = await updateJobFkService(
-      salaryId,
-      metadataId,
-      hppId,
-      id,
-      { ...body, company_id: user.companyId },
+    const auth = await checkCompanyAuthorization(
+      res.locals.user.id,
+      job.company_id
     );
+    if (!auth.authorized) {
+      return sendErrorResponse(res, 403, "user not affiliated with company");
+      // return sendErrorResponse(res, 403, auth.message);
+    }
 
-    res.status(200).json({
-      status: true,
-      message: "job updated successfully",
-      data: updatedJob,
-    });
-    return;
+    const updatedJob = await updateJobService(id, body);
+    return sendResponse(res, true, 200, "Job updated successfully", updatedJob);
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "server error",
-      error: error,
-    });
-    return;
+    return sendErrorResponse(res, 500, "Server error", error);
   }
 }
 
@@ -399,3 +396,58 @@ export async function deleteJobHandler(req: Request, res: Response) {
     });
   }
 }
+
+// export async function updateJobFKHandler(
+//   req: Request<
+//     {
+//       salaryId: string;
+//       metadataId: string;
+//       hppId: string;
+//       id: string;
+//     },
+//     {},
+//     createJobInput["body"]
+//   >,
+//   res: Response
+// ) {
+//   try {
+//     const { salaryId, metadataId, hppId, id } = req.params;
+//     const body = req.body;
+//     const job = await findJobService(id);
+//     if (!job) {
+//       res.status(404).sendStatus(400);
+//       return;
+//     }
+
+//     //get user
+//     const resUser = res.locals.user;
+//     const user = await findUserService(resUser.id);
+
+//     if (!user || user.companyId !== job.company_id) {
+//       res.status(500).json({ error: "unauthorised" });
+//       return;
+//     }
+
+//     const updatedJob = await updateJobFkService(
+//       salaryId,
+//       metadataId,
+//       hppId,
+//       id,
+//       { ...body, company_id: user.companyId }
+//     );
+
+//     res.status(200).json({
+//       status: true,
+//       message: "job updated successfully",
+//       data: updatedJob,
+//     });
+//     return;
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: "server error",
+//       error: error,
+//     });
+//     return;
+//   }
+// }

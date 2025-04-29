@@ -12,14 +12,14 @@ import { getCache, setCache, deleteCache } from "../utils/redis";
  */
 export async function findUserService(userId: string) {
   try {
-    // Try to get from cache first
-    const cacheKey = `user:${userId}`;
-    const cachedUser = await getCache(cacheKey);
+    // // Try to get from cache first
+    // const cacheKey = `user:${userId}`;
+    // const cachedUser = await getCache(cacheKey);
 
-    if (cachedUser) {
-      logger.debug(`User cache hit for ID: ${userId}`);
-      return cachedUser;
-    }
+    // if (cachedUser) {
+    //   logger.debug(`User cache hit for ID: ${userId}`);
+    //   return cachedUser;
+    // }
 
     // Cache miss, fetch from database
     const user = await prisma.user.findUnique({
@@ -35,10 +35,10 @@ export async function findUserService(userId: string) {
       },
     });
 
-    // Cache the result if found
-    if (user) {
-      await setCache(cacheKey, user, 3600); // Cache for 1 hour
-    }
+    // // Cache the result if found
+    // if (user) {
+    //   await setCache(cacheKey, user, 3600); // Cache for 1 hour
+    // }
 
     return user;
   } catch (error) {
