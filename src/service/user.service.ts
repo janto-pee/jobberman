@@ -3,7 +3,7 @@ import { prisma } from "../scripts";
 import { userService } from "../schema/user.schema";
 import { comparePassword, hashPassword } from "../utils/hashPasword";
 import { logger } from "../utils/logger";
-import { getCache, setCache, deleteCache } from "../utils/redis";
+// import { getCache, setCache, deleteCache } from "../utils/redis";
 
 /**
  * Find a user by ID with caching
@@ -96,13 +96,13 @@ export async function validateUser(email: string, password: string) {
 export async function findEmailService(email: string) {
   try {
     // Try to get from cache first
-    const cacheKey = `user:email:${email}`;
-    const cachedUser = await getCache(cacheKey);
+    // const cacheKey = `user:email:${email}`;
+    // const cachedUser = await getCache(cacheKey);
 
-    if (cachedUser) {
-      logger.debug(`User cache hit for email: ${email}`);
-      return cachedUser;
-    }
+    // if (cachedUser) {
+    //   logger.debug(`User cache hit for email: ${email}`);
+    //   return cachedUser;
+    // }
 
     // Cache miss, fetch from database
     const user = await prisma.user.findUnique({
@@ -117,9 +117,9 @@ export async function findEmailService(email: string) {
     });
 
     // Cache the result if found
-    if (user) {
-      await setCache(cacheKey, user, 3600); // Cache for 1 hour
-    }
+    // if (user) {
+    //   await setCache(cacheKey, user, 3600); // Cache for 1 hour
+    // }
 
     return user;
   } catch (error) {
@@ -190,7 +190,7 @@ export async function createUserService(input: userService) {
     logger.info(`User created successfully: ${user.id}`);
 
     // Clear any existing cache for this email
-    await deleteCache(`user:email:${user.email}`);
+    // await deleteCache(`user:email:${user.email}`);
 
     return omit(user, ["hashed_password"]); // Don't return password hash
   } catch (error) {
