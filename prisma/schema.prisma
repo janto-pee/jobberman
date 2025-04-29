@@ -98,8 +98,8 @@ model Job {
   // Relations
   company              Company               @relation(fields: [company_id], references: [id], onDelete: Cascade)
   company_id           String
-  salary               Salary                @relation(fields: [salaryId], references: [id], onDelete: Cascade)
-  salaryId             String                @unique
+  salary               Salary?               @relation(fields: [salaryId], references: [id], onDelete: Cascade)
+  salaryId             String?               @unique
   metadata             MetaData              @relation(fields: [metadataId], references: [id], onDelete: Cascade)
   metadataId           String                @unique
   hasProbationPeriod   HasProbationaryPeriod @relation(fields: [hasProbationPeriodId], references: [id], onDelete: Cascade)

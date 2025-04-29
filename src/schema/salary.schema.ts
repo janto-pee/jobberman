@@ -10,10 +10,13 @@ const salaryInput = object({
    */
 
   //TBS
-  taskLengthMinutes: string({
+  taskLengthMinutes: number({
     required_error: `task length is required`,
   }),
   taskDescription: string({
+    required_error: `task description is required`,
+  }),
+  ratePerTask: string({
     required_error: `task description is required`,
   }),
 
