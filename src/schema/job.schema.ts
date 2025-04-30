@@ -1,4 +1,4 @@
-import { object, string, TypeOf, number, boolean } from "zod";
+import { object, string, TypeOf, number, boolean, any } from "zod";
 
 const companyId = {
   company_id: string({
@@ -23,10 +23,10 @@ const jobItem = {
   complimentary_qualification: string({
     required_error: `complimentary qualification for completed task is required`,
   }),
-  job_type: string({
+  job_type: any({
     required_error: `job type for completed task is required`,
   }),
-  visa_sponsorship: string({
+  visa_sponsorship: any({
     required_error: `visa sponsorship for completed task is required`,
   }),
   remote_posible: string({
@@ -41,10 +41,10 @@ const jobItem = {
   date_posted: string({
     required_error: `date posted for completed task is required`,
   }),
-  relocation: string({
+  relocation: boolean({
     required_error: `relocation for completed task is required`,
   }),
-  skills: string({ required_error: `skills for completed task is required` }),
+  skills: any({ required_error: `skills for completed task is required` }),
   employer_hiring_contact: string({
     required_error: `employer hiring contact for completed task is required`,
   }),
@@ -76,11 +76,14 @@ const jobItem = {
    */
 
   //TBS
-  taskLengthMinutes: string({
+  taskLengthMinutes: number({
     required_error: `task length is required`,
   }),
   taskDescription: string({
     required_error: `task description is required`,
+  }),
+  ratePerTask: string({
+    required_error: `rate per task is required`,
   }),
 
   // FGS

@@ -453,6 +453,7 @@ export async function createJobService(input: jobServiceInput) {
               create: {
                 taskLengthMinutes: input.taskLengthMinutes,
                 taskDescription: input.taskDescription,
+                ratePerTask: input.ratePerTask,
               },
             },
           },
@@ -502,6 +503,7 @@ export async function updateJobService(query: string, update: jobInput) {
       },
       data: {
         ...update,
+        status: "DRAFT",
       },
       include: {
         company: true,
@@ -798,19 +800,19 @@ export async function findFeaturedJobsService(
 ) {
   try {
     // This assumes you have a "featured" or "promoted" field in your schema
-    // If not, you could implement a different logic for featuring jobs
 
     const [jobs, total] = await Promise.all([
       prisma.job.findMany({
         where: {
-          metadata: {
-            // Assuming you might add a "featured" field to metadata
-            // featured: true,
-            // For now, let's use a workaround - get jobs from premium companies
-            employersName: {
-              not: null,
-            },
-          },
+          remote_possible: true,
+          // metadata: {
+          //   // Assuming adding a "featured" field to metadata
+          //   // featured: true,
+          //   // Using a workaround - get jobs from premium companies
+          //   employersName: {
+          //     not: null,
+          //   },
+          // },
         },
         include: {
           salary: true,
