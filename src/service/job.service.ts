@@ -140,34 +140,39 @@ export async function fiilterManyJobService(
   limit: number
 ) {
   try {
-    const orConditions = [];
+    // Build dynamic where clause based on provided parameters
+    const whereClause: any = {
+      orConditions: [],
+    };
+
+    // const orConditions = [];
 
     if (searchParam.title) {
-      orConditions.push({
+      whereClause.orConditions.push({
         title: { contains: searchParam.title, mode: "insensitive" },
       });
     }
 
     if (searchParam.qualification) {
-      orConditions.push({
+      whereClause.orConditions.push({
         qualification: {
           contains: searchParam.qualification,
           mode: "insensitive",
         },
       });
-      orConditions.push({
+      whereClause.orConditions.push({
         skills: { contains: searchParam.qualification, mode: "insensitive" },
       });
     }
 
     if (searchParam.job_type) {
-      orConditions.push({
+      whereClause.orConditions.push({
         job_type: { contains: searchParam.job_type, mode: "insensitive" },
       });
     }
 
     if (searchParam.visa_sponsorship) {
-      orConditions.push({
+      whereClause.orConditions.push({
         visa_sponsorship: {
           contains: searchParam.visa_sponsorship,
           mode: "insensitive",
@@ -176,7 +181,7 @@ export async function fiilterManyJobService(
     }
 
     if (searchParam.remote_posible) {
-      orConditions.push({
+      whereClause.orConditions.push({
         remote_posible: {
           contains: searchParam.remote_posible,
           mode: "insensitive",
@@ -185,7 +190,7 @@ export async function fiilterManyJobService(
     }
 
     if (searchParam.location) {
-      orConditions.push({
+      whereClause.orConditions.push({
         location: { contains: searchParam.location, mode: "insensitive" },
       });
     }
@@ -205,14 +210,12 @@ export async function fiilterManyJobService(
         });
       }
 
-      orConditions.push({ salary: { OR: salaryConditions } });
+      whereClause.orConditions.push({ salary: { OR: salaryConditions } });
     }
-
-    const whereCondition = orConditions.length > 0 ? { OR: orConditions } : {};
 
     const [jobs, total] = await Promise.all([
       prisma.job.findMany({
-        where: whereCondition,
+        where: whereClause,
         include: {
           salary: true,
           metadata: true,
@@ -226,7 +229,7 @@ export async function fiilterManyJobService(
         },
       }),
       prisma.job.count({
-        where: whereCondition,
+        where: whereClause,
       }),
     ]);
 
@@ -317,7 +320,6 @@ export async function findJobLocationService(
               OR: [
                 { city: { contains: location, mode: "insensitive" } },
                 { country: { contains: location, mode: "insensitive" } },
-                { state: { contains: location, mode: "insensitive" } },
               ],
             },
           },
@@ -408,15 +410,12 @@ export async function createJobService(input: jobServiceInput) {
         complimentary_qualification: input.complimentary_qualification,
         job_type: input.job_type,
         visa_sponsorship: input.visa_sponsorship,
-        remote_posible: input.remote_posible,
         preferred_timezones: input.preferred_timezones,
         location: input.location,
         date_posted: input.date_posted || new Date(),
         relocation: input.relocation,
         skills: input.skills,
         employer_hiring_contact: input.employer_hiring_contact,
-        descriptionFormatting: input.descriptionFormatting,
-        probationaryPeriod: input.probationaryPeriod,
         metadata: {
           create: {
             atsName: input.atsName,
@@ -832,7 +831,7 @@ export async function findFeaturedJobsService(
         where: {
           metadata: {
             employersName: {
-              not: null,
+              not: "jobberman",
             },
           },
         },
