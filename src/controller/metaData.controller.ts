@@ -43,24 +43,27 @@ export async function findMetadataHandler(
 
     const metadata = await findMetadataService(id);
     if (!metadata) {
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "Metadata not found",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Metadata retrieved successfully",
       data: metadata,
     });
+    return;
   } catch (error) {
     logger.error("Error in findMetadataHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve metadata",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -82,7 +85,7 @@ export async function findAllMetadataHandler(req: Request, res: Response) {
     const total = await totalMetadataCountService();
 
     if (!metadata || metadata.length === 0) {
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "No metadata found",
         total: 0,
@@ -90,9 +93,10 @@ export async function findAllMetadataHandler(req: Request, res: Response) {
         limit,
         data: [],
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Metadataes retrieved successfully",
       total,
@@ -100,13 +104,15 @@ export async function findAllMetadataHandler(req: Request, res: Response) {
       limit,
       data: metadata,
     });
+    return;
   } catch (error) {
     logger.error("Error in findAllMetadataHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve metadata",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -122,28 +128,31 @@ export async function CreateMetadataHandler(
 
     const user = res.locals.user;
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     const metadata = await createMetadataService({
       ...body,
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       status: true,
       message: "Metadata created successfully",
       data: metadata,
     });
+    return;
   } catch (error) {
     logger.error("Error in CreateMetadataHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to create metadata",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -164,38 +173,42 @@ export async function updateMetadataHandler(
     const user = res.locals.user;
     if (!user) {
       metadataRequestCounter.inc({ operation, status: "unauthorized" });
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     const metadata = await findMetadataService(id);
     if (!metadata) {
       metadataRequestCounter.inc({ operation, status: "notFound" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "Metadata not found",
       });
+      return;
     }
 
     const updatedMetadata = await updateMetadataService(id, body);
 
     metadataRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Metadata updated successfully",
       data: updatedMetadata,
     });
+    return;
   } catch (error) {
     metadataRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in updateMetadataHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to update metadata",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     metadataRequestDuration.observe({ operation }, duration);
@@ -226,5 +239,6 @@ export async function deleteMetadataHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+    return;
   }
 }

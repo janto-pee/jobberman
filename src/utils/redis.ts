@@ -61,6 +61,7 @@ export const setCache = async <T>(
     await redisClient.set(key, JSON.stringify(value), {
       EX: expiryInSeconds,
     });
+    return;
   } catch (error) {
     logger.error(`Redis set error for key ${key}: ${error}`);
   }

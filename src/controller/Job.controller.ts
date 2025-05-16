@@ -28,11 +28,12 @@ function sendResponse(
   message: string,
   data?: any
 ) {
-  return res.status(statusCode).json({
+  res.status(statusCode).json({
     status,
     message,
     ...(data && { data }),
   });
+  return;
 }
 
 function getPaginationParams(req: Request) {
@@ -74,11 +75,12 @@ function sendErrorResponse(
   message: string,
   error?: any
 ) {
-  return res.status(statusCode).json({
+  res.status(statusCode).json({
     status: false,
     message,
     ...(error && { error }),
   });
+  return;
 }
 
 /**
@@ -135,6 +137,7 @@ export async function findAllJobsHandler(req: Request, res: Response) {
       jobs: job,
       totalPages: Math.ceil(total / limit),
     });
+    return;
   } catch (error) {
     return sendErrorResponse(res, 500, "Server error", error);
   }
@@ -170,6 +173,7 @@ export async function findJobsByLocationHandler(
       page: page + 1,
       job: job,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -229,6 +233,7 @@ export async function FilterJobHandler(
       page: page + 1,
       job: job,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -400,6 +405,7 @@ export async function deleteJobHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+    return;
   }
 }
 

@@ -11,7 +11,7 @@ import {
 
 export async function findTBSHandler(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -27,6 +27,7 @@ export async function findTBSHandler(
       message: "User TBS found",
       TBS: TBS,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -76,7 +77,7 @@ export async function findAllTBSHandler(req: Request, res: Response) {
 
 export async function CreateTBSHandler(
   req: Request<{}, {}, createTBS["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const body = req.body;
@@ -103,7 +104,7 @@ export async function CreateTBSHandler(
 
 export async function updateTBSHandler(
   req: Request<{ id: string }, {}, createTBS["body"]>,
-  res: Response,
+  res: Response
 ) {
   try {
     const { id } = req.params;
@@ -121,6 +122,7 @@ export async function updateTBSHandler(
       message: "password changed successfully",
       data: updatedAddress,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -148,5 +150,6 @@ export async function deleteTBSHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+    return;
   }
 }

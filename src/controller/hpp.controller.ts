@@ -43,24 +43,27 @@ export async function findHPPHandler(
 
     const hpp = await findHPPService(id);
     if (!hpp) {
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "HPP not found",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "HPP retrieved successfully",
       data: hpp,
     });
+    return;
   } catch (error) {
     logger.error("Error in findHPPHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve hpp",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -82,7 +85,7 @@ export async function findAllHPPHandler(req: Request, res: Response) {
     const total = await totalHPPCountService();
 
     if (!hpp || hpp.length === 0) {
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "No hpp found",
         total: 0,
@@ -90,9 +93,10 @@ export async function findAllHPPHandler(req: Request, res: Response) {
         limit,
         data: [],
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "HPPes retrieved successfully",
       total,
@@ -100,13 +104,15 @@ export async function findAllHPPHandler(req: Request, res: Response) {
       limit,
       data: hpp,
     });
+    return;
   } catch (error) {
     logger.error("Error in findAllHPPHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve hpp",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -122,28 +128,31 @@ export async function CreateHPPHandler(
 
     const user = res.locals.user;
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     const hpp = await createHPPService({
       ...body,
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       status: true,
       message: "HPP created successfully",
       data: hpp,
     });
+    return;
   } catch (error) {
     logger.error("Error in CreateHPPHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to create hpp",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -164,38 +173,42 @@ export async function updateHPPHandler(
     const user = res.locals.user;
     if (!user) {
       hppRequestCounter.inc({ operation, status: "unauthorized" });
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     const hpp = await findHPPService(id);
     if (!hpp) {
       hppRequestCounter.inc({ operation, status: "notFound" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "HPP not found",
       });
+      return;
     }
 
     const updatedHPP = await updateHPPService(id, body);
 
     hppRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "HPP updated successfully",
       data: updatedHPP,
     });
+    return;
   } catch (error) {
     hppRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in updateHPPHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to update hpp",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     hppRequestDuration.observe({ operation }, duration);
@@ -226,5 +239,6 @@ export async function deleteHPPHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+    return;
   }
 }

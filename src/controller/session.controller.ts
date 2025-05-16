@@ -61,6 +61,7 @@ export async function CreateSessionHandler(
       message: "server error",
       error: error,
     });
+    return;
   }
 }
 
@@ -93,6 +94,7 @@ export async function deleteSessionHandler(_: Request, res: Response) {
       message: "session expired",
       data: session,
     });
+    return;
   } catch (error) {
     res.status(500).json({
       status: false,

@@ -43,24 +43,27 @@ export async function findFGSHandler(
 
     const fgs = await findFGSService(id);
     if (!fgs) {
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "FGS not found",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "FGS retrieved successfully",
       data: fgs,
     });
+    return;
   } catch (error) {
     logger.error("Error in findFGSHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve fgs",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -82,7 +85,7 @@ export async function findAllFGSHandler(req: Request, res: Response) {
     const total = await totalFGSCountService();
 
     if (!fgs || fgs.length === 0) {
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "No fgs found",
         total: 0,
@@ -90,9 +93,10 @@ export async function findAllFGSHandler(req: Request, res: Response) {
         limit,
         data: [],
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "FGSes retrieved successfully",
       total,
@@ -100,13 +104,15 @@ export async function findAllFGSHandler(req: Request, res: Response) {
       limit,
       data: fgs,
     });
+    return;
   } catch (error) {
     logger.error("Error in findAllFGSHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve fgs",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -122,28 +128,31 @@ export async function CreateFGSHandler(
 
     const user = res.locals.user;
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     const fgs = await createFGSService({
       ...body,
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       status: true,
       message: "FGS created successfully",
       data: fgs,
     });
+    return;
   } catch (error) {
     logger.error("Error in CreateFGSHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to create fgs",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -164,25 +173,27 @@ export async function updateFGSHandler(
     const user = res.locals.user;
     if (!user) {
       fgsRequestCounter.inc({ operation, status: "unauthorized" });
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     const fgs = await findFGSService(id);
     if (!fgs) {
       fgsRequestCounter.inc({ operation, status: "notFound" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "FGS not found",
       });
+      return;
     }
 
     // Check if the fgs belongs to the user
     // if (user.fgsId !== id) {
     //   fgsRequestCounter.inc({ operation, status: "forbidden" });
-    //   return res.status(403).json({
+    //  res.status(403).json({
     //     status: false,
     //     message: "You don't have permission to update this fgs",
     //   });
@@ -192,19 +203,21 @@ export async function updateFGSHandler(
 
     fgsRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "FGS updated successfully",
       data: updatedFGS,
     });
+    return;
   } catch (error) {
     fgsRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in updateFGSHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to update fgs",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     fgsRequestDuration.observe({ operation }, duration);
@@ -235,5 +248,6 @@ export async function deleteFGSHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+    return;
   }
 }

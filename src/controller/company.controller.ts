@@ -56,10 +56,11 @@ export async function findCompanyHandler(
     // Input validation
     if (!id || id.trim() === "") {
       companyRequestCounter.inc({ operation: "findCompany", status: "error" });
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message: "Company ID is required",
       });
+      return;
     }
 
     // Try to get from cache first
@@ -73,12 +74,13 @@ export async function findCompanyHandler(
         status: "success",
       });
       timer({ operation: "findCompany" });
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "Company found successfully",
         company: cachedCompany,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
@@ -90,10 +92,11 @@ export async function findCompanyHandler(
         status: "notFound",
       });
       timer({ operation: "findCompany" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "Company not found",
       });
+      return;
     }
 
     // Cache the result for future requests (1 hour TTL)
@@ -101,21 +104,23 @@ export async function findCompanyHandler(
 
     companyRequestCounter.inc({ operation: "findCompany", status: "success" });
     timer({ operation: "findCompany" });
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Company found successfully",
       company,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error finding company: ${error}`);
     companyRequestCounter.inc({ operation: "findCompany", status: "error" });
     timer({ operation: "findCompany" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve company",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -160,10 +165,11 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
         status: "success",
       });
       timer({ operation: "findAllCompanies" });
-      return res.status(200).json({
+      res.status(200).json({
         ...cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database with sorting
@@ -178,10 +184,11 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
         status: "notFound",
       });
       timer({ operation: "findAllCompanies" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "No companies found",
       });
+      return;
     }
 
     const totalPages = Math.ceil(total / limit);
@@ -207,10 +214,11 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
       status: "success",
     });
     timer({ operation: "findAllCompanies" });
-    return res.status(200).json({
+    res.status(200).json({
       ...responseData,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error fetching all companies: ${error}`);
     companyRequestCounter.inc({
@@ -218,11 +226,12 @@ export async function findAllCompanysHandler(req: Request, res: Response) {
       status: "error",
     });
     timer({ operation: "findAllCompanies" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve companies",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -246,20 +255,22 @@ export async function findCompanyByLocationHandler(
       logger.debug(
         `Cache hit for companies in location: ${location}, page ${page + 1}`
       );
-      return res.status(200).json({
+      res.status(200).json({
         ...cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
     const companies = await findManyCompanyService(location, page, limit);
 
     if (companies.length === 0) {
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "No companies found for this location",
       });
+      return;
     }
 
     const responseData = {
@@ -376,11 +387,12 @@ export async function getCompanyStatisticsHandler(req: Request, res: Response) {
         status: "success",
       });
       timer({ operation: "getCompanyStatistics" });
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         data: cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
@@ -394,11 +406,12 @@ export async function getCompanyStatisticsHandler(req: Request, res: Response) {
       status: "success",
     });
     timer({ operation: "getCompanyStatistics" });
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       data: statistics,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error fetching company statistics: ${error}`);
     companyRequestCounter.inc({
@@ -406,11 +419,12 @@ export async function getCompanyStatisticsHandler(req: Request, res: Response) {
       status: "error",
     });
     timer({ operation: "getCompanyStatistics" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve company statistics",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -440,11 +454,12 @@ export async function getTrendingCompaniesHandler(req: Request, res: Response) {
         status: "success",
       });
       timer({ operation: "getTrendingCompanies" });
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         data: cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
@@ -456,10 +471,11 @@ export async function getTrendingCompaniesHandler(req: Request, res: Response) {
         status: "notFound",
       });
       timer({ operation: "getTrendingCompanies" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "No trending companies found",
       });
+      return;
     }
 
     // Cache the result for future requests (15 minutes TTL)
@@ -470,11 +486,12 @@ export async function getTrendingCompaniesHandler(req: Request, res: Response) {
       status: "success",
     });
     timer({ operation: "getTrendingCompanies" });
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       data: trendingCompanies,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error fetching trending companies: ${error}`);
     companyRequestCounter.inc({
@@ -482,11 +499,12 @@ export async function getTrendingCompaniesHandler(req: Request, res: Response) {
       status: "error",
     });
     timer({ operation: "getTrendingCompanies" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve trending companies",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -513,10 +531,11 @@ export async function verifyCompanyHandler(req: Request, res: Response) {
         status: "unauthorized",
       });
       timer({ operation: "verifyCompany" });
-      return res.status(403).json({
+      res.status(403).json({
         status: false,
         message: "Only administrators can verify companies",
       });
+      return;
     }
 
     logger.info(`Verifying company ${id} by admin ${user.id}`);
@@ -535,20 +554,22 @@ export async function verifyCompanyHandler(req: Request, res: Response) {
       status: "success",
     });
     timer({ operation: "verifyCompany" });
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: `Company ${isVerified ? "verified" : "unverified"} successfully`,
       data: updatedCompany,
     });
+    return;
   } catch (error) {
     logger.error(`Error verifying company: ${error}`);
     companyRequestCounter.inc({ operation: "verifyCompany", status: "error" });
     timer({ operation: "verifyCompany" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to verify company",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -578,11 +599,12 @@ export async function getFeaturedCompaniesHandler(req: Request, res: Response) {
         status: "success",
       });
       timer({ operation: "getFeaturedCompanies" });
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         data: cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
@@ -594,10 +616,11 @@ export async function getFeaturedCompaniesHandler(req: Request, res: Response) {
         status: "notFound",
       });
       timer({ operation: "getFeaturedCompanies" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "No featured companies found",
       });
+      return;
     }
 
     // Cache the result for future requests (30 minutes TTL)
@@ -608,11 +631,12 @@ export async function getFeaturedCompaniesHandler(req: Request, res: Response) {
       status: "success",
     });
     timer({ operation: "getFeaturedCompanies" });
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       data: featuredCompanies,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error fetching featured companies: ${error}`);
     companyRequestCounter.inc({
@@ -620,11 +644,12 @@ export async function getFeaturedCompaniesHandler(req: Request, res: Response) {
       status: "error",
     });
     timer({ operation: "getFeaturedCompanies" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve featured companies",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 /**
@@ -646,7 +671,7 @@ export async function CreateCompanyHandler(
 
     if (!user) {
       logger.warn("Unauthorized attempt to create company");
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
@@ -662,7 +687,7 @@ export async function CreateCompanyHandler(
 
     const updatedUser = await addUserToCompanyService(user.id, company.id);
 
-    return res.status(201).json({
+    res.status(201).json({
       status: true,
       message: "Company successfully created",
       data: {
@@ -670,13 +695,15 @@ export async function CreateCompanyHandler(
         user: updatedUser,
       },
     });
+    return;
   } catch (error) {
     logger.error(`Error creating company: ${error}`);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to create company",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 

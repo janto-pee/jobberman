@@ -31,6 +31,7 @@ export async function getCurrentUserHandler(_: Request, res: Response) {
       message: "Current user retrieved successfully",
       data: res.locals.user,
     });
+    return;
   } catch (error) {
     logger.error("Error retrieving current user:", error);
     res.status(500).json({
@@ -38,6 +39,7 @@ export async function getCurrentUserHandler(_: Request, res: Response) {
       message: "Failed to retrieve user information",
       error: error instanceof Error ? error.message : "Unknown error occurred",
     });
+    return;
   }
 }
 
@@ -101,15 +103,17 @@ export async function CreateUserHandler(
 
     // Handle specific error cases
     if (error.code === "P2002") {
-      return res.status(409).json({
+      res.status(409).json({
         status: false,
         message: "An account with this email or username already exists",
       });
+      return;
     } else if (error.code == "28000") {
-      return res.status(409).json({
+      res.status(409).json({
         status: false,
         message: "Unique constraint violation on either username or email",
       });
+      return;
     }
 
     res.status(500).json({
@@ -117,6 +121,7 @@ export async function CreateUserHandler(
       message: "Failed to create user account",
       error: error.message || "Unknown error occurred",
     });
+    return;
   }
 }
 
@@ -134,31 +139,35 @@ export async function verifyUserHandler(
 
     const user = await findUserService(id);
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "User not found",
       });
+      return;
     }
 
     if (user.is_email_verified) {
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "Email already verified. You can now log in to your account.",
       });
+      return;
     }
 
     if (user.verificationCode === verificationcode) {
       await verifyUserService(id);
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message:
           "Email verification successful. You can now log in to your account.",
       });
+      return;
     } else {
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message: "Invalid verification code",
       });
+      return;
     }
   } catch (error) {
     logger.error("Error verifying user:", error);
@@ -167,6 +176,7 @@ export async function verifyUserHandler(
       message: "Failed to verify email",
       error: error instanceof Error ? error.message : "Unknown error occurred",
     });
+    return;
   }
 }
 
@@ -185,19 +195,21 @@ export async function forgotPasswordHandler(
 
     // For security reasons, don't reveal if user exists or not
     if (!user) {
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message:
           "If your email is registered, you will receive password reset instructions",
       });
+      return;
     }
 
     if (!user.is_email_verified) {
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message:
           "Please verify your email address before resetting your password",
       });
+      return;
     }
 
     const pRC = v4();
@@ -230,6 +242,7 @@ export async function forgotPasswordHandler(
       message:
         "If your email is registered, you will receive password reset instructions",
     });
+    return;
   } catch (error) {
     logger.error("Error in forgot password process:", error);
     res.status(500).json({
@@ -237,6 +250,7 @@ export async function forgotPasswordHandler(
       message: "Failed to process password reset request",
       error: error instanceof Error ? error.message : "Unknown error occurred",
     });
+    return;
   }
 }
 
@@ -259,10 +273,11 @@ export async function passwordResetHandler(
       !user.passwordResetCode ||
       user.passwordResetCode !== passwordresetcode
     ) {
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message: "Invalid or expired password reset link",
       });
+      return;
     }
 
     const updatedUser = await passwordResetService(id, password);
@@ -281,6 +296,7 @@ export async function passwordResetHandler(
         "Password updated successfully. You can now log in with your new password.",
       data: savedUser,
     });
+    return;
   } catch (error) {
     logger.error("Error resetting password:", error);
     res.status(500).json({
@@ -288,5 +304,6 @@ export async function passwordResetHandler(
       message: "Failed to reset password",
       error: error instanceof Error ? error.message : "Unknown error occurred",
     });
+    return;
   }
 }

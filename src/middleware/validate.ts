@@ -26,19 +26,21 @@ const validateResource =
           message: err.message,
         }));
 
-        return res.status(400).json({
+        res.status(400).json({
           status: false,
           message: "Validation failed",
           errors: formattedErrors,
         });
+        return;
       }
 
       // Handle unexpected errors
       console.error("Validation error:", error);
-      return res.status(500).json({
+      res.status(500).json({
         status: false,
         message: "Internal server error during validation",
       });
+      return;
     }
   };
 

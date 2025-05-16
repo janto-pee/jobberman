@@ -51,10 +51,11 @@ export async function findSalaryHandler(
     // Input validation
     if (!id || id.trim() === "") {
       salaryRequestCounter.inc({ operation: "findSalary", status: "error" });
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message: "Salary ID is required",
       });
+      return;
     }
 
     // Try to get from cache first
@@ -68,12 +69,13 @@ export async function findSalaryHandler(
         status: "success",
       });
       timer({ operation: "findSalary" });
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "Salary found successfully",
         salary: cachedSalary,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
@@ -85,10 +87,11 @@ export async function findSalaryHandler(
         status: "notFound",
       });
       timer({ operation: "findSalary" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "Salary not found",
       });
+      return;
     }
 
     // Cache the result for future requests (1 hour TTL)
@@ -96,21 +99,23 @@ export async function findSalaryHandler(
 
     salaryRequestCounter.inc({ operation: "findSalary", status: "success" });
     timer({ operation: "findSalary" });
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Salary found successfully",
       salary,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error finding salary: ${error}`);
     salaryRequestCounter.inc({ operation: "findSalary", status: "error" });
     timer({ operation: "findSalary" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve salary",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -155,10 +160,11 @@ export async function findAllSalarysHandler(req: Request, res: Response) {
         status: "success",
       });
       timer({ operation: "findAllCompanies" });
-      return res.status(200).json({
+      res.status(200).json({
         ...cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database with sorting
@@ -173,10 +179,11 @@ export async function findAllSalarysHandler(req: Request, res: Response) {
         status: "notFound",
       });
       timer({ operation: "findAllCompanies" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "No companies found",
       });
+      return;
     }
 
     const totalPages = Math.ceil(total / limit);
@@ -202,10 +209,11 @@ export async function findAllSalarysHandler(req: Request, res: Response) {
       status: "success",
     });
     timer({ operation: "findAllCompanies" });
-    return res.status(200).json({
+    res.status(200).json({
       ...responseData,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error fetching all companies: ${error}`);
     salaryRequestCounter.inc({
@@ -213,11 +221,12 @@ export async function findAllSalarysHandler(req: Request, res: Response) {
       status: "error",
     });
     timer({ operation: "findAllCompanies" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve companies",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -241,20 +250,22 @@ export async function findSalaryByLocationHandler(
       logger.debug(
         `Cache hit for companies in location: ${location}, page ${page + 1}`
       );
-      return res.status(200).json({
+      res.status(200).json({
         ...cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
     const companies = await findManySalaryService(location, page, limit);
 
     if (companies.length === 0) {
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "No companies found for this location",
       });
+      return;
     }
 
     const responseData = {
@@ -371,11 +382,12 @@ export async function getSalaryStatisticsHandler(req: Request, res: Response) {
         status: "success",
       });
       timer({ operation: "getSalaryStatistics" });
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         data: cachedData,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
@@ -389,11 +401,12 @@ export async function getSalaryStatisticsHandler(req: Request, res: Response) {
       status: "success",
     });
     timer({ operation: "getSalaryStatistics" });
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       data: statistics,
       source: "database",
     });
+    return;
   } catch (error) {
     logger.error(`Error fetching salary statistics: ${error}`);
     salaryRequestCounter.inc({
@@ -401,11 +414,12 @@ export async function getSalaryStatisticsHandler(req: Request, res: Response) {
       status: "error",
     });
     timer({ operation: "getSalaryStatistics" });
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve salary statistics",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -428,10 +442,11 @@ export async function CreateSalaryHandler(
 
     if (!user) {
       logger.warn("Unauthorized attempt to create salary");
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     logger.info(`Creating salary for user: ${user.id}`);
@@ -442,20 +457,22 @@ export async function CreateSalaryHandler(
       // createdBy: user.id, // Track who created the salary
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       status: true,
       message: "Salary successfully created",
       data: {
         salary,
       },
     });
+    return;
   } catch (error) {
     logger.error(`Error creating salary: ${error}`);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to create salary",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 

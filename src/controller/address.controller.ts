@@ -57,21 +57,23 @@ export async function findAddressHandler(
         status: "success",
       });
       timer({ operation: "findAddress" });
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "Address found successfully",
         company: cachedAddress,
         source: "cache",
       });
+      return;
     }
 
     // Cache miss, fetch from database
     const address = await findAddressService(id);
     if (!address) {
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "Address not found",
       });
+      return;
     }
     // Cache the result for future requests (1 hour TTL)
     await setCache(cacheKey, address, 3600);
@@ -79,18 +81,20 @@ export async function findAddressHandler(
     addressRequestCounter.inc({ operation: "findAddress", status: "success" });
     timer({ operation: "findCompany" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Address retrieved successfully",
       data: address,
     });
+    return;
   } catch (error) {
     logger.error("Error in findAddressHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve address",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -123,10 +127,11 @@ export async function findAllAddressHandler(req: Request, res: Response) {
         status: "success",
       });
       timer({ operation: "findAllCompanies" });
-      return res.status(200).json({
+      res.status(200).json({
         ...cachedData,
         source: "cache",
       });
+      return;
     }
 
     const addresses = await findAllAddressService(page, limit);
@@ -141,7 +146,7 @@ export async function findAllAddressHandler(req: Request, res: Response) {
     };
 
     if (!addresses || addresses.length === 0) {
-      return res.status(200).json({
+      res.status(200).json({
         status: true,
         message: "No addresses found",
         total: 0,
@@ -149,6 +154,7 @@ export async function findAllAddressHandler(req: Request, res: Response) {
         limit,
         data: [],
       });
+      return;
     }
     // Cache the result for future requests (10 minutes TTL)
     await setCache(cacheKey, responseData, 600);
@@ -159,14 +165,16 @@ export async function findAllAddressHandler(req: Request, res: Response) {
     });
     timer({ operation: "findAllCompanies" });
 
-    return res.status(200).json(responseData);
+    res.status(200).json(responseData);
+    return;
   } catch (error) {
     logger.error("Error in findAllAddressHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve addresses",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -183,14 +191,15 @@ export async function CreateAddressHandler(
 
     const user = res.locals.user;
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     if (user.addressId) {
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message:
           "User already has an address. Please update the existing address instead.",
@@ -203,18 +212,20 @@ export async function CreateAddressHandler(
 
     await addUserToAddressService(user.id, address.id);
 
-    return res.status(201).json({
+    res.status(201).json({
       status: true,
       message: "Address created successfully",
       data: address,
     });
+    return;
   } catch (error) {
     logger.error("Error in CreateAddressHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to create address",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   }
 }
 
@@ -235,54 +246,59 @@ export async function updateAddressHandler(
     const user = res.locals.user;
     if (!user) {
       addressRequestCounter.inc({ operation, status: "unauthorized" });
-      return res.status(401).json({
+      res.status(401).json({
         status: false,
         message: "Authentication required",
       });
+      return;
     }
 
     const address = await findAddressService(id);
     if (!address) {
       addressRequestCounter.inc({ operation, status: "notFound" });
-      return res.status(404).json({
+      res.status(404).json({
         status: false,
         message: "Address not found",
       });
+      return;
     }
 
     // Check if the address belongs to the user
     if (user.addressId !== id) {
       addressRequestCounter.inc({ operation, status: "forbidden" });
-      return res.status(403).json({
+      res.status(403).json({
         status: false,
         message: "You don't have permission to update this address",
       });
+      return;
     }
 
     const updatedAddress = await updateAddressService(id, body);
 
     addressRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Address updated successfully",
       data: updatedAddress,
     });
+    return;
   } catch (error) {
     addressRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in updateAddressHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to update address",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     addressRequestDuration.observe({ operation }, duration);
   }
 }
 
-const timer = addressRequestDuration.startTimer({ operation: "findAddress" });
+// const timer = addressRequestDuration.startTimer({ operation: "findAddress" });
 export async function deleteAddressHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -307,6 +323,7 @@ export async function deleteAddressHandler(req: Request, res: Response) {
       message: "server error",
       error: error,
     });
+    return;
   }
 }
 
@@ -335,7 +352,7 @@ export async function searchAddressesHandler(req: Request, res: Response) {
 
     addressRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Addresses retrieved successfully",
       searchTerm,
@@ -344,14 +361,16 @@ export async function searchAddressesHandler(req: Request, res: Response) {
       limit,
       data: addresses,
     });
+    return;
   } catch (error) {
     addressRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in searchAddressesHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to search addresses",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     addressRequestDuration.observe({ operation }, duration);
@@ -383,10 +402,11 @@ export async function getAddressesByCountryHandler(
 
     if (!countryCode || countryCode.length < 2) {
       addressRequestCounter.inc({ operation, status: "invalid" });
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message: "Valid country code is required",
       });
+      return;
     }
 
     const addresses = await getAddressesByCountryService(
@@ -397,7 +417,7 @@ export async function getAddressesByCountryHandler(
 
     addressRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: `Addresses in ${countryCode} retrieved successfully`,
       countryCode,
@@ -406,14 +426,16 @@ export async function getAddressesByCountryHandler(
       count: addresses.length,
       data: addresses,
     });
+    return;
   } catch (error) {
     addressRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in getAddressesByCountryHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve addresses by country",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     addressRequestDuration.observe({ operation }, duration);
@@ -439,28 +461,31 @@ export async function validateAddressHandler(
 
     if (!validationResult.isValid) {
       addressRequestCounter.inc({ operation, status: "invalid" });
-      return res.status(400).json({
+      res.status(400).json({
         status: false,
         message: "Address validation failed",
         errors: validationResult.errors,
       });
+      return;
     }
 
     addressRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Address data is valid",
       data: body,
     });
+    return;
   } catch (error) {
     addressRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in validateAddressHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to validate address",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     addressRequestDuration.observe({ operation }, duration);
@@ -481,19 +506,21 @@ export async function getAddressStatisticsHandler(req: Request, res: Response) {
 
     addressRequestCounter.inc({ operation, status: "success" });
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Address statistics retrieved successfully",
       data: statistics,
     });
+    return;
   } catch (error) {
     addressRequestCounter.inc({ operation, status: "error" });
     logger.error("Error in getAddressStatisticsHandler:", error);
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to retrieve address statistics",
       error: error instanceof Error ? error.message : String(error),
     });
+    return;
   } finally {
     const duration = (Date.now() - start) / 1000;
     addressRequestDuration.observe({ operation }, duration);
